@@ -5,7 +5,7 @@ session_start();
 if ($_SESSION['s_usuario'] === null) {
   header("Location:index.php");
 } else {
-  
+ 
 }
 ?>
 
@@ -15,7 +15,7 @@ if ($_SESSION['s_usuario'] === null) {
 <head>
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <title>CHECA</title>
+  <title>INMOBILIARIA BOSQUE DE LAS ANIMAS</title>
   <!-- Tell the browser to be responsive to screen width -->
   <meta name="viewport" content="width=device-width, initial-scale=1">
 

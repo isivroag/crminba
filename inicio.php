@@ -14,15 +14,7 @@ include_once "templates/navegacion.php";
 
   <!-- Main content -->
   <section class="content ">
-    <div class="container-fluid ">
-      <div class="card">
-        <div class="card-header bg-green">
-          <h3>CHECA S.A DE C.V.</h3>
-        </div>
-
-
-      </div>
-    </div>
+    
   </section>
   <section>
     <div class="container-fluid">
@@ -32,7 +24,7 @@ include_once "templates/navegacion.php";
           <div class="col-lg-12 text-center">
             
             <br>
-            <img src="img/logoempresa.jpg" alt="">
+            <img src="img/logoverde.png" alt="">
           </div>
         </div>
       </div>

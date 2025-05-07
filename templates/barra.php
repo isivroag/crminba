@@ -1,32 +1,28 @@
 <?php
 include_once('bd/funcion.php');
 
-if (isset($_COOKIE["barra"])){
-  $barra=$_COOKIE["barra"];
-}
-else{
+if (isset($_COOKIE["barra"])) {
+  $barra = $_COOKIE["barra"];
+} else {
 
-  $barra="";
-  setcookie("barra", $barra,time () + 604800,"/");
-  
-
+  $barra = "";
+  setcookie("barra", $barra, time() + 604800, "/");
 }
 
 
 
 ?>
 <script>
-  function funcion(){
-  
-    valor=$('#barra').val();    
- 
-    if (valor==""){
+  function funcion() {
+
+    valor = $('#barra').val();
+
+    if (valor == "") {
       $('#barra').val("sidebar-collapse")
       document.cookie = "barra=sidebar-collapse;max-age=3600;path=/";
       //$.cookie.set('barra',"sidebar-callapse");
 
-    }
-    else{
+    } else {
       $('#barra').val("")
       document.cookie = "barra=;max-age=3600;path=/";
       //$.cookie.set('barra','');
@@ -34,7 +30,7 @@ else{
     }
 
 
-};
+  };
 </script>
 
 <body class="hold-transition sidebar-mini <?php echo $barra ?> ">
@@ -44,8 +40,8 @@ else{
     <nav class="main-header navbar navbar-expand navbar-dark navbar-gray-dark">
       <!-- Left navbar links -->
       <ul class="navbar-nav">
-        <li class="nav-item"  >
-          <button class="nav-link btn btn-sm" style="border:none;background:none;" onclick="funcion()" data-widget="pushmenu" value="<?php echo $barra ?>" id="barra" href="#" ><i class="fas fa-bars"></i></button>
+        <li class="nav-item">
+          <button class="nav-link btn btn-sm" style="border:none;background:none;" onclick="funcion()" data-widget="pushmenu" value="<?php echo $barra ?>" id="barra" href="#"><i class="fas fa-bars"></i></button>
           <!--<a class="nav-link" data-widget="pushmenu" id="barra" href="#" role="button"><i class="fas fa-bars"></i></a>-->
         </li>
 
@@ -54,7 +50,13 @@ else{
       </ul>
 
       <!-- SEARCH FORM -->
+      <ul class="navbar-nav ml-auto">
+        <li class="nav-item d-none d-sm-inline-block">
+          <strong><a class="nav-link" style="font-size:x-large; color:white"  href="index.php">INMOBILIARIA BOSQUE DE LAS ANIMAS S.A. DE C.V.</a></strong>
+        </li>
 
+
+      </ul>
 
       <!-- Right navbar links -->
       <ul class="navbar-nav ml-auto">
@@ -72,8 +74,8 @@ else{
         <!-- Messages Dropdown Menu -->
         <li class="nav-item dropdown no-arrow">
           <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-            <span class="mr-2 d-none d-lg-inline text-gray-600 small"><?php echo $_SESSION['s_nombre'] ; ?></span>
-            <input type="hidden" id="rolusuario" name="rolusuario" value =<?php echo $_SESSION['s_rol'] ?>>
+            <span class="mr-2 d-none d-lg-inline text-gray-600 small"><?php echo $_SESSION['s_nombre']; ?></span>
+            <input type="hidden" id="rolusuario" name="rolusuario" value=<?php echo $_SESSION['s_rol'] ?>>
             <i class="fas fa-user"></i>
           </a>
           <!-- Dropdown - User Information -->
