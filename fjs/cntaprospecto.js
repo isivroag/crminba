@@ -254,71 +254,97 @@ $(document).ready(function () {
     });
   });
   // Guardar Prospecto (Crear o Editar)
-  $(document).on("click", "#btnGuardar", function () {
-    var nombre = $.trim($("#nombre").val());
-    var telefono = $.trim($("#telefono").val());
-    var correo = $.trim($("#correo").val());
-    var col_asignado = $("#col_asignado").val();
+ $(document).on("click", "#btnGuardar", function () {
+  var nombre = $.trim($("#nombre").val());
+  var telefono = $.trim($("#telefono").val());
+  var correo = $.trim($("#correo").val());
+  var col_asignado = $("#col_asignado").val();
 
-    // Validaciones...
+  // Validaciones (agrega las tuyas)...
 
-    $.ajax({
-      url: "bd/crudprospecto.php",
-      type: "POST",
-      dataType: "json",
-      data: {
-        nombre: nombre,
-        telefono: telefono,
-        correo: correo,
-        col_asignado: col_asignado,
-        id: id,
-        opcion: opcion,
-      },
-      success: function (data) {
-        if (data.success) {
-          // Solo actualizar turno si no es autoasignación de colaborador
-          var tipousuario = $("#tipousuario").val();
-          if (tipousuario != 4) {
-            actualizarTurnoColaborador(col_asignado);
-          }
-
-          // Resto del código de éxito...
-          $("#modalCRUD").modal("hide");
-
-          if (opcion == 1) {
-            tablaVis.row
-              .add([
-                data.id_pros,
-                data.nombre,
-                data.telefono,
-                data.correo,
-                data.nombre_colaborador,
-                data.fecha_registro,
-                '<span class="badge badge-asignado">Asignado</span>',
-                generarBotonesAccion(data.id_pros),
-              ])
-              .draw();
-          } else {
-            tablaVis
-              .row(fila)
-              .data([
-                data.id_pros,
-                data.nombre,
-                data.telefono,
-                data.correo,
-                data.nombre_colaborador,
-                data.fecha_registro,
-                '<span class="badge badge-asignado">Asignado</span>',
-                generarBotonesAccion(data.id_pros),
-              ])
-              .draw();
-          }
-
-          Swal.fire("Éxito", data.message, "success");
+  $.ajax({
+    url: "bd/crudprospecto.php",
+    type: "POST",
+    dataType: "json",
+    data: {
+      nombre: nombre,
+      telefono: telefono,
+      correo: correo,
+      col_asignado: col_asignado,
+      id: id,
+      opcion: opcion,
+    },
+    success: function (data) {
+      if (data.success) {
+        var tipousuario = $("#tipousuario").val();
+        if (tipousuario != 4) {
+          actualizarTurnoColaborador(col_asignado);
         }
-      },
-    });
+
+        $("#modalCRUD").modal("hide");
+
+        if (opcion == 1) {
+          tablaVis.row
+            .add([
+              data.id_pros,
+              data.nombre,
+              data.telefono,
+              data.correo,
+              data.nombre_colaborador,
+              data.fecha_registro,
+              '<span class="badge badge-asignado">Asignado</span>',
+              generarBotonesAccion(data.id_pros),
+            ])
+            .draw();
+        } else {
+          tablaVis
+            .row(fila)
+            .data([
+              data.id_pros,
+              data.nombre,
+              data.telefono,
+              data.correo,
+              data.nombre_colaborador,
+              data.fecha_registro,
+              '<span class="badge badge-asignado">Asignado</span>',
+              generarBotonesAccion(data.id_pros),
+            ])
+            .draw();
+        }
+
+        // Enviar correo automáticamente según sea alta o modificación
+        let urlCorreo = opcion == 1 ? "bd/usarapicorreo.php" : "bd/usarapicorreo2.php";
+
+        $.ajax({
+          url: urlCorreo,
+          type: "POST",
+          dataType: "json",
+          contentType: "application/json",
+          data: JSON.stringify({
+            id_pros: data.id_pros,
+            nombre: data.nombre,
+            telefono: data.telefono,
+            correo: data.correo,
+            colaborador: data.nombre_colaborador,
+          }),
+          success: function (resp) {
+            Swal.fire({
+              title: "Éxito",
+              text: resp.message,
+              icon: resp.success ? "success" : "warning",
+            });
+          },
+          error: function () {
+            Swal.fire("Error", "No se pudo enviar el correo al colaborador", "error");
+          },
+        });
+
+        Swal.fire("Éxito", data.message, "success");
+      }
+    },
   });
+});
+
 
   function actualizarTurnoColaborador(id_col) {
     $.ajax({

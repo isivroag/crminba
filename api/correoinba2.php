@@ -9,10 +9,8 @@ require '../email/src/Exception.php';
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
 
-// Obtener datos del cuerpo de la solicitud
 $data = json_decode(file_get_contents('php://input'), true);
 
-// Validar datos requeridos
 $required = ['id_pros', 'nombre', 'telefono', 'correo', 'colaborador', 'email_colaborador'];
 foreach ($required as $field) {
     if (empty($data[$field])) {
@@ -22,11 +20,9 @@ foreach ($required as $field) {
     }
 }
 
-// Configurar PHPMailer
 $mail = new PHPMailer(true);
 
 try {
-    // Configuración del servidor SMTP
     $mail->isSMTP();
     $mail->Host = 'mail.tecniem.com';
     $mail->SMTPAuth = true;
@@ -37,94 +33,44 @@ try {
     $mail->CharSet = 'UTF-8';
     $mail->ContentType = 'text/html; charset=UTF-8';
 
-    // Remitente y destinatario
     $mail->setFrom('avisos@tecniem.com', 'Sistema de Prospectos');
     $mail->addAddress($data['email_colaborador'], $data['colaborador']);
 
-    // Asunto y cuerpo del mensaje
-    $mail->Subject = 'Nuevo prospecto asignado: ' . $data['nombre'];
-
-    // Agregar imagen incrustada
+    $mail->Subject = 'Prospecto modificado: ' . $data['nombre'];
     $mail->AddEmbeddedImage('../assets/img/logoVerde.png', 'logo_empresa');
 
-    // Cuerpo del mensaje HTML
     $mail->Body = '
     <html>
     <head>
         <style>
-           body {
-    font-family: Arial, sans-serif;
-    color: #2d2d2d;
-    background-color: #eaf1e5; /* fondo suave */
-}
-
-.container {
-    background-color: #ffffff;
-    padding: 20px;
-    margin: 0 auto;
-    box-shadow: 0 0 20px rgba(0,0,0,0.1);
-    max-width: 800px;
-    border: 1px solid #cddccf;
-}
-
-.header {
-    text-align: center;
-    background-color: #153510; /* color principal */
-    padding: 10px;
-    color: #ffffff;
-}
-
-.content {
-    line-height: 1.6;
-    padding: 20px;
-}
-
-.info {
-    background-color: #f2f7f0;
-    padding: 15px;
-    border-radius: 5px;
-    margin: 15px 0;
-    border-left: 5px solid #153510;
-}
-
-.footer {
-    text-align: center;
-    padding: 10px;
-    font-size: 12px;
-    color: #ffffff;
-    background-color: #153510; /* color principal */
-}
-
-.titulo {
-    text-align: center;
-    color: #153510; /* color principal */
-}
+            body { font-family: Arial, sans-serif; color: #2d2d2d; background-color: #eaf1e5; }
+            .container { background-color: #ffffff; padding: 20px; max-width: 800px; margin: auto; border: 1px solid #cddccf; box-shadow: 0 0 20px rgba(0,0,0,0.1); }
+            .header { text-align: center; background-color: #153510; color: #ffffff; padding: 10px; }
+            .content { padding: 20px; line-height: 1.6; }
+            .info { background-color: #f2f7f0; padding: 15px; border-left: 5px solid #153510; margin: 15px 0; border-radius: 5px; }
+            .footer { text-align: center; padding: 10px; font-size: 12px; color: #ffffff; background-color: #153510; }
+            .titulo { text-align: center; color: #153510; }
         </style>
     </head>
     <body>
         <div class="container">
             <div class="header">
                 <div style="background-color: #f2f7f0; padding: 10px; display: inline-block; border-radius: 10%;">
-                    
-                <img src="logoVerde.png" alt="Bosque de las Animas" style="height: 60px;">
-                </div>            
-            
+                    <img src="cid:logo_empresa" alt="Bosque de las Animas" style="height: 60px;">
+                </div>
             </div>
             <div class="content">
                 <div class="titulo">
-                    <h1>Nuevo Prospecto Asignado</h1>
+                    <h1>Actualización de Prospecto</h1>
                 </div>
-                
                 <p>Hola ' . htmlspecialchars($data['colaborador']) . ',</p>
-                <p>Se te ha asignado un nuevo prospecto:</p>
-                
+                <p>Se ha actualizado la información del siguiente prospecto:</p>
                 <div class="info">
                     <p><strong>Nombre:</strong> ' . htmlspecialchars($data['nombre']) . '</p>
                     <p><strong>Teléfono:</strong> <a href="tel:' . htmlspecialchars($data['telefono']) . '">' . htmlspecialchars($data['telefono']) . '</a></p>
                     <p><strong>Correo:</strong> <a href="mailto:' . htmlspecialchars($data['correo']) . '">' . htmlspecialchars($data['correo']) . '</a></p>
                 </div>
-                
-                <p>Por favor contacta al prospecto dentro de las próximas 24 horas.</p>
+                <p>Por favor revisa los cambios y realiza seguimiento si es necesario.</p>
             </div>
             <div class="footer">
                 <p>© ' . date('Y') . ' INMOBILIARIA BOSQUE DE LAS ANIMAS SA DE CV. Todos los derechos reservados.</p>
@@ -146,11 +92,12 @@ try {
 
     //  Adjuntar vCard al correo
     $mail->addAttachment($vcardPath, $data['nombre'] . '.vcf');
-    // Enviar correo
+
     $mail->send();
 
-    echo json_encode(["success" => true, "message" => "Correo enviado exitosamente al colaborador"]);
+    echo json_encode(["success" => true, "message" => "Correo enviado por modificación del prospecto."]);
 } catch (Exception $e) {
     http_response_code(500);
     echo json_encode(["success" => false, "message" => "Error al enviar el correo: " . $mail->ErrorInfo]);
 }
+?>

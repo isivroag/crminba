@@ -125,14 +125,7 @@ $message = "";
                                                         <button class="btn btn-sm btn-secondary btnEnviar" data-toggle="tooltip" title="Enviar">
                                                             <i class="fas fa-envelope"></i>
                                                         </button>
-                                                        <?php if($dat['edo_pros'] == 1): ?>
-                                                            <button class="btn btn-sm btn-success btnConvertir" data-toggle="tooltip" title="Convertir a Cliente">
-                                                                <i class="fas fa-user-check"></i>
-                                                            </button>
-                                                        <?php endif; ?>
-                                                        <button class="btn btn-sm btn-danger btnDescartar" data-toggle="tooltip" title="Descartar Prospecto">
-                                                            <i class="fas fa-trash-alt"></i>
-                                                        </button>
+                                                       
                                                     </div>
                                                 </td>
                                             </tr>
