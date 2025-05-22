@@ -10,20 +10,13 @@ $(document).ready(function () {
     let id_pros = $("#id_pros").val();
     let id_seg = $("#id_seg").val();
     let comentarios = $("#observaciones").val();
-    console.log("ID Seg:", id_seg);
-    console.log(opcion = id_seg ? 2 : 1);
+    
     if (id_seg && parseInt(id_seg) > 0) {
       opcion = 2;
     } else {
       opcion = 1;
     }
 
-    console.log("ID Pros:", id_pros);
-    console.log("Tipo Seg:", tipo_seg);
-    console.log("Fecha Seg:", fecha_seg);
-    console.log("Realizado:", realizado);
-    console.log("ID Col:", id_col);
-    console.log("Comentarios:", comentarios);
 
     // Validaciones básicas
     if (!tipo_seg || !fecha_seg || !realizado || !id_col) {
@@ -62,27 +55,68 @@ $(document).ready(function () {
       url: "bd/guardar_seguimiento.php",
       type: "POST",
       data: {
-      tipo_seg: tipo_seg,
-      fecha_seg: fecha_seg,
-      realizado: realizado,
-      comentarios: comentarios,
-      id_col: id_col,
-      id_pros: id_pros,
-      id_seg: id_seg,
-      opcion: opcion
-    },
+        tipo_seg: tipo_seg,
+        fecha_seg: fecha_seg,
+        realizado: realizado,
+        comentarios: comentarios,
+        id_col: id_col,
+        id_pros: id_pros,
+        id_seg: id_seg,
+        opcion: opcion,
+      },
       success: function (response) {
         try {
           const res = JSON.parse(response);
           if (res.success) {
+            console.log("Respuesta del servidor:", res);
             Swal.fire({
               title: "Seguimiento Guardado",
               text: res.message || "La acción ha sido registrada exitosamente.",
               icon: "success",
-              timer: 2000,
-              showConfirmButton: false,
+              showCancelButton: true,
+              confirmButtonText: "Sí, enviar correo",
+              cancelButtonText: "No, gracias",
+            }).then((result) => {
+              if (result.value) {
+                // Enviar correo por AJAXç
+                console.log("Enviando correo...");
+                $.ajax({
+                  url: "bd/usarapicorreoseg.php",
+                  type: "POST",
+                  contentType: "application/json",
+                  data: JSON.stringify({ id_seg: res.id_seg || id_seg }), // usa el id_seg que devuelva PHP si lo actualizaste ahí
+                  success: function (correoRes) {
+                    try {
+                      const correoJson = JSON.parse(correoRes);
+                      Swal.fire({
+                        title: correoJson.success ? "Correo Enviado" : "Error",
+                        text: correoJson.message,
+                        icon: correoJson.success ? "success" : "error",
+                      });
+                    } catch (e) {
+                      console.error(
+                        "Error al interpretar respuesta del correo:",
+                        e
+                      );
+                      Swal.fire({
+                        title: "Error",
+                        text: "No se pudo interpretar la respuesta del correo.",
+                        icon: "error",
+                      });
+                    }
+                  },
+                  error: function (xhr, status, error) {
+                    console.error("Error al enviar correo:", error);
+                    Swal.fire({
+                      title: "Error de Conexión",
+                      text: "No se pudo enviar el correo.",
+                      icon: "error",
+                    });
+                  },
+                });
+              }
+              $("#formSeguimiento")[0].reset();
             });
-            $("#formSeguimiento")[0].reset();
           } else {
             Swal.fire({
               title: "Error",

@@ -36,17 +36,24 @@ $message = "";
     .starchecked {
         color: rgba(255, 195, 0, 100)
     }
+
     .multi-line {
         white-space: normal;
         width: 250px;
     }
+
     .badge-asignado {
         background-color: #28a745;
     }
-    .badge-convertido {
+
+    .badge-seguimiento {
         background-color: #17a2b8;
     }
-    .badge-descartado {
+
+    .badge-finalizado{
+        background-color: #6c757d;
+    }
+     .badge-pendiente{
         background-color: #6c757d;
     }
 </style>
@@ -84,6 +91,7 @@ $message = "";
                                             <th>ASIGNADO A</th>
                                             <th>FECHA REGISTRO</th>
                                             <th>ESTADO</th>
+                                            <th>ORIGEN</th>
                                             <th>ACCIONES</th>
                                         </tr>
                                     </thead>
@@ -97,25 +105,54 @@ $message = "";
                                                 <td><?php echo $dat['nombre_colaborador'] ?></td>
                                                 <td><?php echo date('d/m/Y', strtotime($dat['fecha_registro'])) ?></td>
                                                 <td class="text-center">
-                                                    <?php 
+                                                    <?php
                                                     $badge_class = '';
                                                     $estado_text = '';
-                                                    switch($dat['edo_pros']) {
-                                                        case 1: 
-                                                            $badge_class = 'badge-asignado';
-                                                            $estado_text = 'Asignado';
+                                                    switch ($dat['edo_seguimiento']) {
+                                                        case 1:
+                                                            $badge_class = 'bg-success';
+                                                            $estado_text = 'Nuevo';
                                                             break;
-                                                        case 2: 
-                                                            $badge_class = 'badge-convertido';
-                                                            $estado_text = 'Convertido';
+                                                        case 2:
+                                                            $badge_class = 'bg-primary';
+                                                            $estado_text = 'Seguimiento';
                                                             break;
-                                                        case 3: 
-                                                            $badge_class = 'badge-descartado';
-                                                            $estado_text = 'Descartado';
+                                                        case 3:
+                                                            $badge_class = 'bg-green';
+                                                            $estado_text = 'Finalizado';
+                                                            break;
+                                                         case 4:
+                                                            $badge_class = 'bg-secondary';
+                                                            $estado_text = 'Pendiente';
                                                             break;
                                                     }
                                                     ?>
                                                     <span class="badge <?php echo $badge_class ?>"><?php echo $estado_text ?></span>
+                                                </td>
+                                                <td data-origen="<?php echo strtolower($dat['origen']); ?>">
+                                                    <?php
+                                                    $origen = strtolower($dat['origen']);
+                                                    switch ($origen) {
+                                                        case 'facebook':
+                                                            echo '<i class="fab fa-facebook text-primary"></i> Facebook';
+                                                            break;
+                                                        case 'instagram':
+                                                            echo '<i class="fab fa-instagram text-danger"></i> Instagram';
+                                                            break;
+                                                        case 'web':
+                                                            echo '<i class="fas fa-globe text-info"></i> Web';
+                                                            break;
+                                                        case 'whatsapp':
+                                                            echo '<i class="fab fa-whatsapp text-success"></i> WhatsApp';
+                                                            break;
+                                                        case 'llamada':
+                                                            echo '<i class="fas fa-phone text-dark"></i> Llamada';
+                                                            break;
+                                                        default:
+                                                            echo ucfirst($origen);
+                                                            break;
+                                                    }
+                                                    ?>
                                                 </td>
                                                 <td class="text-center">
                                                     <div class="btn-group">
@@ -126,6 +163,7 @@ $message = "";
                                                             <i class="fas fa-envelope"></i>
                                                         </button>
                                                        
+
                                                     </div>
                                                 </td>
                                             </tr>
@@ -153,34 +191,47 @@ $message = "";
                     </div>
                     <div class="modal-body">
                         <div class="card card-widget" style="margin: 10px;">
-                            <form id="formDatos" class="row p-2" action="" method="POST">
+                            <form id="formDatos" class="row p-2 g-2" action="" method="POST">
                                 <input type="hidden" id="id_pros" name="id_pros">
-                                
-                                <div class="col-sm-12">
+
+                                <div class="col-12">
                                     <div class="form-group input-group-sm">
-                                        <label for="nombre" class="col-form-label">*NOMBRE:</label>
-                                        <input type="text" class="form-control" name="nombre" id="nombre" autocomplete="off" placeholder="NOMBRE COMPLETO" required>
+                                        <label for="nombre" class="col-form-label form-control-sm">*NOMBRE:</label>
+                                        <input type="text" class="form-control form-control-sm" name="nombre" id="nombre" autocomplete="off" placeholder="NOMBRE COMPLETO" required>
                                     </div>
                                 </div>
-                                
-                                <div class="col-sm-6">
+
+                                <div class="col-12 col-sm-4">
                                     <div class="form-group input-group-sm">
-                                        <label for="telefono" class="col-form-label">*TELÉFONO:</label>
-                                        <input type="text" class="form-control" name="telefono" id="telefono" autocomplete="off" placeholder="TELÉFONO" required>
+                                        <label for="telefono" class="col-form-label form-control-sm">*TELÉFONO:</label>
+                                        <input type="text" class="form-control form-control-sm" name="telefono" id="telefono" autocomplete="off" placeholder="TELÉFONO" required>
                                     </div>
                                 </div>
-                                
-                                <div class="col-sm-6">
+
+                                <div class="col-12 col-sm-4">
                                     <div class="form-group input-group-sm">
-                                        <label for="correo" class="col-form-label">*CORREO:</label>
-                                        <input type="email" class="form-control" name="correo" id="correo" autocomplete="off" placeholder="CORREO ELECTRÓNICO" required>
+                                        <label for="correo" class="col-form-label form-control-sm">*CORREO:</label>
+                                        <input type="email" class="form-control form-control-sm" name="correo" id="correo" autocomplete="off" placeholder="CORREO ELECTRÓNICO" required>
                                     </div>
                                 </div>
-                                
-                                <div class="col-sm-12">
+
+                                <div class="col-12 col-sm-4">
                                     <div class="form-group input-group-sm">
-                                        <label for="col_asignado" class="col-form-label">ASIGNADO A:</label>
-                                        <select class="form-control selectpicker" name="col_asignado" id="col_asignado" data-live-search="true" title="SELECCIONA COLABORADOR" required>
+                                        <label for="origen" class="col-form-label form-control-sm">*Origen:</label>
+                                        <select id="origen" name="origen" class="selectpicker form-control form-control-sm" data-live-search="false" title="Seleccione el origen...">
+                                            <option value="facebook" data-icon="fab fa-facebook text-primary">Facebook</option>
+                                            <option value="instagram" data-icon="fab fa-instagram text-danger">Instagram</option>
+                                            <option value="web" data-icon="fas fa-globe text-info">Web</option>
+                                            <option value="whatsapp" data-icon="fab fa-whatsapp text-success">WhatsApp</option>
+                                            <option value="llamada" data-icon="fas fa-phone text-dark">Llamada</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="col-12">
+                                    <div class="form-group input-group-sm">
+                                        <label for="col_asignado" class="col-form-label form-control-sm">ASIGNADO A:</label>
+                                        <select class="form-control form-control-sm selectpicker" name="col_asignado" id="col_asignado" data-live-search="true" title="SELECCIONA COLABORADOR" required>
                                             <?php foreach ($colaboradores as $colab): ?>
                                                 <option value="<?php echo $colab['id_col'] ?>"><?php echo $colab['nombre'] ?></option>
                                             <?php endforeach; ?>
@@ -189,6 +240,7 @@ $message = "";
                                 </div>
                             </form>
                         </div>
+
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-warning" data-dismiss="modal"><i class="fas fa-ban"></i> Cancelar</button>
@@ -212,17 +264,17 @@ $message = "";
                 <div class="modal-body">
                     <form id="formCliente" class="row p-3">
                         <input type="hidden" id="id_prospecto" name="id_prospecto">
-                        
+
                         <div class="col-md-6 form-group">
                             <label for="rfc">RFC:</label>
                             <input type="text" class="form-control" id="rfc" name="rfc" placeholder="RFC">
                         </div>
-                        
+
                         <div class="col-md-6 form-group">
                             <label for="fecha_nacimiento">FECHA DE NACIMIENTO:</label>
                             <input type="date" class="form-control" id="fecha_nacimiento" name="fecha_nacimiento">
                         </div>
-                        
+
                         <div class="col-12 form-group">
                             <label for="direccion">DIRECCIÓN COMPLETA:</label>
                             <textarea class="form-control" id="direccion" name="direccion" rows="3" placeholder="CALLE, NÚMERO, COLONIA, CÓDIGO POSTAL, CIUDAD, ESTADO"></textarea>

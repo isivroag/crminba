@@ -119,27 +119,29 @@ $message = "";
                     </div>
                     <div class="modal-body">
                         <div class="card card-widget" style="margin: 10px;">
-                            <form id="formDatos" class="row p-2" action="" method="POST">
-                                <div class="col-sm-12">
+                            <form id="formDatos" class="row p-2 g-2" action="" method="POST">
+                                <div class="col-12">
                                     <div class="form-group input-group-sm">
-                                        <label for="nombre" class="col-form-label">*NOMBRE:</label>
-                                        <input type="text" class="form-control" name="nombre" id="nombre" autocomplete="off" placeholder="NOMBRE" required>
+                                        <label for="nombre" class="col-form-label form-control-sm">*NOMBRE:</label>
+                                        <input type="text" class="form-control form-control-sm" name="nombre" id="nombre" autocomplete="off" placeholder="NOMBRE" required>
                                     </div>
                                 </div>
-                                <div class="col-sm-6">
+                                <div class="col-12 col-sm-6">
                                     <div class="form-group input-group-sm">
-                                        <label for="telefono" class="col-form-label">*TELEFONO:</label>
-                                        <input type="text" class="form-control" name="telefono" id="telefono" autocomplete="off" placeholder="TELEFONO" required>
+                                        <label for="telefono" class="col-form-label form-control-sm">*TELEFONO:</label>
+                                        <input type="text" class="form-control form-control-sm" name="telefono" id="telefono" autocomplete="off" placeholder="TELEFONO" required>
                                     </div>
                                 </div>
-                                <div class="col-sm-6">
+                                <div class="col-12 col-sm-6">
                                     <div class="form-group input-group-sm">
-                                        <label for="correo" class="col-form-label">*CORREO:</label>
-                                        <input type="email" class="form-control" name="correo" id="correo" autocomplete="off" placeholder="CORREO" required>
+                                        <label for="correo" class="col-form-label form-control-sm">*CORREO:</label>
+                                        <input type="email" class="form-control form-control-sm" name="correo" id="correo" autocomplete="off" placeholder="CORREO" required>
                                     </div>
                                 </div>
+                               
                             </form>
                         </div>
+
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-warning" data-dismiss="modal"><i class="fas fa-ban"></i> Cancelar</button>

@@ -20,7 +20,7 @@ if (isset($_SESSION["s_usuario"])) {
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>CHECA | Inicio de Sesión</title>
+    <title>INBA | Inicio de Sesión</title>
     
    
     <!-- Font Awesome -->

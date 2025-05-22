@@ -45,11 +45,11 @@
           <!-- ABRE MENU CATALOGOS -->
 
 
-          <li class="nav-item  has-treeview <?php echo ($pagina == 'prospecto' ||  $pagina == 'colaborador' ||  $pagina == 'cliente'  || $pagina == 'partidacto' || $pagina == 'subpartidacto' || $pagina == 'cntaclientecto'
+          <li class="nav-item  has-treeview <?php echo ($pagina == 'prospecto' ||  $pagina == 'colaborador' ||  $pagina == 'cntacliente'  || $pagina == 'cntaproyecto' || $pagina == 'subpartidacto' || $pagina == 'cntaclientecto'
                                               ||  $pagina == 'especialidad' ||  $pagina == 'proveedor' ||  $pagina == 'personal') ? "menu-open" : ""; ?>">
-            <a href="#" class="nav-link  <?php echo ($pagina == 'prospecto' || $pagina == 'colaborador' ||  $pagina == 'obra'  || $pagina == 'partidacto' || $pagina == 'subpartidacto' || $pagina == 'cntaobracto'
+            <a href="#" class="nav-link  <?php echo ($pagina == 'prospecto' || $pagina == 'colaborador' ||  $pagina == 'cntacliente'  || $pagina == 'cntaproyecto' || $pagina == 'subpartidacto' || $pagina == 'cntaobracto'
                                             ||  $pagina == 'especialidad' ||  $pagina == 'proveedor' ||  $pagina == 'personal') ? "active" : ""; ?>">
-              <i class="nav-icon  fa-sharp-duotone fa-regular fa-circle "></i>
+              <i class="nav-icon  fa-sharp-duotone fa-regular fa-books "></i>
               <p>
                 Catalogos
                 <i class="right fas fa-angle-left"></i>
@@ -73,14 +73,20 @@
                   <p>Colaboradores</p>
                 </a>
               </li>
-              <!--
+
               <li class="nav-item">
-                <a href="cntacliente.php" class="nav-link <?php echo ($pagina == 'cliente') ? "seleccionado" : ""; ?>  ">
+                <a href="cntaproyecto.php" class="nav-link <?php echo ($pagina == 'cntaproyecto') ? "seleccionado" : ""; ?>  ">
+                  <i class=" fa-duotone fa-regular fa-city nav-icon"></i>
+                  <p>Proyectos</p>
+                </a>
+              </li>
+
+              <li class="nav-item">
+                <a href="cntacliente.php" class="nav-link <?php echo ($pagina == 'cntacliente') ? "seleccionado" : ""; ?>  ">
                   <i class=" fa-duotone fa-regular fa-user-tie nav-icon"></i>
                   <p>Clientes</p>
                 </a>
               </li>
-        -->
 
 
 
@@ -93,7 +99,7 @@
 
           <li class="nav-item  has-treeview <?php echo ($pagina == 'cntaseguimiento' || $pagina == 'ordenes' || $pagina == 'obracto' ||
                                               $pagina === 'saldoseggral' || $pagina == "cntapagoordenes" || $pagina == "reportepagos") ? "menu-open" : ""; ?>">
-            <a href="#" class="nav-link  <?php echo ($pagina == 'cntaseguimiento' || $pagina == 'ordenes' || $pagina == 'obracto' ||
+            <a href="#" class="nav-link  <?php echo ($pagina == 'cntaseguimiento' || $pagina == 'cotizador' || $pagina == 'obracto' ||
                                             $pagina === 'saldoseggral' || $pagina == "cntapagocxpgral" || $pagina == "reportepagos") ? "active" : ""; ?>">
               <i class="fa-sharp-duotone fa-regular fa-circle  nav-icon"></i>
               <p>
@@ -108,21 +114,52 @@
 
 
               <li class="nav-item">
-                <a href="cntaseguimiento.php" class="nav-link <?php echo ($pagina == 'cntaseguimiento') ? " seleccionado" : ""; ?>  ">
+                <a href="cntahistorial.php" class="nav-link <?php echo ($pagina == 'cntaseguimiento') ? " seleccionado" : ""; ?>  ">
                   <i class="fa-sharp-duotone fa-regular fa-circle nav-icon"></i>
-                  <p>Historial</p>
+                  <p>Seguimiento</p>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="cotizador.php" class="nav-link <?php echo ($pagina == 'cotizador') ? " seleccionado" : ""; ?>  ">
+                  <i class="fa-sharp-duotone fa-regular fa-circle nav-icon"></i>
+                  <p>Cotizador</p>
                 </a>
               </li>
 
-             
 
 
             </ul>
 
           </li>
 
+          <li class="nav-item  has-treeview <?php echo ($pagina == 'rptprospectos') ? "menu-open" : ""; ?>">
+            <a href="#" class="nav-link  <?php echo ($pagina == 'rptprospectos') ? "active" : ""; ?>">
+              <i class="fa-sharp-duotone fa-regular fa-circle  nav-icon"></i>
+              <p>
+                Reportes
+                <i class="right fas fa-angle-left"></i>
+              </p>
+            </a>
 
-          
+
+            <ul class="nav nav-treeview">
+
+
+
+              <li class="nav-item">
+                <a href="rptprospectos.php" class="nav-link <?php echo ($pagina == 'rptprospectos') ? " seleccionado" : ""; ?>  ">
+                  <i class="fa-sharp-duotone fa-regular fa-circle nav-icon"></i>
+                  <p>Est. Prospectos</p>
+                </a>
+              </li>
+
+
+
+
+            </ul>
+
+          </li>
+
           <?php if ($_SESSION['s_rol'] == '3') { ?>
             <!--
             <li class="nav-item has-treeview <?php echo ($pagina == 'cntaingresos' || $pagina == 'ingresos' || $pagina == 'cntacobros'

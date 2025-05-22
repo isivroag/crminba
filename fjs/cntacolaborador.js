@@ -93,6 +93,7 @@ $(document).ready(function () {
     telefono = fila.find("td:eq(2)").text();
 
     correo = fila.find("td:eq(3)").text();
+    
 
     $("#nombre").val(nombre);
     $("#telefono").val(telefono);
@@ -148,10 +149,10 @@ $(document).ready(function () {
     var nombre = $("#nombre").val();
     var telefono = $("#telefono").val();
     var correo = $("#correo").val();
-    var col_asignado = $("#col_asignado").val();
+ 
 
     // Validación de campos
-    if (!nombre || !telefono || !correo || !col_asignado) {
+    if (!nombre || !telefono || !correo ) {
         Swal.fire({
             title: "Datos Faltantes",
             text: "Debe ingresar todos los datos marcados con *",
@@ -171,14 +172,13 @@ $(document).ready(function () {
     }
 
     $.ajax({
-        url: "bd/crudprospecto.php",
+        url: "bd/crudcolaborador.php",
         type: "POST",
         dataType: "json",
         data: {
             nombre: nombre,
             telefono: telefono,
             correo: correo,
-            col_asignado: col_asignado,
             id: id,
             opcion: opcion
         },

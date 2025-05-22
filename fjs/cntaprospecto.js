@@ -41,6 +41,19 @@ $(document).ready(function () {
       },
       sProcessing: "Procesando...",
     },
+    columnDefs: [
+      {
+        targets: -1,
+        data: null,
+        defaultContent:
+          "<div class='text-center btn-group'>\
+          <button class='btn btn-sm btn-primary btnEditar' data-toggle='tooltip' data-placement='top' title='Editar'><i class='fas fa-edit'></i></button>\
+           <button class='btn btn-sm btn-secondary btnEnviar' data-toggle='tooltip' data-placement='top' title='Correo'><i class='fas fa-envelope'></i></button>\
+           <button class='btn btn-sm bg-purple btnSegumiento' data-toggle='tooltip' data-placement='top' title='Registrar Seguimiento'><i class='fas fa-phone'></i></button>\
+           <button class='btn btn-sm bg-orange btnHistoria' data-toggle='tooltip' data-placement='top' title='Ver Historial'><i class='fa-solid fa-book'></i></button>\
+           </div>",
+      },
+    ],
   });
 
   // Tooltips
@@ -129,19 +142,26 @@ $(document).ready(function () {
   var fila;
   // Botón Editar Prospecto
   $(document).on("click", ".btnEditar", function () {
-    var fila = $(this).closest("tr");
+    fila = $(this).closest("tr");
     id = parseInt(fila.find("td:eq(0)").text());
 
     // Obtener datos de la fila
     var nombre = fila.find("td:eq(1)").text();
     var telefono = fila.find("td:eq(2)").text();
     var correo = fila.find("td:eq(3)").text();
+
+    // Obtener valor del atributo data-origen del <td> que contiene el canal de comunicación
+    var origen = fila.find("td[data-origen]").data("origen"); // Ej: "facebook"
     var col_asignado = fila.find("td:eq(4)").text();
 
-    // Llenar el formulario
+    // Rellenar el formulario con los datos obtenidos
+    $("#id_pros").val(id);
     $("#nombre").val(nombre);
     $("#telefono").val(telefono);
     $("#correo").val(correo);
+
+    // Asignar el valor al selectpicker
+    $("#origen").selectpicker("val", origen);
 
     // Buscar el ID del colaborador asignado
     var select = $("#col_asignado");
@@ -160,13 +180,20 @@ $(document).ready(function () {
   });
 
   // Botón Convertir a Cliente
-  $(document).on("click", ".btnConvertir", function () {
+  $(document).on("click", ".btnSegumiento", function () {
     var fila = $(this).closest("tr");
     id = parseInt(fila.find("td:eq(0)").text());
 
-    $("#id_prospecto").val(id);
-    $("#formCliente").trigger("reset");
-    $("#modalConvertir").modal("show");
+   
+    window.location.href = "seguimiento.php?id_pros=" + id;
+  });
+  
+   $(document).on("click", ".btnHistoria", function () {
+    var fila = $(this).closest("tr");
+    id = parseInt(fila.find("td:eq(0)").text());
+
+   
+    window.location.href = "cntahistorial.php?id_pros=" + id;
   });
 
   // Botón Descartar Prospecto
@@ -224,129 +251,146 @@ $(document).ready(function () {
       if (result.value) {
         console.log("Enviando correo a: " + correo_pros);
         $.ajax({
-            url: "bd/usarapicorreo.php",
-            type: "POST",
-            dataType: "json",
-            contentType: "application/json", // <- esto es clave
-            data: JSON.stringify({
-              id_pros: id_pros,
-              nombre: nombre_pros,
-              telefono: telefono_pros,
-              correo: correo_pros,
-              colaborador: nombre_colab,
-            }),
-            success: function (response) {
-              Swal.fire({
-                title: response.message,
-                icon: response.success ? "success" : "error",
-              });
-            },
-            error: function () {
-              Swal.fire({
-                title: "Error",
-                text: "No se pudo conectar al servidor",
-                icon: "error",
-              });
-            },
-          });
-          
-      }
-    });
-  });
-  // Guardar Prospecto (Crear o Editar)
- $(document).on("click", "#btnGuardar", function () {
-  var nombre = $.trim($("#nombre").val());
-  var telefono = $.trim($("#telefono").val());
-  var correo = $.trim($("#correo").val());
-  var col_asignado = $("#col_asignado").val();
-
-  // Validaciones (agrega las tuyas)...
-
-  $.ajax({
-    url: "bd/crudprospecto.php",
-    type: "POST",
-    dataType: "json",
-    data: {
-      nombre: nombre,
-      telefono: telefono,
-      correo: correo,
-      col_asignado: col_asignado,
-      id: id,
-      opcion: opcion,
-    },
-    success: function (data) {
-      if (data.success) {
-        var tipousuario = $("#tipousuario").val();
-        if (tipousuario != 4) {
-          actualizarTurnoColaborador(col_asignado);
-        }
-
-        $("#modalCRUD").modal("hide");
-
-        if (opcion == 1) {
-          tablaVis.row
-            .add([
-              data.id_pros,
-              data.nombre,
-              data.telefono,
-              data.correo,
-              data.nombre_colaborador,
-              data.fecha_registro,
-              '<span class="badge badge-asignado">Asignado</span>',
-              generarBotonesAccion(data.id_pros),
-            ])
-            .draw();
-        } else {
-          tablaVis
-            .row(fila)
-            .data([
-              data.id_pros,
-              data.nombre,
-              data.telefono,
-              data.correo,
-              data.nombre_colaborador,
-              data.fecha_registro,
-              '<span class="badge badge-asignado">Asignado</span>',
-              generarBotonesAccion(data.id_pros),
-            ])
-            .draw();
-        }
-
-        // Enviar correo automáticamente según sea alta o modificación
-        let urlCorreo = opcion == 1 ? "bd/usarapicorreo.php" : "bd/usarapicorreo2.php";
-
-        $.ajax({
-          url: urlCorreo,
+          url: "bd/usarapicorreo.php",
           type: "POST",
           dataType: "json",
-          contentType: "application/json",
+          contentType: "application/json", // <- esto es clave
           data: JSON.stringify({
-            id_pros: data.id_pros,
-            nombre: data.nombre,
-            telefono: data.telefono,
-            correo: data.correo,
-            colaborador: data.nombre_colaborador,
+            id_pros: id_pros,
+            nombre: nombre_pros,
+            telefono: telefono_pros,
+            correo: correo_pros,
+            colaborador: nombre_colab,
           }),
-          success: function (resp) {
+          success: function (response) {
             Swal.fire({
-              title: "Éxito",
-              text: resp.message,
-              icon: resp.success ? "success" : "warning",
+              title: response.message,
+              icon: response.success ? "success" : "error",
             });
           },
           error: function () {
-            Swal.fire("Error", "No se pudo enviar el correo al colaborador", "error");
+            Swal.fire({
+              title: "Error",
+              text: "No se pudo conectar al servidor",
+              icon: "error",
+            });
           },
         });
-
-        Swal.fire("Éxito", data.message, "success");
       }
-    },
+    });
   });
-});
 
+  // Guardar Prospecto (Crear o Editar)
+  $(document).on("click", "#btnGuardar", function () {
+    var nombre = $.trim($("#nombre").val());
+    var telefono = $.trim($("#telefono").val());
+    var correo = $.trim($("#correo").val());
+    var col_asignado = $("#col_asignado").val();
+    var origen = $("#origen").val();
+
+    $.ajax({
+      url: "bd/crudprospecto.php",
+      type: "POST",
+      dataType: "json",
+      data: {
+        nombre: nombre,
+        telefono: telefono,
+        correo: correo,
+        col_asignado: col_asignado,
+        id: id,
+        opcion: opcion,
+        origen: origen,
+      },
+      success: function (data) {
+        if (data.success) {
+          // var tipousuario = $("#tipousuario").val();
+          if (opcion == 1) {
+            actualizarTurnoColaborador(col_asignado);
+          }
+
+          $("#modalCRUD").modal("hide");
+
+          if (opcion == 1) {
+            tablaVis.row
+              .add([
+                data.id_pros,
+                data.nombre,
+                data.telefono,
+                data.correo,
+                data.nombre_colaborador,
+                data.fecha_registro,
+                '<span class="badge badge-asignado">Asignado</span>',
+                formatoOrigen(origen),
+              ])
+              .draw();
+          } else {
+            tablaVis
+              .row(fila)
+              .data([
+                data.id_pros,
+                data.nombre,
+                data.telefono,
+                data.correo,
+                data.nombre_colaborador,
+                data.fecha_registro,
+                '<span class="badge badge-asignado">Asignado</span>',
+                formatoOrigen(origen),
+              ])
+              .draw();
+          }
+
+          // Enviar correo automáticamente según sea alta o modificación
+          Swal.fire({
+            title: "¿Enviar correo al colaborador?",
+            text: "¿Deseas notificar al colaborador sobre las modificaciones realizadas?",
+            icon: "question",
+            showCancelButton: true,
+            confirmButtonText: "Sí, enviar",
+            cancelButtonText: "No enviar",
+          }).then((result) => {
+            if (result.value) {
+              console.log("Enviando correo a: " + correo);
+              let urlCorreo =
+                opcion == 1 ? "bd/usarapicorreo.php" : "bd/usarapicorreo2.php";
+
+              $.ajax({
+                url: urlCorreo,
+                type: "POST",
+                dataType: "json",
+                contentType: "application/json",
+                data: JSON.stringify({
+                  id_pros: data.id_pros,
+                  nombre: data.nombre,
+                  telefono: data.telefono,
+                  correo: data.correo,
+                  colaborador: data.nombre_colaborador,
+                }),
+                success: function (resp) {
+                  Swal.fire({
+                    title: "Éxito",
+                    text: resp.message,
+                    icon: resp.success ? "success" : "warning",
+                  });
+                },
+                error: function () {
+                  Swal.fire(
+                    "Error",
+                    "No se pudo enviar el correo al colaborador",
+                    "error"
+                  );
+                },
+              });
+            } else {
+              Swal.fire("Éxito", data.message, "success");
+            }
+          });
+        }
+      },
+    });
+  });
 
   function actualizarTurnoColaborador(id_col) {
+    console.log("Actualizando turno para colaborador:", id_col);
     $.ajax({
       url: "bd/actualizar_turno.php",
       type: "POST",
@@ -355,6 +399,24 @@ $(document).ready(function () {
         console.log("Turno actualizado para colaborador:", id_col);
       },
     });
+  }
+
+  function formatoOrigen(origen) {
+    origen = origen.toLowerCase();
+    switch (origen) {
+      case "facebook":
+        return '<td data-origen="facebook"><i class="fab fa-facebook text-primary"></i> Facebook</td>';
+      case "instagram":
+        return '<td data-origen="instagram"><i class="fab fa-instagram text-danger"></i> Instagram</td>';
+      case "web":
+        return '<td data-origen="web"><i class="fas fa-globe text-info"></i> Web</td>';
+      case "whatsapp":
+        return '<td data-origen="whatsapp"><i class="fab fa-whatsapp text-success"></i> WhatsApp</td>';
+      case "llamada":
+        return '<td data-origen="llamada"><i class="fas fa-phone text-dark"></i> Llamada</td>';
+      default:
+        return `<td data-origen="${origen}">${origen.charAt(0).toUpperCase() + origen.slice(1)}</td>`;
+    }
   }
 
   // Convertir a Cliente
@@ -419,19 +481,4 @@ $(document).ready(function () {
   }
 
   // Función para generar botones de acción
-  function generarBotonesAccion(id) {
-    return (
-      '<div class="btn-group">' +
-      '<button class="btn btn-sm btn-primary btnEditar" data-toggle="tooltip" title="Editar">' +
-      '<i class="fas fa-edit"></i>' +
-      "</button>" +
-      '<button class="btn btn-sm btn-success btnConvertir" data-toggle="tooltip" title="Convertir a Cliente">' +
-      '<i class="fas fa-user-check"></i>' +
-      "</button>" +
-      '<button class="btn btn-sm btn-danger btnDescartar" data-toggle="tooltip" title="Descartar Prospecto">' +
-      '<i class="fas fa-trash-alt"></i>' +
-      "</button>" +
-      "</div>"
-    );
-  }
 });

@@ -6,20 +6,23 @@ $conexion = $objeto->connect();
 $response = ['success' => false, 'message' => ''];
 
 $opcion = $_POST['opcion'] ?? 0;
+
 $id = $_POST['id'] ?? null;
+$nombre = $_POST['nombre'];
+$telefono = $_POST['telefono'];
+$correo = $_POST['correo'];
+$col_asignado = $_POST['col_asignado'];
+$origen = $_POST['origen'];
 
 try {
     switch ($opcion) {
         case 1: // Crear nuevo prospecto
-            $nombre = $_POST['nombre'];
-            $telefono = $_POST['telefono'];
-            $correo = $_POST['correo'];
-            $col_asignado = $_POST['col_asignado'];
 
-            $consulta = "INSERT INTO prospecto (nombre, telefono, correo, col_asignado, edo_pros) 
+
+            $consulta = "INSERT INTO prospecto (nombre, telefono, correo, col_asignado, edo_pros,origen) 
                          VALUES (?, ?, ?, ?, 1)";
             $stmt = $conexion->prepare($consulta);
-            $stmt->execute([$nombre, $telefono, $correo, $col_asignado]);
+            $stmt->execute([$nombre, $telefono, $correo, $col_asignado, $origen]);
 
             $id_pros = $conexion->lastInsertId();
 
@@ -40,21 +43,19 @@ try {
                 'telefono' => $data['telefono'],
                 'correo' => $data['correo'],
                 'nombre_colaborador' => $data['nombre_colaborador'],
-                'fecha_registro' => date('d/m/Y', strtotime($data['fecha_registro']))
+                'fecha_registro' => date('d/m/Y', strtotime($data['fecha_registro'])),
+                'origen' => $data['origen']
             ];
             break;
 
         case 2: // Editar prospecto
-            $nombre = $_POST['nombre'];
-            $telefono = $_POST['telefono'];
-            $correo = $_POST['correo'];
-            $col_asignado = $_POST['col_asignado'];
+
 
             $consulta = "UPDATE prospecto SET 
-                         nombre = ?, telefono = ?, correo = ?, col_asignado = ?
+                         nombre = ?, telefono = ?, correo = ?, col_asignado = ?,origen = ? 
                          WHERE id_pros = ?";
             $stmt = $conexion->prepare($consulta);
-            $stmt->execute([$nombre, $telefono, $correo, $col_asignado, $id]);
+            $stmt->execute([$nombre, $telefono, $correo, $col_asignado, $origen, $id ]);
 
             // Obtener datos actualizados
             $consulta = "SELECT p.*, c.nombre as nombre_colaborador 
@@ -73,7 +74,8 @@ try {
                 'telefono' => $data['telefono'],
                 'correo' => $data['correo'],
                 'nombre_colaborador' => $data['nombre_colaborador'],
-                'fecha_registro' => date('d/m/Y', strtotime($data['fecha_registro']))
+                'fecha_registro' => date('d/m/Y', strtotime($data['fecha_registro'])),
+                'origen' => $data['origen']
             ];
             break;
 

@@ -4,21 +4,20 @@ $objeto = new conn();
 $conexion = $objeto->connect();
 
 // Recepción de datos POST desde el JS
-$id_pros = isset($_POST['id_pros']) ? $_POST['id_pros'] : '';
-$tipo_seg = isset($_POST['tipo_seg']) ? $_POST['tipo_seg'] : '';
-$fecha_seg = isset($_POST['fecha_seg']) ? $_POST['fecha_seg'] : '';
-$realizado = isset($_POST['realizado']) ? $_POST['realizado'] : '';
-$comentarios = isset($_POST['comentarios']) ? $_POST['comentarios'] : '';
-$id_col = isset($_POST['id_col']) ? $_POST['id_col'] : '';
-$opcion = isset($_POST['opcion']) ? $_POST['opcion'] : '';
-$id_seg = isset($_POST['id_seg']) ? $_POST['id_seg'] : '';
+$id_pros = $_POST['id_pros'] ?? '';
+$tipo_seg = $_POST['tipo_seg'] ?? '';
+$fecha_seg = $_POST['fecha_seg'] ?? '';
+$realizado = $_POST['realizado'] ?? '';
+$comentarios = $_POST['comentarios'] ?? '';
+$id_col = $_POST['id_col'] ?? '';
+$opcion = $_POST['opcion'] ?? '';
+$id_seg = $_POST['id_seg'] ?? '';
 
-// Variable de respuesta
 $response = ["success" => false, "message" => ""];
+
 switch ($opcion) {
     case 1:
-
-    try {
+        try {
             $consulta = "INSERT INTO seg_pros (id_pros, tipo_seg, fecha_seg, realizado, observaciones, id_col)
                          VALUES (:id_pros, :tipo_seg, :fecha_seg, :realizado, :comentarios, :id_col)";
             $resultado = $conexion->prepare($consulta);
@@ -29,14 +28,28 @@ switch ($opcion) {
             $resultado->bindParam(':comentarios', $comentarios, PDO::PARAM_STR);
             $resultado->bindParam(':id_col', $id_col, PDO::PARAM_INT);
             $resultado->execute();
+            $idGenerado = $conexion->lastInsertId();
 
-            $response['success'] = true;
-            $response['message'] = "Seguimiento registrado correctamente.";
+            // Actualizar seguimiento en tabla prospecto
+            $updateColab = "UPDATE prospecto SET edo_seguimiento = 2 WHERE id_pros = :id_pros";
+            $stmtColab = $conexion->prepare($updateColab);
+            $stmtColab->bindParam(':id_pros', $id_pros, PDO::PARAM_INT);
+            $stmtColab->execute();
 
+            $response = [
+                "success" => true,
+                "message" => "Seguimiento guardado correctamente.",
+                "id_seg" => $idGenerado
+            ];
         } catch (PDOException $e) {
-            $response['message'] = "Error al guardar el seguimiento: " . $e->getMessage();
+            $response = [
+                "success" => false,
+                "message" => "Error al guardar el seguimiento: " . $e->getMessage()
+            ];
         }
-case 2:
+        break;
+
+    case 2:
         try {
             $consulta = "UPDATE seg_pros SET tipo_seg = :tipo_seg, fecha_seg = :fecha_seg, realizado = :realizado, observaciones = :comentarios
                          WHERE id_seg = :id_seg";
@@ -49,19 +62,27 @@ case 2:
             $resultado->execute();
 
             if ($resultado->rowCount() > 0) {
-                $response['success'] = true;
-                $response['message'] = "Seguimiento actualizado correctamente.";
+                $response = [
+                    "success" => true,
+                    "message" => "Seguimiento actualizado correctamente.",
+                    "id_seg" => $id_seg
+                ];
             } else {
-                $response['message'] = "No se encontraron registros para actualizar.";
+                $response = [
+                    "success" => false,
+                    "message" => "No se encontró el seguimiento para actualizar."
+                ];
             }
         } catch (PDOException $e) {
-            $response['message'] = "Error al actualizar el seguimiento: " . $e->getMessage();
+            $response = [
+                "success" => false,
+                "message" => "Error al actualizar el seguimiento: " . $e->getMessage()
+            ];
         }
         break;
 }
-    
- 
- 
 
+// Devuelve una sola respuesta JSON válida
 echo json_encode($response, JSON_UNESCAPED_UNICODE);
 $conexion = null;
+
