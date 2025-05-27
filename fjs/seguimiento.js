@@ -1,28 +1,23 @@
 $(document).ready(function () {
-  
-  
-    const realizadoSelect = document.getElementById("realizado");
-    const campoResultado = document.getElementById("campo_resultado");
-    const campoObscierre= document.getElementById("campoObseraciones");
-    const inputObservaciones = document.getElementById("observaciones"); // Asegúrate de tener este ID
+  const realizadoSelect = document.getElementById("realizado");
+  const campoResultado = document.getElementById("campo_resultado");
+  const campoObscierre = document.getElementById("campoObseraciones");
+  const inputObservaciones = document.getElementById("observaciones"); // Asegúrate de tener este ID
 
+  realizadoSelect.addEventListener("change", function () {
+    if (this.value == "1") {
+      campoResultado.style.display = "block";
+      campoObscierre.style.display = "block";
+      inputObservaciones.disabled = true;
+    } else {
+      campoResultado.style.display = "none";
+      campoObscierre.style.display = "none";
+      inputObservaciones.disabled = false;
+    }
+  });
 
-    realizadoSelect.addEventListener("change", function () {
-      if (this.value == "1") {
-        campoResultado.style.display = "block";
-        campoObscierre.style.display = "block";
-         inputObservaciones.disabled = true;
-
-      } else {
-        campoResultado.style.display = "none";
-        campoObscierre.style.display = "none";
-         inputObservaciones.disabled = false;
-      }
-    });
-
-    // Inicializar el estado del campo al cargar la página
-    realizadoSelect.dispatchEvent(new Event("change"));
-  
+  // Inicializar el estado del campo al cargar la página
+  realizadoSelect.dispatchEvent(new Event("change"));
 
   // Validación al guardar seguimiento
   $("#formSeguimiento").on("submit", function (e) {
@@ -92,7 +87,7 @@ $(document).ready(function () {
       id_seg,
       resultado,
       obs_cierre,
-      opcion
+      opcion,
     });
 
     var formData = $(this).serializeArray(); // convierte el formulario en array
@@ -142,6 +137,11 @@ $(document).ready(function () {
                         title: correoJson.success ? "Correo Enviado" : "Error",
                         text: correoJson.message,
                         icon: correoJson.success ? "success" : "error",
+                        timer: 2500,
+                        timerProgressBar: true,
+                      }).then(() => {
+                        // Redirigir inicio
+                        window.location.href = "inicio.php";
                       });
                     } catch (e) {
                       console.error(
@@ -165,7 +165,11 @@ $(document).ready(function () {
                   },
                 });
               }
-              $("#formSeguimiento")[0].reset();
+              else {
+                // Redirigir inicio si no se envía correo
+                window.location.href = "inicio.php";
+              }
+              
             });
           } else {
             Swal.fire({

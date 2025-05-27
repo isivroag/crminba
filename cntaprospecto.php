@@ -231,7 +231,7 @@ $message = "";
                                 <div class="col-12 col-sm-4">
                                     <div class="form-group input-group-sm">
                                         <label for="telefono" class="col-form-label form-control-sm">*TELÉFONO:</label>
-                                        <input type="text" class="form-control form-control-sm" name="telefono" id="telefono" autocomplete="off" placeholder="TELÉFONO" required>
+                                        <input type="text" class="form-control form-control-sm" name="telefono" id="telefono" autocomplete="off" placeholder="TELÉFONO" required maxlength="10" oninput="this.value = this.value.replace(/[^0-9]/g, '')">
                                     </div>
                                 </div>
 

@@ -71,14 +71,11 @@ $(document).ready(function () {
             icon: 'success',
             title: 'Éxito',
             text: 'Prospecto registrado y notificación enviada',
-            timer: 2000,
+            timer: 1500,
             timerProgressBar: true,
-            didClose: () => {
-              // Limpiar formulario después de guardar
-              $('#formProspecto')[0].reset();
-              $('.selectpicker').selectpicker('refresh');
-              $('#nombre').focus();
-            }
+          }).then(() => {
+            // Redirigir inicio
+            window.location.href = 'inicio.php';
           });
           
           // Opcional: Actualizar turno del colaborador

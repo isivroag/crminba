@@ -65,7 +65,7 @@ $message = "";
                                 <div class="col-sm-4">
                                     <div class="form-group">
                                         <label for="telefono" class="form-label">* Teléfono:</label>
-                                        <input type="text" class="form-control form-control-sm" name="telefono" id="telefono" autocomplete="off" placeholder="Número de teléfono" required>
+                                        <input type="text" class="form-control form-control-sm" name="telefono" id="telefono" autocomplete="off" placeholder="Número de teléfono" required maxlength="10" oninput="this.value = this.value.replace(/[^0-9]/g, '')">
                                     </div>
                                 </div>
 
