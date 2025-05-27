@@ -1,7 +1,7 @@
 <?php
 // Datos del servidor donde está alojada la API
-$api_url = 'http://tecniem.com/srmcheca/api/correoinba.php';
-
+//$api_url = 'http://tecniem.com/srmcheca/api/correoinba.php';
+$api_url = 'http://intranet.bosquedelasanimas.com.mx/api/correoinba.php';
 // Datos del formulario
 $data = json_decode(file_get_contents('php://input'), true);
 

@@ -23,6 +23,7 @@ foreach ($required as $field) {
 $mail = new PHPMailer(true);
 
 try {
+    /*
     $mail->isSMTP();
     $mail->Host = 'mail.tecniem.com';
     $mail->SMTPAuth = true;
@@ -34,6 +35,20 @@ try {
     $mail->ContentType = 'text/html; charset=UTF-8';
 
     $mail->setFrom('avisos@tecniem.com', 'INBA. NOTIFICACIONES');
+    $mail->addAddress($data['email_colaborador'], $data['colaborador']);
+*/
+    // Configuración del servidor SMTP 2
+    $mail->isSMTP();
+    $mail->Host = 'mail.bosquedelasanimas.com.mx';
+    $mail->SMTPAuth = true;
+    $mail->Username = 'notificaciones@bosquedelasanimas.com.mx';
+    $mail->Password = 'SistemaCRMBosque.2025';
+    $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
+    $mail->Port = 587;
+    $mail->CharSet = 'UTF-8';
+    $mail->ContentType = 'text/html; charset=UTF-8';
+    // Remitente y destinatario
+    $mail->setFrom('notificaciones@bosquedelasanimas.com.mx', 'INBA. NOTIFICACIONES');
     $mail->addAddress($data['email_colaborador'], $data['colaborador']);
 
     // Asunto y cuerpo del mensaje

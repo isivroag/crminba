@@ -7,7 +7,7 @@
             
         </div>
         
-        <strong>Copyright &copy; <?php echo date('Y')?> <a href="http://tecniem.com">Tecniem</a>.</strong> Todos los Derechos Reservados.
+        <strong>Copyright &copy; <?php echo date('Y')?> <a href="http://bosquedelasanimas.com.mx">Inmobiliaria Bosque de las Animas S.A. de C.V.</a>.</strong> Todos los Derechos Reservados.
     </footer>
 
     <!-- Control Sidebar -->

@@ -89,7 +89,7 @@ $(document).ready(function () {
         targets: -1,
         data: null,
         defaultContent:
-          "<div class='text-center'><div class='btn-group'><button class='btn btn-sm btn-primary btnEditar'><i class='fas fa-edit'></i></button><button class='btn btn-sm btn-danger btnBorrar'><i class='fas fa-trash-alt'></i></button></div></div>",
+          "<div class='text-center'><div class='btn-group'><button class='btn btn-sm btn-primary btnEditar'><i class='fas fa-edit'></i></button></div></div>",
         orderable: false,
       },
     ],
@@ -137,17 +137,11 @@ $(document).ready(function () {
   });
   // Editar seguimiento
   $(document).on("click", ".btnEditar", function () {
-    var data = tablaV.row($(this).parents("tr")).data();
-    $("#id_seg").val(data[0]);
-    $("#fecha_seg").val(formatDateForInput(data[1]));
-    $("#tipo_seg").val(data[2]);
-    $("#observaciones").val(data[3]);
-    $("#realizado").val(data[4]);
-
-    $("#modalCRUD").modal("show");
-    $(".modal-header").css("background-color", "#007bff");
-    $(".modal-header").css("color", "white");
-    $(".modal-title").text("Editar Seguimiento");
+    fila= $(this).closest("tr");
+     id = parseInt(fila.find("td:eq(0)").text());
+   
+   
+     window.location.href = "seguimiento.php?id_seg=" +id;
   });
 
   // Guardar seguimiento
@@ -217,54 +211,7 @@ $(document).ready(function () {
     });
   });
 
-  // Eliminar seguimiento
-  $(document).on("click", ".btnBorrar", function () {
-    var data = tablaV.row($(this).parents("tr")).data();
-
-    Swal.fire({
-      title: "¿Estás seguro?",
-      text: "¡No podrás revertir esto!",
-      icon: "warning",
-      showCancelButton: true,
-      confirmButtonColor: "#3085d6",
-      cancelButtonColor: "#d33",
-      confirmButtonText: "Sí, eliminarlo!",
-    }).then((result) => {
-      if (result.isConfirmed) {
-        $.ajax({
-          url: "bd/crudhistorial.php",
-          type: "POST",
-          datatype: "json",
-          data: {
-            id_seg: data[0],
-            action: "eliminar",
-          },
-          success: function (data) {
-            data = JSON.parse(data);
-            if (data == "ok") {
-              Swal.fire({
-                title: "Eliminado!",
-                text: "El seguimiento ha sido eliminado.",
-                icon: "success",
-                showConfirmButton: false,
-                timer: 1500,
-              }).then(function () {
-                location.reload();
-              });
-            } else {
-              Swal.fire({
-                title: "Error",
-                text: data,
-                icon: "error",
-                showConfirmButton: false,
-                timer: 1500,
-              });
-            }
-          },
-        });
-      }
-    });
-  });
+ 
 
   function getCurrentDate() {
     var today = new Date();

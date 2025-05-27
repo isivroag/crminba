@@ -51,6 +51,7 @@ $(document).ready(function () {
            <button class='btn btn-sm btn-secondary btnEnviar' data-toggle='tooltip' data-placement='top' title='Correo'><i class='fas fa-envelope'></i></button>\
            <button class='btn btn-sm bg-purple btnSegumiento' data-toggle='tooltip' data-placement='top' title='Registrar Seguimiento'><i class='fas fa-phone'></i></button>\
            <button class='btn btn-sm bg-orange btnHistoria' data-toggle='tooltip' data-placement='top' title='Ver Historial'><i class='fa-solid fa-book'></i></button>\
+           <button class='btn btn-sm bg-danger btnEliminar' data-toggle='tooltip' data-placement='top' title='Eliminar'><i class='fa-solid fa-trash'></i></button>\
            </div>",
       },
     ],
@@ -184,51 +185,98 @@ $(document).ready(function () {
     var fila = $(this).closest("tr");
     id = parseInt(fila.find("td:eq(0)").text());
 
-   
     window.location.href = "seguimiento.php?id_pros=" + id;
   });
-  
-   $(document).on("click", ".btnHistoria", function () {
+
+  $(document).on("click", ".btnHistoria", function () {
     var fila = $(this).closest("tr");
     id = parseInt(fila.find("td:eq(0)").text());
 
-   
     window.location.href = "cntahistorial.php?id_pros=" + id;
   });
 
   // Botón Descartar Prospecto
-  $(document).on("click", ".btnDescartar", function () {
+  $(document).on("click", ".btnEliminar", function () {
     var fila = $(this).closest("tr");
-    id = parseInt(fila.find("td:eq(0)").text());
-
+    var id = parseInt(fila.find("td:eq(0)").text());
+    console.log("ID a eliminar:", id);
     Swal.fire({
-      title: "¿Descartar prospecto?",
+      title: "¿Eliminar prospecto?",
       text: "Esta acción no se puede deshacer",
       icon: "warning",
       showCancelButton: true,
       confirmButtonColor: "#3085d6",
       cancelButtonColor: "#d33",
-      confirmButtonText: "Sí, descartar",
+      confirmButtonText: "Sí, eliminar",
       cancelButtonText: "Cancelar",
     }).then((result) => {
-      if (result.isConfirmed) {
-        opcion = 3; // Opción 3: Descartar
-
+      if (result.value) {
+        // Primero verificar si tiene seguimientos
         $.ajax({
           url: "bd/crudprospecto.php",
           type: "POST",
           dataType: "json",
-          data: { id: id, opcion: opcion },
-          success: function (data) {
-            if (data.success) {
-              tablaVis.row(fila).remove().draw();
-              Swal.fire("Éxito", "Prospecto descartado", "success");
+          data: {
+            id: id,
+            opcion: 4, // Nueva opción para verificar seguimientos
+          },
+          success: function (response) {
+            console.log("Respuesta de verificación:", response);
+            if (response.success && response.count > 0) {
+              // Mostrar error si tiene seguimientos
+              Swal.fire({
+                icon: "error",
+                title: "No se puede eliminar",
+                html: `Este prospecto tiene <b>${response.count}</b> registros de seguimiento asociados.<br><br>Primero elimine los seguimientos antes de eliminar el prospecto.`,
+              });
+            } else {
+              // Proceder con eliminación si no tiene seguimientos
+              eliminarProspecto(id, fila);
             }
+          },
+          error: function (xhr, status, error) {
+            console.error("Error AJAX:", xhr.responseText);
+            Swal.fire({
+              icon: "error",
+              title: "Error",
+              text: "Error al verificar seguimientos",
+            });
           },
         });
       }
     });
   });
+
+  function eliminarProspecto(id, fila) {
+    $.ajax({
+      url: "bd/crudprospecto.php",
+      type: "POST",
+      dataType: "json",
+      data: {
+        id: id,
+        opcion: 3, // Opción 3: Eliminar
+      },
+      success: function (data) {
+        if (data.success) {
+          tablaVis.row(fila).remove().draw();
+          Swal.fire("Éxito", "Prospecto eliminado correctamente", "success");
+        } else {
+          Swal.fire({
+            icon: "error",
+            title: "Error",
+            text: data.message || "Error al eliminar prospecto",
+          });
+        }
+      },
+      error: function () {
+        Swal.fire({
+          icon: "error",
+          title: "Error",
+          text: "Error al conectar con el servidor",
+        });
+      },
+    });
+  }
   // Botón Enviar Correo
   $(document).on("click", ".btnEnviar", function () {
     fila = $(this).closest("tr");
@@ -287,6 +335,38 @@ $(document).ready(function () {
     var correo = $.trim($("#correo").val());
     var col_asignado = $("#col_asignado").val();
     var origen = $("#origen").val();
+    console.log(
+      "Datos a enviar:",
+      nombre,
+      telefono,
+      correo,
+      col_asignado,
+      origen
+    );
+
+    // Validación básica
+    if (!nombre || !telefono || !correo || !col_asignado || !origen) {
+      Swal.fire("Advertencia", "Todos los campos son obligatorios", "warning");
+      return;
+    }
+
+    // Validar estructura del correo
+    var correoValido = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(correo);
+    if (!correoValido) {
+      Swal.fire("Correo inválido", "Ingresa un correo válido", "warning");
+      return;
+    }
+
+    // Validar estructura del teléfono (ejemplo: solo 10 dígitos numéricos)
+    var telefonoValido = /^[0-9]{10}$/.test(telefono);
+    if (!telefonoValido) {
+      Swal.fire(
+        "Teléfono inválido",
+        "El número debe tener 10 dígitos numéricos",
+        "warning"
+      );
+      return;
+    }
 
     $.ajax({
       url: "bd/crudprospecto.php",
@@ -303,7 +383,6 @@ $(document).ready(function () {
       },
       success: function (data) {
         if (data.success) {
-          // var tipousuario = $("#tipousuario").val();
           if (opcion == 1) {
             actualizarTurnoColaborador(col_asignado);
           }
@@ -339,7 +418,6 @@ $(document).ready(function () {
               .draw();
           }
 
-          // Enviar correo automáticamente según sea alta o modificación
           Swal.fire({
             title: "¿Enviar correo al colaborador?",
             text: "¿Deseas notificar al colaborador sobre las modificaciones realizadas?",

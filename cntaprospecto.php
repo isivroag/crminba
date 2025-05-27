@@ -10,12 +10,39 @@ $objeto = new conn();
 $conexion = $objeto->connect();
 
 // Consulta para obtener prospectos activos (edo_pros = 1)
+
+if($_SESSION['s_rol'] == 4) {
+     $colaborador_id = $_SESSION['id_col'];
+    $consulta = "SELECT p.*, c.nombre as nombre_colaborador 
+                 FROM prospecto p
+                 JOIN colaborador c ON p.col_asignado = c.id_col
+                 WHERE p.edo_pros = 1 AND p.col_asignado = :colaborador_id 
+                 AND p.col_asignado = :colaborador_id
+                 ORDER BY p.id_pros";
+    $resultado = $conexion->prepare($consulta);
+    $resultado->bindParam(':colaborador_id', $colaborador_id, PDO::PARAM_INT);
+    // Si no es administrador, filtrar por el colaborador asignado
+   
+} else {
+     $colaborador_id = $_SESSION['id_col'];
+    $consulta = "SELECT p.*, c.nombre as nombre_colaborador 
+                 FROM prospecto p
+                 JOIN colaborador c ON p.col_asignado = c.id_col
+                 WHERE p.edo_pros = 1 AND p.col_asignado = :colaborador_id 
+                 ORDER BY p.id_pros";
+    $resultado = $conexion->prepare($consulta);
+ 
+
+}
+    // Administrador puede ver todos los prospectos activos
+/*
 $consulta = "SELECT p.*, c.nombre as nombre_colaborador 
              FROM prospecto p
              JOIN colaborador c ON p.col_asignado = c.id_col
              WHERE p.edo_pros = 1 
              ORDER BY p.id_pros";
 $resultado = $conexion->prepare($consulta);
+*/
 $resultado->execute();
 $data = $resultado->fetchAll(PDO::FETCH_ASSOC);
 
@@ -215,7 +242,7 @@ $message = "";
                                     </div>
                                 </div>
 
-                                <div class="col-12 col-sm-4">
+                               <div class="col-12 col-sm-4">
                                     <div class="form-group input-group-sm">
                                         <label for="origen" class="col-form-label form-control-sm">*Origen:</label>
                                         <select id="origen" name="origen" class="selectpicker form-control form-control-sm" data-live-search="false" title="Seleccione el origen...">

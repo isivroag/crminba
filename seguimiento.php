@@ -31,6 +31,8 @@ if (isset($_GET['id_seg'])) {
     $id_pros = $seguimiento['id_pros'];
     $nombre_pros = $seguimiento['nombre'];
     $observaciones = $seguimiento['observaciones'];
+    $res_seg = $seguimiento['resultado'];
+    $obs_cierre = $seguimiento['obs_cierre'] ?? ''; // Manejo de observaciones de cierre, si existe
 
 
 
@@ -45,6 +47,8 @@ if (isset($_GET['id_seg'])) {
     $tipo_seg = null;
     $fecha_seg = date("Y-m-d");
     $realizado = null;
+    $res_seg = null;
+    $obs_cierre = null; // Manejo de observaciones de cierre, si no existe
 
     $observaciones = null;
 
@@ -122,7 +126,6 @@ $stmtColabs->closeCursor(); // Limpieza opcional si vas a seguir consultando con
         color: #007bff !important;
         /* azul Bootstrap */
     }
-    
 </style>
 
 <!-- Content Wrapper. Contains page content -->
@@ -180,7 +183,7 @@ $stmtColabs->closeCursor(); // Limpieza opcional si vas a seguir consultando con
 
 
 
-                                <div class="col-md-6">
+                                <div class="col-md-4">
                                     <div class="form-group input-group-sm">
                                         <label for="id_col" class="col-form-label">*RESPONSABLE DE ACCIÓN:</label>
                                         <?php $esEdicion = ($id_seg != null); ?>
@@ -207,8 +210,17 @@ $stmtColabs->closeCursor(); // Limpieza opcional si vas a seguir consultando con
                                         <?php endif; ?>
                                     </div>
                                 </div>
-
-
+                                <div class="col-md-2">
+                                    <div id="campo_resultado" class=" form-group input-group-sm" style="display: none;">
+                                        <label for="res_cierre" class="col-form-label">RESULTADO:</label>
+                                        <select name="res_cierre" id="res_cierre"class="form-control form-control-sm">
+                                            <option value="exito <?= ($res_seg == "exito") ? "selected" : "" ?>">Éxito</option>
+                                            <option value="sin_respuesta" <?= ($res_seg == "sin_respuesta") ? "selected" : "" ?>>Sin respuesta</option>
+                                            <option value="rechazado" <?= ($res_seg == "rechazado") ? "selected" : "" ?>>Rechazado</option>
+                                            <option value="cancelado" <?= ($res_seg == "cancelado") ? "selected" : "" ?>>Cancelado</option>
+                                        </select>
+                                    </div>
+                                </div>
 
 
                                 <div class="col-md-12">
@@ -222,6 +234,13 @@ $stmtColabs->closeCursor(); // Limpieza opcional si vas a seguir consultando con
                                     <div class="form-group input-group-sm">
                                         <label for="observaciones" class="col-form-label">OBSERVACIONES:</label>
                                         <textarea name="observaciones" id="observaciones" class="form-control" rows="4" placeholder="DETALLES ADICIONALES..."><?= $observaciones ?></textarea>
+                                    </div>
+                                </div>
+
+                                 <div class="col-md-12">
+                                    <div id="campoObseraciones" class="form-group input-group-sm" style="display: none;">
+                                        <label for="obs_cierre" class="col-form-label">OBSERVACIONES CIERRE:</label>
+                                        <textarea name="obs_cierre" id="obs_cierre" class="form-control" rows="4" placeholder="DETALLES DE CIERRE..."><?= $obs_cierre ?></textarea>
                                     </div>
                                 </div>
 

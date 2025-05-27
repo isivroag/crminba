@@ -1,7 +1,11 @@
 <?php
 include_once 'conexion.php';
+include_once 'bitacora.php';
 $objeto = new conn();
+
+
 $conexion = $objeto->connect();
+$bitacora = new Bitacora($conexion);
 
 // Recepción de datos POST desde el JS
 $id_pros = $_POST['id_pros'] ?? '';
@@ -12,6 +16,9 @@ $comentarios = $_POST['comentarios'] ?? '';
 $id_col = $_POST['id_col'] ?? '';
 $opcion = $_POST['opcion'] ?? '';
 $id_seg = $_POST['id_seg'] ?? '';
+$res_seg = $_POST['resultado'] ?? '';
+$obs_cierre = $_POST['obs_cierre'] ?? '';
+
 
 $response = ["success" => false, "message" => ""];
 
@@ -36,6 +43,19 @@ switch ($opcion) {
             $stmtColab->bindParam(':id_pros', $id_pros, PDO::PARAM_INT);
             $stmtColab->execute();
 
+
+            // Registrar en bitácora
+
+             if (!$bitacora->registrar(
+                'SEGUIMIENTO',
+                'CREACIÓN',
+                $idGenerado,
+                "Nuevo Seguimiento Folio: $idGenerado, Al prospecto ID: $id_pros, Tipo: $tipo_seg"
+            )) {
+                throw new Exception("Error al registrar en bitácora");
+            }
+
+
             $response = [
                 "success" => true,
                 "message" => "Seguimiento guardado correctamente.",
@@ -51,15 +71,28 @@ switch ($opcion) {
 
     case 2:
         try {
-            $consulta = "UPDATE seg_pros SET tipo_seg = :tipo_seg, fecha_seg = :fecha_seg, realizado = :realizado, observaciones = :comentarios
-                         WHERE id_seg = :id_seg";
+            $consulta = "UPDATE seg_pros SET tipo_seg = :tipo_seg, fecha_seg = :fecha_seg, realizado = :realizado, observaciones = :comentarios,
+            resultado = :resultado, obs_cierre = :obs_cierre, fecha_cierre = NOW()
+            WHERE id_seg = :id_seg";
             $resultado = $conexion->prepare($consulta);
             $resultado->bindParam(':id_seg', $id_seg, PDO::PARAM_INT);
             $resultado->bindParam(':tipo_seg', $tipo_seg, PDO::PARAM_STR);
             $resultado->bindParam(':fecha_seg', $fecha_seg, PDO::PARAM_STR);
             $resultado->bindParam(':realizado', $realizado, PDO::PARAM_INT);
             $resultado->bindParam(':comentarios', $comentarios, PDO::PARAM_STR);
+            $resultado->bindParam(':resultado', $res_seg, PDO::PARAM_STR);
+            
+            $resultado->bindParam(':obs_cierre', $obs_cierre, PDO::PARAM_STR);
             $resultado->execute();
+
+             if (!$bitacora->registrar(
+                'SEGUIMIENTO',
+                'MODIFICACION',
+                $id_seg,
+                "Modificacion Seguimiento Folio: $id_seg"
+            )) {
+                throw new Exception("Error al registrar en bitácora");
+            }
 
             if ($resultado->rowCount() > 0) {
                 $response = [

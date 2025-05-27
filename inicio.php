@@ -122,6 +122,7 @@ if ($_SESSION['s_rol'] == 4) {
           </div>
         </div>
       </div>
+      <?php if ($_SESSION['s_rol'] != '5') { ?>
       <div class="card-deck">
         <div class="card text-center">
           <div class="card-header bg-green text-white">
@@ -217,11 +218,13 @@ if ($_SESSION['s_rol'] == 4) {
                           <th>ULTIMO SEG</th>
                           <th>ACCION SEG</th>
                           <th>OBSERVACIONES</th>
+                          <th>RESULTADO</th>
 
                         </tr>
                       </thead>
                       <tbody>
-                        <?php foreach ($data_realizados as $dat): ?>
+                        <?php foreach ($data_realizados as $dat):
+                        ?>
                           <tr>
                             <td><?php echo $dat['id_pros'] ?></td>
                             <td><?php echo $dat['nombre'] ?></td>
@@ -257,7 +260,34 @@ if ($_SESSION['s_rol'] == 4) {
 
                               <span class=><?php echo $icono_tipo . " " . $dat['tipo_seg'] ?></span>
                             </td>
-                            <td><?= $dat['observaciones'] ?></td>
+                            <td><?= $dat['obs_cierre'] ?></td>
+                            <?php
+                            $resultado = $dat['resultado'];
+                            $clase = '';
+                            $icono = '';
+
+                            // Evaluar el resultado
+                            switch (strtolower($resultado)) {
+                              case 'exito':
+                                $clase = 'text-success font-weight-bold';
+                                $icono = '<i class="fas fa-check-circle"></i>';
+                                break;
+                              case 'sin_respuesta':
+                                $clase = 'text-warning font-weight-bold';
+                                $icono = '<i class="fas fa-exclamation-circle"></i>';
+                                break;
+                              case 'rechazado':
+                              case 'cancelado':
+                                $clase = 'text-danger font-weight-bold';
+                                $icono = '<i class="fas fa-times-circle"></i>';
+                                break;
+                              default:
+                                $clase = '';
+                                $icono = '<i class="fas fa-info-circle text-muted"></i>';
+                                break;
+                            }
+                            ?>
+                            <td class="<?= $clase ?>"><?= $icono . ' ' . htmlspecialchars($resultado) ?></td>
 
 
 
@@ -366,6 +396,7 @@ if ($_SESSION['s_rol'] == 4) {
         </div>
 
       </div>
+      <?php }?>
     </div>
   </section>
   <!-- /.content -->

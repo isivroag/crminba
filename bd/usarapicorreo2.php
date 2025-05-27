@@ -1,5 +1,6 @@
 <?php
-$api_url = 'http://tecniem.com/srmcheca/api/correoinba2.php';
+//$api_url = 'http://tecniem.com/srmcheca/api/correoinba2.php';
+$api_url = 'http://intranet.bosquedelasanimas.com.mx/api/correoinba2.php';
 
 $data = json_decode(file_get_contents('php://input'), true);
 

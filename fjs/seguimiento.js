@@ -1,4 +1,29 @@
 $(document).ready(function () {
+  
+  
+    const realizadoSelect = document.getElementById("realizado");
+    const campoResultado = document.getElementById("campo_resultado");
+    const campoObscierre= document.getElementById("campoObseraciones");
+    const inputObservaciones = document.getElementById("observaciones"); // Asegúrate de tener este ID
+
+
+    realizadoSelect.addEventListener("change", function () {
+      if (this.value == "1") {
+        campoResultado.style.display = "block";
+        campoObscierre.style.display = "block";
+         inputObservaciones.disabled = true;
+
+      } else {
+        campoResultado.style.display = "none";
+        campoObscierre.style.display = "none";
+         inputObservaciones.disabled = false;
+      }
+    });
+
+    // Inicializar el estado del campo al cargar la página
+    realizadoSelect.dispatchEvent(new Event("change"));
+  
+
   // Validación al guardar seguimiento
   $("#formSeguimiento").on("submit", function (e) {
     e.preventDefault();
@@ -10,13 +35,14 @@ $(document).ready(function () {
     let id_pros = $("#id_pros").val();
     let id_seg = $("#id_seg").val();
     let comentarios = $("#observaciones").val();
-    
+    let resultado = $("#res_cierre").val();
+    let obs_cierre = $("#obs_cierre").val();
+
     if (id_seg && parseInt(id_seg) > 0) {
       opcion = 2;
     } else {
       opcion = 1;
     }
-
 
     // Validaciones básicas
     if (!tipo_seg || !fecha_seg || !realizado || !id_col) {
@@ -28,9 +54,18 @@ $(document).ready(function () {
       return;
     }
 
+    if (realizado === "1" && !resultado) {
+      Swal.fire({
+        title: "Resultado Requerido",
+        text: "Por favor, ingresa el resultado de la acción realizada.",
+        icon: "warning",
+      });
+      return;
+    }
+
     // Validar fecha si ya se realizó
     const hoy = new Date().toISOString().split("T")[0];
-    if (realizado === "1" && fecha_seg > hoy) {
+    if (realizado === "1" && fecha_seg > hoy && id_seg === "") {
       Swal.fire({
         title: "Fecha Inválida",
         text: "No puedes indicar que ya se realizó con una fecha futura.",
@@ -47,6 +82,18 @@ $(document).ready(function () {
       });
       return;
     }
+    console.log("Datos del formulario:", {
+      tipo_seg,
+      fecha_seg,
+      realizado,
+      comentarios,
+      id_col,
+      id_pros,
+      id_seg,
+      resultado,
+      obs_cierre,
+      opcion
+    });
 
     var formData = $(this).serializeArray(); // convierte el formulario en array
     formData.push({ name: "opcion", value: opcion });
@@ -62,11 +109,14 @@ $(document).ready(function () {
         id_col: id_col,
         id_pros: id_pros,
         id_seg: id_seg,
+        resultado: resultado,
+        obs_cierre: obs_cierre,
         opcion: opcion,
       },
       success: function (response) {
         try {
           const res = JSON.parse(response);
+          console.log("Respuesta del servidor:", res);
           if (res.success) {
             console.log("Respuesta del servidor:", res);
             Swal.fire({

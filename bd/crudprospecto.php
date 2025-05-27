@@ -1,30 +1,50 @@
 <?php
 include_once 'conexion.php';
+include_once 'bitacora.php';
 $objeto = new conn();
 $conexion = $objeto->connect();
+$bitacora = new Bitacora($conexion);
 
 $response = ['success' => false, 'message' => ''];
 
 $opcion = $_POST['opcion'] ?? 0;
 
 $id = $_POST['id'] ?? null;
-$nombre = $_POST['nombre'];
-$telefono = $_POST['telefono'];
-$correo = $_POST['correo'];
-$col_asignado = $_POST['col_asignado'];
-$origen = $_POST['origen'];
-
+$nombre = $_POST['nombre'] ?? null;
+$telefono = $_POST['telefono'] ?? null;
+$correo = $_POST['correo'] ?? null;
+$col_asignado = $_POST['col_asignado'] ?? null;
+$origen = $_POST['origen'] ?? null;
 try {
     switch ($opcion) {
         case 1: // Crear nuevo prospecto
 
 
-            $consulta = "INSERT INTO prospecto (nombre, telefono, correo, col_asignado, edo_pros,origen) 
-                         VALUES (?, ?, ?, ?, 1)";
+
+            $consulta = "INSERT INTO prospecto (nombre, telefono, correo, col_asignado, origen)
+                         VALUES (:nombre, :telefono, :correo, :col_asignado, :origen)";
+
             $stmt = $conexion->prepare($consulta);
-            $stmt->execute([$nombre, $telefono, $correo, $col_asignado, $origen]);
+            $stmt->bindParam(':nombre', $nombre);
+            $stmt->bindParam(':telefono', $telefono);
+            $stmt->bindParam(':correo', $correo);
+            $stmt->bindParam(':col_asignado', $col_asignado);
+            $stmt->bindParam(':origen', $origen);
+            $stmt->execute();
+
+
+
 
             $id_pros = $conexion->lastInsertId();
+
+            if (!$bitacora->registrar(
+                'PROSPECTO',
+                'CREACIÓN',
+                $id_pros,
+                "Nuevo prospecto: $nombre, Tel: $telefono"
+            )) {
+                throw new Exception("Error al registrar en bitácora");
+            }
 
             // Obtener datos para mostrar en tabla
             $consulta = "SELECT p.*, c.nombre as nombre_colaborador 
@@ -49,13 +69,33 @@ try {
             break;
 
         case 2: // Editar prospecto
+            // Obtener datos anteriores para comparar
+            $sql_old = "SELECT * FROM prospecto WHERE id_pros = ?";
+            $stmt_old = $conexion->prepare($sql_old);
+            $stmt_old->execute([$id]);
+            $old_data = $stmt_old->fetch(PDO::FETCH_ASSOC);
+
 
 
             $consulta = "UPDATE prospecto SET 
-                         nombre = ?, telefono = ?, correo = ?, col_asignado = ?,origen = ? 
-                         WHERE id_pros = ?";
+                         nombre =:nombre, telefono = :telefono, correo = :correo, col_asignado = :col_asignado,origen = :origen 
+                         WHERE id_pros = :id";
+
+
             $stmt = $conexion->prepare($consulta);
-            $stmt->execute([$nombre, $telefono, $correo, $col_asignado, $origen, $id ]);
+            $stmt->bindParam(':nombre', $nombre);
+            $stmt->bindParam(':telefono', $telefono);
+            $stmt->bindParam(':correo', $correo);
+            $stmt->bindParam(':col_asignado', $col_asignado);
+            $stmt->bindParam(':origen', $origen);
+            $stmt->bindParam(':id', $id, PDO::PARAM_INT);
+            // Ejecutar la consulta
+            $stmt->execute();
+            if ($stmt->rowCount() === 0) {
+                $response['message'] = 'No se encontraron cambios para actualizar';
+                echo json_encode($response);
+                exit;
+            }
 
             // Obtener datos actualizados
             $consulta = "SELECT p.*, c.nombre as nombre_colaborador 
@@ -65,6 +105,25 @@ try {
             $stmt = $conexion->prepare($consulta);
             $stmt->execute([$id]);
             $data = $stmt->fetch(PDO::FETCH_ASSOC);
+
+            // Registrar cambios en bitácora
+            $cambios = [];
+            if ($old_data['nombre'] != $nombre) $cambios[] = "Nombre: {$old_data['nombre']} → $nombre";
+            if ($old_data['telefono'] != $telefono) $cambios[] = "Teléfono: {$old_data['telefono']} → $telefono";
+            if ($old_data['correo'] != $correo) $cambios[] = "Correo: {$old_data['correo']} → $correo";
+            if ($old_data['col_asignado'] != $col_asignado) $cambios[] = "Asignado a: ID {$old_data['col_asignado']} → $col_asignado";
+            if ($old_data['origen'] != $origen) $cambios[] = "Origen: {$old_data['origen']} → $origen";
+
+            $descripcion = "Actualización: " . implode(", ", $cambios);
+
+            if (!$bitacora->registrar(
+                'PROSPECTO',
+                'ACTUALIZACIÓN',
+                $id,
+                $descripcion
+            )) {
+                throw new Exception("Error al registrar en bitácora");
+            }
 
             $response = [
                 'success' => true,
@@ -80,14 +139,42 @@ try {
             break;
 
         case 3: // Descartar prospecto
-            $consulta = "UPDATE prospecto SET edo_pros = 3 WHERE id_pros = ?";
+            $consulta = "UPDATE prospecto SET edo_pros = 3 WHERE id_pros = :id";
             $stmt = $conexion->prepare($consulta);
-            $stmt->execute([$id]);
+            $stmt->bindParam(':id', $id, PDO::PARAM_INT);
+            $stmt->execute();
+
+            // Registrar en bitácora
+            if (!$bitacora->registrar(
+                'PROSPECTO',
+                'DESCARTE',
+                $id,
+                "Prospecto descartado (ID: $id)"
+            )) {
+                throw new Exception("Error al registrar en bitácora");
+            }
+
 
             $response = [
                 'success' => true,
                 'message' => 'Prospecto descartado'
             ];
+            break;
+
+        case 4: // Verificar seguimientos
+            $consulta = "SELECT COUNT(*) as count FROM seg_pros WHERE id_pros = :id";
+            $stmt = $conexion->prepare($consulta);
+
+            // Asegurarse de que el ID sea un entero
+            $stmt->bindParam(':id', $id, PDO::PARAM_INT);
+            $stmt->execute();
+            $data = $stmt->fetch(PDO::FETCH_ASSOC);
+
+            $response = [
+                'success' => true,
+                'count' => $data['count']
+            ];
+
             break;
 
         default:
