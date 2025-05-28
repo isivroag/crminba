@@ -16,7 +16,7 @@ if($_SESSION['s_rol'] == 4) {
     $consulta = "SELECT p.*, c.nombre as nombre_colaborador 
                  FROM prospecto p
                  JOIN colaborador c ON p.col_asignado = c.id_col
-                 WHERE p.edo_pros = 1 AND p.col_asignado = :colaborador_id 
+                 WHERE p.edo_pros = 1 
                  AND p.col_asignado = :colaborador_id
                  ORDER BY p.id_pros";
     $resultado = $conexion->prepare($consulta);
@@ -24,11 +24,11 @@ if($_SESSION['s_rol'] == 4) {
     // Si no es administrador, filtrar por el colaborador asignado
    
 } else {
-     $colaborador_id = $_SESSION['id_col'];
+     
     $consulta = "SELECT p.*, c.nombre as nombre_colaborador 
                  FROM prospecto p
                  JOIN colaborador c ON p.col_asignado = c.id_col
-                 WHERE p.edo_pros = 1 AND p.col_asignado = :colaborador_id 
+                 WHERE p.edo_pros = 1 
                  ORDER BY p.id_pros";
     $resultado = $conexion->prepare($consulta);
  
@@ -111,7 +111,7 @@ $message = "";
                                 <table name="tablaV" id="tablaV" class="table table-sm table-striped table-bordered table-condensed text-nowrap w-auto mx-auto" style="width:100%; font-size:14px">
                                     <thead class="text-center  bg-green">
                                         <tr>
-                                            <th>ID</th>
+                                            <th>ID  </th>
                                             <th>NOMBRE</th>
                                             <th>TELÉFONO</th>
                                             <th>CORREO</th>
@@ -181,18 +181,7 @@ $message = "";
                                                     }
                                                     ?>
                                                 </td>
-                                                <td class="text-center">
-                                                    <div class="btn-group">
-                                                        <button class="btn btn-sm btn-primary btnEditar" data-toggle="tooltip" title="Editar">
-                                                            <i class="fas fa-edit"></i>
-                                                        </button>
-                                                        <button class="btn btn-sm btn-secondary btnEnviar" data-toggle="tooltip" title="Enviar">
-                                                            <i class="fas fa-envelope"></i>
-                                                        </button>
-                                                       
-
-                                                    </div>
-                                                </td>
+                                                <td></td>
                                             </tr>
                                         <?php endforeach; ?>
                                     </tbody>

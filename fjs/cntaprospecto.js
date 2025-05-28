@@ -1,6 +1,51 @@
 $(document).ready(function () {
   var id, opcion;
   opcion = 4; // Valor por defecto para operaciones
+  var textcolumnas = permisos();
+
+  function permisos() {
+    var tipousuario =parseInt( $("#tipousuario").val());
+    var columnas = "";
+    console.log("Tipo de usuario:", tipousuario);
+
+    switch (tipousuario) {
+      case 1: // usuario normal
+        columnas =
+          "<div class='text-center btn-group'>\
+          <button class='btn btn-sm btn-primary btnEditar' data-toggle='tooltip' data-placement='top' title='Editar'><i class='fas fa-edit'></i></button>\
+           <button class='btn btn-sm btn-secondary btnEnviar' data-toggle='tooltip' data-placement='top' title='Correo'><i class='fas fa-envelope'></i></button>\
+           </div>";
+        break;
+      case 2: // usuario administrador
+      case 3: // usuario supervisor
+        columnas =
+          "<div class='text-center btn-group'>\
+          <button class='btn btn-sm btn-primary btnEditar' data-toggle='tooltip' data-placement='top' title='Editar'><i class='fas fa-edit'></i></button>\
+           <button class='btn btn-sm btn-secondary btnEnviar' data-toggle='tooltip' data-placement='top' title='Correo'><i class='fas fa-envelope'></i></button>\
+           <button class='btn btn-sm bg-purple btnSegumiento' data-toggle='tooltip' data-placement='top' title='Registrar Seguimiento'><i class='fas fa-phone'></i></button>\
+           <button class='btn btn-sm bg-orange btnHistoria' data-toggle='tooltip' data-placement='top' title='Ver Historial'><i class='fa-solid fa-book'></i></button>\
+           <button class='btn btn-sm bg-danger btnEliminar' data-toggle='tooltip' data-placement='top' title='Eliminar'><i class='fa-solid fa-trash'></i></button>\
+           </div>";
+           break;
+      case 4: // usuario colaborador
+        columnas =
+          "<div class='text-center btn-group'>\
+          <button class='btn btn-sm btn-primary btnEditar' data-toggle='tooltip' data-placement='top' title='Editar'><i class='fas fa-edit'></i></button>\
+           <button class='btn btn-sm bg-purple btnSegumiento' data-toggle='tooltip' data-placement='top' title='Registrar Seguimiento'><i class='fas fa-phone'></i></button>\
+           <button class='btn btn-sm bg-orange btnHistoria' data-toggle='tooltip' data-placement='top' title='Ver Historial'><i class='fa-solid fa-book'></i></button>\
+           </div>";
+
+        break;
+        case 5: // usuario capturista
+        columnas ="";
+        break;
+      default:
+        columnas ="";
+       
+        break;
+    }
+    return columnas;
+  }
 
   // Inicialización de DataTable
   var tablaVis = $("#tablaV").DataTable({
@@ -45,14 +90,7 @@ $(document).ready(function () {
       {
         targets: -1,
         data: null,
-        defaultContent:
-          "<div class='text-center btn-group'>\
-          <button class='btn btn-sm btn-primary btnEditar' data-toggle='tooltip' data-placement='top' title='Editar'><i class='fas fa-edit'></i></button>\
-           <button class='btn btn-sm btn-secondary btnEnviar' data-toggle='tooltip' data-placement='top' title='Correo'><i class='fas fa-envelope'></i></button>\
-           <button class='btn btn-sm bg-purple btnSegumiento' data-toggle='tooltip' data-placement='top' title='Registrar Seguimiento'><i class='fas fa-phone'></i></button>\
-           <button class='btn btn-sm bg-orange btnHistoria' data-toggle='tooltip' data-placement='top' title='Ver Historial'><i class='fa-solid fa-book'></i></button>\
-           <button class='btn btn-sm bg-danger btnEliminar' data-toggle='tooltip' data-placement='top' title='Eliminar'><i class='fa-solid fa-trash'></i></button>\
-           </div>",
+        defaultContent: textcolumnas,
       },
     ],
   });

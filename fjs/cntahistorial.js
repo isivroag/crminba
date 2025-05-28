@@ -86,6 +86,38 @@ $(document).ready(function () {
         },
       },
       {
+            targets: 6, // Columna de resultado (6ta columna, índice 5)
+            render: function(data, type, row) {
+                // Normalizar el texto (minúsculas, sin espacios, sin acentos)
+                var resultado = data ? String(data).toLowerCase().trim().normalize("NFD").replace(/[\u0300-\u036f]/g, "") : "";
+                var clase = '';
+                var icono = '';
+
+                // Evaluar el resultado
+                switch (resultado) {
+                    case 'exito':
+                        clase = 'text-success font-weight-bold';
+                        icono = '<i class="fas fa-check-circle"></i>';
+                        break;
+                    case 'sin_respuesta':
+                    case 'sin respuesta':
+                        clase = 'text-warning font-weight-bold';
+                        icono = '<i class="fas fa-exclamation-circle"></i>';
+                        break;
+                    case 'rechazado':
+                    case 'cancelado':
+                        clase = 'text-danger font-weight-bold';
+                        icono = '<i class="fas fa-times-circle"></i>';
+                        break;
+                    default:
+                        clase = 'text-muted';
+                        icono = '<i class="fas fa-info-circle"></i>';
+                }
+
+                return '<span class="' + clase + '">' + icono + ' ' + (data || 'Sin resultado') + '</span>';
+            }
+        },
+      {
         targets: -1,
         data: null,
         defaultContent:
@@ -129,9 +161,12 @@ $(document).ready(function () {
     $(document).on("click", ".btnSelPros", function () {
     var data = tablaProspecto.row($(this).parents("tr")).data();
     $("#id_pros").val(data[0]);
+    
     $("#prospecto").val(data[1]);
     $("#correo").val(data[2]);
     $("#telefono").val(data[3]);
+    estado   = data[4];
+    console.log("Estado:", estado);
     $("#modalProspecto").modal("hide");
     window.location.href = "cntahistorial.php?id_pros=" + data[0];
   });
@@ -139,9 +174,21 @@ $(document).ready(function () {
   $(document).on("click", ".btnEditar", function () {
     fila= $(this).closest("tr");
      id = parseInt(fila.find("td:eq(0)").text());
+     estado = fila.find("td:eq(5)").text();
    
-   
+   console.log("Estado:", estado);
+   if (estado == "REALIZADO") {
+      Swal.fire({
+        title: "Advertencia",
+        text: "No se puede editar un seguimiento realizado",
+        icon: "warning",
+        showConfirmButton: false,
+        timer: 2500,
+      });
+      return false; 
+    }else {
      window.location.href = "seguimiento.php?id_seg=" +id;
+    }
   });
 
   // Guardar seguimiento

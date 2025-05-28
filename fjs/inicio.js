@@ -1,6 +1,46 @@
 $(document).ready(function () {
   var id, opcion;
   opcion = 4;
+   var textcolumnas = permisos();
+
+  function permisos() {
+    var tipousuario =parseInt( $("#tipousuario").val());
+    var columnas = "";
+    console.log("Tipo de usuario:", tipousuario);
+
+    switch (tipousuario) {
+      case 1: // usuario normal
+        columnas =
+          "";
+        break;
+      case 2: // usuario administrador
+      case 3: // usuario supervisor
+        columnas =
+          "<div class='btn-group'>\
+            <button class='btn btn-sm btn-success btnSeguimiento' data-toggle='tooltip' title='Seguimiento'>\
+              <i class='fa-duotone fa-solid fa-phone'></i>\
+            </button>\
+          </div>";
+           break;
+      case 4: // usuario colaborador
+        columnas =
+          "<div class='btn-group'>\
+            <button class='btn btn-sm btn-success btnSeguimiento' data-toggle='tooltip' title='Seguimiento'>\
+              <i class='fa-duotone fa-solid fa-phone'></i>\
+            </button>\
+          </div>";
+
+        break;
+        case 5: // usuario capturista
+        columnas ="";
+        break;
+      default:
+        columnas ="";
+       
+        break;
+    }
+    return columnas;
+  }
 
   var tablaNuevo = $("#tablaNuevo").DataTable({
     dom: "<'row'<'col-sm-12'tr>>", // Solo la tabla (sin l, B, f, i, p)

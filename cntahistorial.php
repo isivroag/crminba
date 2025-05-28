@@ -21,7 +21,7 @@ if (isset($_GET['id_pros'])) {
     $correo = $data[0]['correo'];
     $telefono = $data[0]['telefono'];
 
-    $consultaseg = "SELECT id_seg, fecha_seg, tipo_seg, observaciones, realizado,nom_col_seg FROM vseg_pros WHERE id_pros=:id_pros ORDER BY fecha_seg DESC";
+    $consultaseg = "SELECT * FROM vseg_pros WHERE id_pros=:id_pros ORDER BY fecha_seg DESC";
     $resultadoseg = $conexion->prepare($consultaseg);
     $resultadoseg->bindParam(':id_pros', $id_pros, PDO::PARAM_INT);
     $resultadoseg->execute();
@@ -129,7 +129,10 @@ $message = "";
                                                 <th>TIPO</th>
                                                 <th>OBSERVACIONES</th>
                                                 <th>REALIZADO POR</th>
-                                                <th>TAREA REALIZADA</th>
+
+                                                 <th>ESTADO</th>
+                                                 <th>RESULTADO</th>
+                                                 <th>OBS RESPUESTA</th>
                                                 <th>ACCIONES</th>
                                             </tr>
                                         </thead>
@@ -138,12 +141,14 @@ $message = "";
                                             foreach ($dataseg as $dat) {
                                             ?>
                                                 <tr>
-                                                    <td><?php echo $dat['id_seg'] ?></td>
-                                                    <td><?php echo date('d/m/Y', strtotime($dat['fecha_seg'])) ?></td>
-                                                    <td><?php echo $dat['tipo_seg'] ?></td>
+                                                    <td class="text-center"><?php echo $dat['id_seg'] ?></td>
+                                                    <td class="text-center"><?php echo date('d/m/Y', strtotime($dat['fecha_seg'])) ?></td>
+                                                    <td class="text-center"><?php echo $dat['tipo_seg'] ?></td>
                                                     <td class="multi-line"><?php echo $dat['observaciones'] ?></td>
                                                     <td><?php echo $dat['nom_col_seg'] ?></td>
-                                                    <td><?php echo $dat['realizado'] ?></td>
+                                                    <td class="text-center"><?php echo $dat['realizado'] ?></td>
+                                                    <td class="text-center"><?php echo $dat['resultado'] ?></td>
+                                                    <td class="text-center multi-line"><?php echo $dat['obs_cierre'] ?></td>
                                                     <td></td>
                                                 </tr>
                                             <?php

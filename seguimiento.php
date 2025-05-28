@@ -151,7 +151,7 @@ $stmtColabs->closeCursor(); // Limpieza opcional si vas a seguir consultando con
 
                                 <div class="col-md-2">
                                     <div class="form-group input-group-sm">
-                                        <label for="tipo_seg" class="col-form-label">*TIPO DE SEGUIMIENTO:</label>
+                                        <label for="tipo_seg" class="col-form-label">*TIPO DE SEG:</label>
                                         <select name="tipo_seg" id="tipo_seg" class="form-control selectpicker form-control-sm" data-live-search="false" title="SELECCIONA TIPO" required>
                                             <option value="Llamada" data-content='<i class="fas fa-phone-alt text-success"></i> Llamada' <?= ($tipo_seg == "Llamada") ? "selected" : "" ?>>Llamada</option>
                                             <option value="Mensaje" data-content='<i class="fas fa-comment-dots text-info"></i> Mensaje' <?= ($tipo_seg == "Mensaje") ? "selected" : "" ?>>Mensaje</option>
@@ -165,7 +165,7 @@ $stmtColabs->closeCursor(); // Limpieza opcional si vas a seguir consultando con
 
                                 <div class="col-md-2">
                                     <div class="form-group input-group-sm">
-                                        <label for="fecha_seg" class="col-form-label">*FECHA DE ACCIÓN:</label>
+                                        <label for="fecha_seg" class="col-form-label">*FECHA:</label>
                                         <input type="date" name="fecha_seg" id="fecha_seg" class="form-control" required value="<?= htmlspecialchars($fecha_seg) ?>">
                                     </div>
                                 </div>
@@ -185,7 +185,7 @@ $stmtColabs->closeCursor(); // Limpieza opcional si vas a seguir consultando con
 
                                 <div class="col-md-4">
                                     <div class="form-group input-group-sm">
-                                        <label for="id_col" class="col-form-label">*RESPONSABLE DE ACCIÓN:</label>
+                                        <label for="id_col" class="col-form-label">*RESPONSABLE:</label>
                                         <?php $esEdicion = ($id_seg != null); ?>
 
                                         <select name="id_col_disabled" id="id_col" class="form-control selectpicker form-control-sm"

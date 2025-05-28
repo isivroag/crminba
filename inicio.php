@@ -122,7 +122,7 @@ if ($_SESSION['s_rol'] == 4) {
           </div>
         </div>
       </div>
-      <?php if ($_SESSION['s_rol'] != '5') { ?>
+      
       <div class="card-deck">
         <div class="card text-center">
           <div class="card-header bg-green text-white">
@@ -174,14 +174,7 @@ if ($_SESSION['s_rol'] == 4) {
                               ?>
                               <span class="badge <?php echo $badge_class ?>"><?php echo $estado_text ?></span>
                             </td>
-                            <td>
-                              <div class="btn-group">
-                                <button class="btn btn-sm btn-success btnSeguimiento" data-toggle="tooltip" title="Seguimiento">
-                                  <i class="fa-duotone fa-solid fa-phone"></i>
-                                </button>
-
-                              </div>
-                            </td>
+                            <td></td>
 
 
 
@@ -197,6 +190,7 @@ if ($_SESSION['s_rol'] == 4) {
         </div>
 
       </div>
+      <?php if ($_SESSION['s_rol'] != '5' && $_SESSION['s_rol']!=1) { ?>
       <div class="card-deck">
         <div class="card text-center">
           <div class="card-header bg-green text-white">
@@ -267,7 +261,8 @@ if ($_SESSION['s_rol'] == 4) {
                             $icono = '';
 
                             // Evaluar el resultado
-                            switch (strtolower($resultado)) {
+                            switch (strtolower(trim($resultado))) {
+                              case 'éxito':
                               case 'exito':
                                 $clase = 'text-success font-weight-bold';
                                 $icono = '<i class="fas fa-check-circle"></i>';
