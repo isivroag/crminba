@@ -13,11 +13,11 @@ use PHPMailer\PHPMailer\Exception;
 $data = json_decode(file_get_contents('php://input'), true);
 
 // Validar datos requeridos
-$required = ['id_pros', 'nombre', 'telefono', 'correo', 'colaborador', 'email_colaborador'];
+$required = ['id_pros', 'nombre', 'colaborador', 'email_colaborador'];
 foreach ($required as $field) {
     if (empty($data[$field])) {
         http_response_code(400);
-        echo json_encode(["success" => false, "message" => "Falta el campo: $field"]);
+        echo json_encode(["success" => false, "message" => "Falta el campo obligatorio: $field"]);
         exit;
     }
 }

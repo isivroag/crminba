@@ -12,8 +12,10 @@ use PHPMailer\PHPMailer\Exception;
 // Obtener datos del cuerpo de la solicitud
 $data = json_decode(file_get_contents('php://input'), true);
 
+
+
 // Validar campos requeridos
-$required = ['id_pros', 'nombre', 'telefono', 'correo', 'nom_colaborador', 'correo_colaborador', 'fecha_seg', 'tipo_seg', 'observaciones'];
+$required = ['id_pros', 'nombre', 'nom_colaborador', 'correo_colaborador', 'fecha_seg', 'tipo_seg', 'observaciones'];
 foreach ($required as $field) {
     if (empty($data[$field])) {
         http_response_code(400);

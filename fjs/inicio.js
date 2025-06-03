@@ -62,6 +62,14 @@ $(document).ready(function () {
       },
       sProcessing: "Procesando...",
     },
+    columnDefs: [
+     
+      {
+        targets: -1,
+        data: null,
+        defaultContent: textcolumnas,
+      },
+    ],
   });
 
   var tablaRealizado = $("#tablaRealizado").DataTable({

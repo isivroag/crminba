@@ -337,7 +337,7 @@ $message = "";
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <?php include_once 'templates/footer.php'; ?>
-<script src="fjs/cotizador.js?v=<?php echo (rand()); ?>"></script>
+<script src="fjs/cot.js?v=<?php echo (rand()); ?>"></script>
 <script src="plugins/datatables/jquery.dataTables.min.js"></script>
 <script src="plugins/datatables-bs4/js/dataTables.bootstrap4.min.js"></script>
 <script src="plugins/datatables-responsive/js/dataTables.responsive.min.js"></script>

@@ -4,7 +4,7 @@ $(document).ready(function () {
   var textcolumnas = permisos();
 
   function permisos() {
-    var tipousuario =parseInt( $("#tipousuario").val());
+    var tipousuario = parseInt($("#tipousuario").val());
     var columnas = "";
     console.log("Tipo de usuario:", tipousuario);
 
@@ -26,7 +26,7 @@ $(document).ready(function () {
            <button class='btn btn-sm bg-orange btnHistoria' data-toggle='tooltip' data-placement='top' title='Ver Historial'><i class='fa-solid fa-book'></i></button>\
            <button class='btn btn-sm bg-danger btnEliminar' data-toggle='tooltip' data-placement='top' title='Eliminar'><i class='fa-solid fa-trash'></i></button>\
            </div>";
-           break;
+        break;
       case 4: // usuario colaborador
         columnas =
           "<div class='text-center btn-group'>\
@@ -36,12 +36,12 @@ $(document).ready(function () {
            </div>";
 
         break;
-        case 5: // usuario capturista
-        columnas ="";
+      case 5: // usuario capturista
+        columnas = "";
         break;
       default:
-        columnas ="";
-       
+        columnas = "";
+
         break;
     }
     return columnas;
@@ -366,6 +366,9 @@ $(document).ready(function () {
     });
   });
 
+  $("#formDatos").on("submit", function(e) {
+    e.preventDefault(); // Evita recargar la página
+});
   // Guardar Prospecto (Crear o Editar)
   $(document).on("click", "#btnGuardar", function () {
     var nombre = $.trim($("#nombre").val());
@@ -383,26 +386,60 @@ $(document).ready(function () {
     );
 
     // Validación básica
-    if (!nombre || !telefono || !correo || !col_asignado || !origen) {
-      Swal.fire("Advertencia", "Todos los campos son obligatorios", "warning");
-      return;
-    }
-
-    // Validar estructura del correo
-    var correoValido = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(correo);
-    if (!correoValido) {
-      Swal.fire("Correo inválido", "Ingresa un correo válido", "warning");
-      return;
-    }
-
-    // Validar estructura del teléfono (ejemplo: solo 10 dígitos numéricos)
-    var telefonoValido = /^[0-9]{10}$/.test(telefono);
-    if (!telefonoValido) {
+    if (!nombre || !col_asignado || !origen) {
       Swal.fire(
-        "Teléfono inválido",
-        "El número debe tener 10 dígitos numéricos",
+        "Advertencia",
+        "Los campos nombre, colaborador asignado y origen son obligatorios",
         "warning"
       );
+      return;
+    }
+
+    // Validar correo solo si se proporcionó
+   /* if (correo && correo.trim() !== "") {
+      var correoValido = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(correo);
+      if (!correoValido) {
+        Swal.fire("Correo inválido", "Ingresa un correo válido", "warning");
+        return;
+      }
+    }
+
+    // Validar teléfono solo si se proporcionó
+    if (telefono && telefono.trim() !== "") {
+      var telefonoValido = /^[0-9]{10}$/.test(telefono);
+      if (!telefonoValido) {
+        Swal.fire(
+          "Teléfono inválido",
+          "El número debe tener 10 dígitos numéricos",
+          "warning"
+        );
+        return;
+      }
+    }
+
+    // Validar que al menos uno (teléfono o correo) esté presente
+    if (!telefono && !correo) {
+      Swal.fire(
+        "Advertencia",
+        "Debes proporcionar al menos un teléfono o un correo",
+        "warning"
+      );
+      return;
+    }
+*/
+
+    console.log("ID:", id, "Opción:", opcion); // Debug
+    console.log("Datos a enviar al backend:", {
+    nombre: nombre,
+    telefono: telefono,
+    correo: correo,
+    col_asignado: col_asignado,
+    id: id,
+    opcion: opcion,
+    origen: origen
+});
+    if (id === undefined || opcion === undefined) {
+      Swal.fire("Error", "Falta información crítica (ID u opción)", "error");
       return;
     }
 
@@ -420,6 +457,7 @@ $(document).ready(function () {
         origen: origen,
       },
       success: function (data) {
+        console.log("Respuesta del servidor:", data); // Debug
         if (data.success) {
           if (opcion == 1) {
             actualizarTurnoColaborador(col_asignado);
@@ -499,6 +537,13 @@ $(document).ready(function () {
             } else {
               Swal.fire("Éxito", data.message, "success");
             }
+          });
+        }
+        else {
+          Swal.fire({
+            icon: "error",
+            title: "Error",
+            text: data.message || "Error al guardar los datos",
           });
         }
       },

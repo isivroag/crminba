@@ -11,11 +11,16 @@ if (json_last_error() !== JSON_ERROR_NONE) {
 }
 
 // Verificar si se recibieron los parámetros necesarios
-if (!isset($data['id_pros'], $data['nombre'],$data['telefono'],$data['correo'],$data['colaborador'])) {
-    echo json_encode(array("message" => "Faltan parametros obligatorios."));
+if (!isset($data['id_pros'], $data['nombre'], $data['colaborador'])) {
+    echo json_encode(["success" => false, "message" => "Faltan parámetros obligatorios: id_pros, nombre o colaborador"]);
     return;
 }
 
+// Valida que al menos correo o teléfono estén presentes (pero no necesariamente ambos)
+if (empty($data['telefono']) && empty($data['correo'])) {
+    echo json_encode(["success" => false, "message" => "Debe proporcionar al menos un teléfono o un correo"]);
+    return;
+}
 include_once 'conexion.php';
 $objeto = new conn();
 $conexion = $objeto->connect();
