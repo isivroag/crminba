@@ -35,17 +35,15 @@ $stmt_det->execute();
 $detalles = $stmt_det->fetchAll(PDO::FETCH_ASSOC);
 
 // Crear PDF configurando para no mostrar header/footer automáticos
+// Configuración inicial del PDF - AJUSTAR MÁRGENES
 $pdf = new TCPDF('P', 'mm', 'Letter', true, 'UTF-8', false);
-$pdf->setPrintHeader(false); // Desactivar header automático
-$pdf->setPrintFooter(false); // Desactivar footer automático
-
-$pdf->SetCreator('Sistema de Cotizaciones');
-$pdf->SetAuthor($presupuesto['nombre_pros']);
-$pdf->SetTitle('Presupuesto #' . $presupuesto['id_pres']);
-$pdf->SetMargins(15, 15, 15);
+$pdf->setPrintHeader(false);
+$pdf->setPrintFooter(false);
+$pdf->SetMargins(15, 10, 15); // Reducir margen superior de 15 a 10
 $pdf->SetAutoPageBreak(TRUE, 15);
 $pdf->AddPage();
-
+// Ajustar posición inicial del contenido
+$pdf->SetY(10); // Posición inicial más arriba
 // Logo (ajusta la ruta según tu estructura)
 $logoPath = 'img/logoVerde.jpg';
 $logoHTML = '';
@@ -55,51 +53,156 @@ if (file_exists($logoPath)) {
 
 // Construir el HTML completo
 $html = '
-<style>
-    body { font-family: helvetica; }
-    .header { margin-bottom: 5mm; overflow: auto; }
-    .company-info { text-align: center; margin-left: 35mm; }
-    .company-name { font-weight: bold; font-size: 11pt; }
-    .company-details { font-size: 9pt; line-height: 1.2; }
-    .document-title { color: #337ab7; font-size: 14pt; font-weight: bold; text-align: center; margin: 3mm 0; }
-    .folio { font-size: 11pt; text-align: center; margin-bottom: 5mm; }
-    .section-title { background-color: #f5f5f5; padding: 2mm; font-weight: bold; font-size: 11pt; margin: 2mm 0; }
-    .client-table { width: 100%; font-size: 9pt; margin-bottom: 5mm; }
-    .payment-table { width: 100%; font-size: 8pt; border-collapse: collapse; margin-bottom: 5mm; }
-    .payment-table th { background-color: #337ab7; color: white; padding: 2mm; text-align: center; }
-    .payment-table td { padding: 1.5mm; border-bottom: 1px solid #ddd; }
-    .payment-table tr:nth-child(even) { background-color: #f9f9f9; }
-    .totals-row { background-color: #e9e9e9; font-weight: bold; }
-    .terms { font-size: 8pt; margin-top: 5mm; }
-    .signature { margin-top: 15mm; text-align: right; }
-    .footer { font-size: 7pt; color: #666; margin-top: 5mm; border-top: 1px solid #eee; padding-top: 2mm; }
-    .text-right { text-align: right; }
-    .text-center { text-align: center; }
-</style>
+ <style>
+        body { 
+            font-family: Arial, sans-serif; 
+            margin: 0; 
+            padding: 15px;
+            width: 210mm; /* Tamaño carta */
+        }
+        
+        .header-table {
+            width: 100%;
+            border: none;
+            margin-bottom: 0mm;
+        }
+        
+        .header-table td {
+            vertical-align: middle;
+            padding: 0;
+        }
+        
+        .company-info { 
+            text-align: center; 
+        }
+        
+        .company-name { 
+            font-weight: bold; 
+            font-size: 11px;
+            margin-bottom: 100mm;
+            text-align: center;
+        }
+        
+        .company-details { 
+            font-size: 10px; 
+            line-height: 1.2;
+            text-align: center;
+        }
+        
+        .document-title {  
+            color: #153510; 
+            font-size: 14px; 
+            font-weight: bold; 
+            text-align: center; 
+         
+        }
+        
+        .folio { 
+            font-size: 14px; 
+            text-align: left; 
+            margin-bottom: 0px;
+        }
+        
+        .section-title { 
+            background-color: #f5f5f5; 
+            padding: 8px; 
+            font-weight: bold; 
+            font-size: 12px; 
+            margin: 0; 
+        }
+        
+        .client-table { 
+            width: 100%; 
+            font-size: 11px; 
+            margin-bottom: 15px; 
+        }
+        
+        .payment-table { 
+            width: 100%; 
+            font-size: 9px; 
+            border-collapse: collapse; 
+            margin-bottom: 2mm; 
+        }
+        
+        .payment-table th { 
+            background-color: #153510; 
+            color: white; 
+            padding: 8px; 
+            text-align: center; 
+        }
+        
+        .payment-table td { 
+            padding: 6px; 
+            border-bottom: 1px solid #ddd; 
+        }
+        
+        .payment-table tr:nth-child(even) { 
+            background-color: #f9f9f9; 
+        }
+        
+        .totals-row { 
+            background-color: #e9e9e9; 
+            font-weight: bold; 
+        }
+        
+        .terms { 
+            font-size: 10px; 
+            margin-top: 0px; 
+        }
+        
+        .signature { 
+            margin-top: 30px; 
+            text-align: right; 
+        }
+        
+        .footer { 
+            font-size: 11px; 
+            color: #666; 
+            margin-top: 15px; 
+            border-top: 1px solid #eee; 
+            padding-top: 8px; 
+        }
+        
+        .text-right { 
+            text-align: right; 
+        }
+        
+        .text-center { 
+            text-align: center; 
+        }
+        
+        img.logo {
+            height: 40px;
+        }
+    </style>
+</head>
+<body>
 
-<div class="header">
-    <div class="row">
-        <div class="col-xs-3 text-center">
-             ' . $logoHTML . '
-        </div>
-        <div class="col-xs-9 text-center">
-            <div class="company-info">
-                <div class="company-name">INMOBILIARIA BOSQUE DE LAS ANIMAS S.A. DE C.V.</div>
-                <div class="company-details">
-                    BLVD. CRISTOBAL COLON 5 INT 501<br>
-                    COL FUENTE DE LAS ANIMAS<br>
-                    Tel: (55) 1234-5678<br>
-                    RFC: IBA040421EB4
-                </div>
-             </div>
-        </div>
-    </div>
-   
+<!-- Encabezado con logo y datos de empresa -->
+<table class="header-table">
+    <tr>
+        <td style="width: 20%; text-align: left;">
+            <img src="img/logoVerde.jpg" class="logo">
+        </td>
+          <td style="width: 60%;">
+            <div class="company-name">INMOBILIARIA BOSQUE DE LAS ANIMAS S.A. DE C.V.</div>
+            <div class="company-details">
+                BLVD. CRISTOBAL COLON 5 INT 501<br>
+                COL FUENTE DE LAS ANIMAS<br>
+                Tel: (55) 1234-5678<br>
+                RFC: IBA040421EB4
+            </div>
+        </td>
+        <td style="width: 20%; text-align: right;">
+            <img src="img/logoVerde.jpg" class="logo">
+        </td>
+    </tr>
+</table>
+
+
 </div>
-
-<div class="document-title">PRESUPUESTO DE INMUEBLE</div>
+<div class="document-title">PRESUPUESTO</div>
 <div class="folio">Folio: ' . $presupuesto['id_pres'] . '</div>
-
 <div class="section-title">DATOS DEL CLIENTE</div>
 <table class="client-table">
     <tr>

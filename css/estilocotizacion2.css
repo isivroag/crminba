@@ -10,11 +10,6 @@
     clear: both;
 }
 
-a {
-    color: #c36800;
-    text-decoration: none;
-}
-
 body {
     position: relative;
     width: 21cm;
@@ -24,211 +19,169 @@ body {
     background: #FFFFFF;
     font-family: Arial, sans-serif;
     font-size: 13px;
-    /*font-family: SourceSansPro;*/
 }
 
-header {
-    padding: 5px 0;
-    margin-bottom: 5px;
-    border-bottom: 1px solid #AAAAAA;
-}
-
-#logo {
-    float: left;
-    margin-top: 0px;
-    width: 20%;
-}
-
-#logo img {
-    height: 20px;
-}
-
-#company {
-    float: left;
-    text-align: center;
-    width: 60%;
-}
-
-#folio {
-    float: left;
-    text-align: left;
-    width: 20%;
-}
-
-#folio h1 {
-    color: #db6719;
-    font-size: 1.2em;
-    line-height: 1em;
-    font-weight: normal;
-    margin: 0 0 0 0;
-}
-
-#folio .date {
-    font-size: 1.0em;
-    color: #777777;
-}
-
-#details {
-    margin-bottom: 20px;
-}
-
-#client {
-    padding-left: 6px;
-    /*border-left: 6px solid #db6719;*/
-    float: left;
-}
-
-#client .to {
-    color: #777777;
-}
-
-h2.name {
-    font-size: 1.4em;
-    font-weight: normal;
-    margin: 0;
-}
-
-#invoice {
-    float: right;
-    text-align: right;
-}
-
-#invoice h1 {
-    /* color: #db6719;*/
-    font-size: 1.2em;
-    line-height: 1em;
-    font-weight: normal;
-    margin: 0 0 10px 0;
-}
-
-#invoice .date {
-    font-size: 1.0em;
-    color: #777777;
-}
-
-table {
+/* Estilos para la tabla del header (sin bordes) */
+header table {
     width: 100%;
     border-collapse: collapse;
-    border-spacing: 0;
-    margin-bottom: 10px;
-    border: 1px solid #000000;
 }
 
-table th,
-table td {
-    padding: 10px;
-    /*background: #EEEEEE;*/
-    text-align: center;
-    border: 1px solid #000000;
-}
-
-table th {
-    white-space: nowrap;
-    font-weight: normal;
-}
-
-table td {
-    text-align: right;
-    border: 1px solid #000000;
-}
-
-table td h3 {
-    /*color: #e46820;*/
-    font-size: 1.2em;
-    font-weight: normal;
-    margin: 0 0 0.2em 0;
-    border: 1px solid #000000;
-}
-
-table .no {
-    color: #FFFFFF;
-    font-size: 1.6em;
-    background: #57B223;
-}
-
-table .desc {
-    text-align: left;
-}
-
-table .unit {
-    background: #DDDDDD;
-}
-
-
-/*table .qty {}*/
-
-table .total {
-    /*background: #e46820;*/
-    color: #000000;
-}
-
-table td.unit,
-table td.qty,
-table td.total {
-    font-size: 1.0em;
-}
-
-table tbody tr:last-child td {
-    border: 1px solid #000000;
-}
-
-table tfoot td {
-    padding: 5px 5px;
-    background: #FFFFFF;
-    font-size: 1.0em;
-    white-space: nowrap;
-    border-bottom: 1px solid #000000;
-    border: none;
-}
-
-table tfoot tr:first-child td {
-    border: none;
-}
-
-table tfoot tr:last-child td {
-    color: #57B223;
-    font-size: 1.4em;
-    border: none;
-    border-bottom: 1px solid #000000;
-}
-
-table tfoot tr td:first-child {
-    border: none;
-    border-bottom: 1px solid #000000;
-}
-
-#thanks {
-    font-size: 1.5em;
-    margin-bottom: 50px;
-    text-align: center;
-}
-
-#notices {
-    padding-left: 6px;
-    /*border-left: 6px solid #fad42c;*/
-}
-
-#notices .notice {
-    font-size: .8em;
-}
-
-footer {
-    color: #777777;
-    width: 100%;
-    height: 30px;
-    position: absolute;
-    bottom: 0;
-    /*border-top: 1px solid #AAAAAA;*/
-    padding: 8px 0;
-    text-align: center;
-}
-
-
-/*
-.sborde {
+header table, header table tr, header table td {
     border: none !important;
 }
 
-.cborde {
-    border-bottom: 1px solid #000000 !important;
-}*/
+.logo_factura img {
+    width: 180px;
+}
+
+.info_empresa {
+    text-align: center;
+}
+
+.info_empresa .empresa {
+    font-weight: bold;
+    font-size: 14px;
+}
+
+.info_factura {
+    text-align: right;
+}
+
+.info_factura .encabezado {
+    font-weight: bold;
+    font-size: 14px;
+}
+
+/* Estilos para la tabla factura_cliente */
+.factura_cliente {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 15px;
+}
+
+.factura_cliente td {
+    padding: 8px;
+    text-align: left; /* Alineación a la derecha */
+}
+
+.info_cliente .encabezado {
+    font-weight: bold;
+    font-size: 14px;
+}
+
+.info_cliente p b {
+    font-weight: bold; /* Texto en negritas para el nombre del cliente */
+}
+
+/* Estilos para la tabla factura_detalle */
+.factura_detalle {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 15px;
+}
+
+.factura_detalle thead th {
+    background-color: #153510 !important;
+    color: white !important;
+    padding: 8px;
+    text-align: center;
+    font-weight: bold;
+}
+
+.factura_detalle tbody td {
+    padding: 6px;
+    text-align: center;
+    background-color: white !important;
+    border: 1px solid #ddd;
+    font-size: 12px;
+}
+
+.factura_detalle .textright {
+    text-align: right;
+}
+
+.factura_detalle .textcenter {
+    text-align: center;
+}
+
+/* Estilos para los totales */
+.detalle_totales th {
+    padding: 8px;
+    text-align: right;
+    font-weight: bold;
+}
+
+.detalle_totales th span {
+    font-weight: bold;
+}
+
+/* Notas y pie de página */
+.nota {
+    font-size: 12px;
+    line-height: 1.4;
+    margin-bottom: 15px;
+}
+
+.label_gracias {
+    text-align: center;
+    font-size: 16px;
+    margin-top: 20px;
+    color: #153510;
+}
+
+/* Clases utilitarias */
+.round {
+    border-radius: 3px;
+    padding: 10px;
+}
+
+.textcenter {
+    text-align: center;
+}
+
+.textright {
+    text-align: right;
+}
+
+/* Estilos para la tabla factura_cliente */
+.factura_cliente {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 15px;
+}
+
+.factura_cliente .info_cliente {
+    padding: 0;
+}
+
+/* Estilos para la tabla detalle_pres */
+.detalle_pres {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+    border: 1px solid #153510;
+}
+
+.detalle_pres thead th {
+    background-color: #153510;
+    color: white;
+    padding: 8px;
+    text-align: center;
+    font-weight: bold;
+    border: 1px solid #153510;
+}
+
+.detalle_pres tbody td {
+    padding: 8px;
+    text-align: center;
+    border: 1px solid #153510;
+}
+
+.detalle_pres .textright {
+    text-align: right;
+}
+
+.detalle_pres .textcenter {
+    text-align: center;
+}
