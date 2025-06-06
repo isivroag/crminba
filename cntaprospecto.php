@@ -227,7 +227,7 @@ $message = "";
                                 <div class="col-12 col-sm-4">
                                     <div class="form-group input-group-sm">
                                         <label for="correo" class="col-form-label form-control-sm">*CORREO:</label>
-                                        <input type="email" class="form-control form-control-sm" name="correo" id="correo" autocomplete="off" placeholder="CORREO ELECTRÓNICO" required>
+                                        <input type="email" class="form-control form-control-sm" name="correo" id="correo" autocomplete="off" placeholder="CORREO ELECTRÓNICO" >
                                     </div>
                                 </div>
 

@@ -396,7 +396,7 @@ $(document).ready(function () {
     }
 
     // Validar correo solo si se proporcionó
-   /* if (correo && correo.trim() !== "") {
+    if (correo && correo.trim() !== "") {
       var correoValido = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(correo);
       if (!correoValido) {
         Swal.fire("Correo inválido", "Ingresa un correo válido", "warning");
@@ -426,7 +426,7 @@ $(document).ready(function () {
       );
       return;
     }
-*/
+
 
     console.log("ID:", id, "Opción:", opcion); // Debug
     console.log("Datos a enviar al backend:", {

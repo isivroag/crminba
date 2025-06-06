@@ -13,37 +13,48 @@ $(document).ready(function () {
     var col_asignado = $('#col_asignado').val();
     var nombre_colaborador = $('#col_asignado option:selected').text();
     
-    // Validación básica
-    if (!nombre || !telefono || !correo || !origen || !col_asignado) {
-      Swal.fire({
-        icon: 'error',
-        title: 'Error',
-        text: 'Todos los campos son obligatorios'
-      });
+       // Validación básica
+    if (!nombre || !col_asignado || !origen) {
+      Swal.fire(
+        "Advertencia",
+        "Los campos nombre, colaborador asignado y origen son obligatorios",
+        "warning"
+      );
       return;
     }
-    
-    // Validar correo electrónico
-    var correoValido = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(correo);
-    if (!correoValido) {
-      Swal.fire({
-        icon: 'error',
-        title: 'Error',
-        text: 'Por favor ingrese un correo electrónico válido'
-      });
+
+    // Validar correo solo si se proporcionó
+    if (correo && correo.trim() !== "") {
+      var correoValido = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(correo);
+      if (!correoValido) {
+        Swal.fire("Correo inválido", "Ingresa un correo válido", "warning");
+        return;
+      }
+    }
+
+    // Validar teléfono solo si se proporcionó
+    if (telefono && telefono.trim() !== "") {
+      var telefonoValido = /^[0-9]{10}$/.test(telefono);
+      if (!telefonoValido) {
+        Swal.fire(
+          "Teléfono inválido",
+          "El número debe tener 10 dígitos numéricos",
+          "warning"
+        );
+        return;
+      }
+    }
+
+    // Validar que al menos uno (teléfono o correo) esté presente
+    if (!telefono && !correo) {
+      Swal.fire(
+        "Advertencia",
+        "Debes proporcionar al menos un teléfono o un correo",
+        "warning"
+      );
       return;
     }
-    
-    // Validar teléfono (10 dígitos)
-    var telefonoValido = /^\d{10}$/.test(telefono);
-    if (!telefonoValido) {
-      Swal.fire({
-        icon: 'error',
-        title: 'Error',
-        text: 'El teléfono debe tener 10 dígitos numéricos'
-      });
-      return;
-    }
+
     
     // Crear objeto con los datos del formulario
     var formData = {

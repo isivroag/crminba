@@ -72,7 +72,7 @@ $message = "";
                                 <div class="col-sm-4">
                                     <div class="form-group">
                                         <label for="correo" class="form-label">* Correo electrónico:</label>
-                                        <input type="email" class="form-control form-control-sm" name="correo" id="correo" autocomplete="off" placeholder="Correo electrónico" required>
+                                        <input type="email" class="form-control form-control-sm" name="correo" id="correo" autocomplete="off" placeholder="Correo electrónico" >
                                     </div>
                                 </div>
 
