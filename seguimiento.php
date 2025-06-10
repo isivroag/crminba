@@ -1,4 +1,5 @@
 <?php
+ob_start();
 $pagina = "seguimiento";
 
 include_once "templates/header.php";
@@ -19,6 +20,11 @@ if (isset($_GET['id_seg'])) {
     $stmt->bindParam(':id_seg', $id_seg, PDO::PARAM_INT);
     $stmt->execute();
     $seguimiento = $stmt->fetch(PDO::FETCH_ASSOC);
+    if (!$seguimiento) {
+          header("Location: inicio.php");
+    exit;
+         
+    }
 
 
 
@@ -53,31 +59,51 @@ if (isset($_GET['id_seg'])) {
     $observaciones = null;
 
 
-
-
     if (!isset($_GET['id_pros'])) {
-        echo "ID del prospecto no especificado.";
+        $id_pros = null;
+        $nombre_pros = null;
+        $fecha_seg = date("Y-m-d");
+        $realizado = null;
+        $id_col = $_SESSION['id_col'];
+
+        $tipo_seg = null;
+        $res_seg = null;
+        $obs_cierre = null; // Manejo de observaciones de cierre, si no existe
+        if ($id_col != null && $id_col != 0)    {
+            
+            $cnta="SELECT * from vprospecto where edo_pros = 1 and col_asignado=:id_col ORDER BY id_pros DESC ";
+        } else {
+            $id_col = $_SESSION['id_col']; // Asignar el id del colaborador actual si no se proporciona otro
+            $cnta="SELECT * from vprospecto where edo_pros = 1 ORDER BY id_pros DESC ";
+        }
+        
+        $stmtPros = $conexion->prepare($cnta);
+        $stmtPros->bindParam(':id_col', $id_col, PDO::PARAM_INT);
+        $stmtPros->execute();
+        $data = $stmtPros->fetchAll(PDO::FETCH_ASSOC);
+       // Limpieza opcional si vas a seguir consultando con la misma conexión
+
+
+       
+
+    }else{
+        $id_pros = $_GET['id_pros'];
+        $sqlPros = "SELECT id_pros, nombre,col_asignado FROM vprospecto WHERE id_pros = :id_pros";
+        $stmtPros = $conexion->prepare($sqlPros);
+        $stmtPros->bindParam(':id_pros', $id_pros, PDO::PARAM_INT);
+        $stmtPros->execute();
+        $prospecto = $stmtPros->fetch(PDO::FETCH_ASSOC);
+
+        if ($prospecto) {
+            $nombre_pros = $prospecto['nombre'];
+            $id_col = $prospecto['col_asignado'];
+            $stmtPros->closeCursor(); // Limpieza opcional si vas a seguir consultando con la misma conexión
+        } else {
+            echo "Prospecto no encontrado.";
+            exit;
+        }
     }
-    $id_pros = $_GET['id_pros'];
-    $s_rol = $_SESSION['s_rol'];
-    $id_col_sesion = $_SESSION['id_col'];
-
-    // Consulta para obtener nombre del prospecto y colaborador asignado
-    $sql = "SELECT nombre, col_asignado FROM vprospecto WHERE id_pros = :id_pros";
-    $stmt = $conexion->prepare($sql);
-    $stmt->bindParam(':id_pros', $id_pros, PDO::PARAM_INT);
-    $stmt->execute();
-    $prospecto = $stmt->fetch(PDO::FETCH_ASSOC);
-
-    $nombre_pros = $prospecto['nombre'] ?? 'NO DEFINIDO';
-    $col_asignado = $prospecto['col_asignado'] ?? null;
-    $stmt->closeCursor(); // Limpieza opcional si vas a seguir consultando con la misma conexión
-
-    if ($s_rol == 4) {
-        $id_col = $id_col_sesion;
-    } else {
-        $id_col = $col_asignado;
-    }
+   
 }
 
 
@@ -145,9 +171,25 @@ $stmtColabs->closeCursor(); // Limpieza opcional si vas a seguir consultando con
                     <div class="row justify-content-center">
                         <div class="col-md-10 text-center">
                             <form id="formSeguimiento" class="row p-3" method="post" action="guardar_seguimiento.php">
-                                <input type="hidden" id="id_pros" name="id_pros" value="<?= $id_pros ?>">
+                              
                                 <input type="hidden" id="id_colaborador" name="id_colaborador" value="<?= $id_col ?>">
                                 <input type="hidden" id="id_seg" name="id_seg" value="<?= $id_seg ?>">
+
+
+                                <div class="col-md-12">
+                                     <div class="input-group input-group-sm">
+                                                <label for="prospecto" class="col-form-label">PROSPECTO:</label>
+                                                <div class="input-group input-group-sm">
+                                                    <input type="hidden" class="form-control" name="id_pros" id="id_pros" value="<?php echo $id_pros; ?>">
+                                                    <input type="text" class="form-control" name="nombre_prospecto" id="nombre_prospecto" disabled placeholder="SELECCIONAR PROSPECTO" value="<?php echo $nombre_pros; ?>">
+                                                    <?php if ($id_pros == null) { ?>
+                                                        <span class="input-group-append">
+                                                            <button id="bprospecto" type="button" class="btn btn-sm btn-primary"><i class="fas fa-search"></i></button>
+                                                        </span>
+                                                    <?php } ?>
+                                                </div>
+                                            </div>
+                                </div>
 
                                 <div class="col-md-2">
                                     <div class="form-group input-group-sm">
@@ -223,12 +265,7 @@ $stmtColabs->closeCursor(); // Limpieza opcional si vas a seguir consultando con
                                 </div>
 
 
-                                <div class="col-md-12">
-                                    <div class="form-group input-group-sm">
-                                        <label for="nombre_pros" class="col-form-label">PROSPECTO:</label>
-                                        <input type="text" name="nombre_pros" id="nombre_pros" class="form-control" value="<?= htmlspecialchars($nombre_pros) ?>" readonly>
-                                    </div>
-                                </div>
+                                
 
                                 <div class="col-md-12">
                                     <div class="form-group input-group-sm">
@@ -259,6 +296,51 @@ $stmtColabs->closeCursor(); // Limpieza opcional si vas a seguir consultando con
 
     </section>
 
+    <!-- INICIA PROSPECTO -->
+    <section>
+        <div class="container-fluid">
+            <!-- Default box -->
+            <div class="modal fade" id="modalProspectos" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                <div class="modal-dialog modal-lg modal-xl" role="document">
+                    <div class="modal-content w-auto">
+                        <div class="modal-header bg-green">
+                            <h5 class="modal-title" id="exampleModalLabel">BUSCAR PROSPECTO</h5>
+                        </div>
+                        <br>
+                        <div class="table-hover table-responsive w-auto" style="padding:15px">
+                            <table name="tablaProspecto" id="tablaProspecto" class="table table-sm table-striped table-bordered table-condensed" style="width:100%">
+                                <thead class="text-center bg-green">
+                                    <tr>
+                                        <th style="min-width: 60px; max-width: 80px; width: 8%;">ID</th>
+                                        <th style="min-width: 200px; max-width: 350px; width: 40%;">NOMBRE</th>
+                                        <th style="min-width: 140px; max-width: 220px; width: 22%;">COL_ASIGANDO</th>
+                                    
+                                        <th style="min-width: 90px; max-width: 120px; width: 12%;">ACCIONES</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <?php
+                                    foreach ($data as $datc) {
+                                    ?>
+                                        <tr>
+                                            <td><?php echo $datc['id_pros'] ?></td>
+                                            <td><?php echo $datc['nombre'] ?></td>
+                                            <td><?php echo $datc['col_asignado'] ?></td>
+                                            
+                                            <td></td>
+                                        </tr>
+                                    <?php
+                                    }
+                                    ?>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- TERMINA PROSPECTO -->
 
 
 

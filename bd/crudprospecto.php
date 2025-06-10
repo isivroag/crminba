@@ -15,14 +15,22 @@ $telefono = $_POST['telefono'] ?? null;
 $correo = $_POST['correo'] ?? null;
 $col_asignado = $_POST['col_asignado'] ?? null;
 $origen = $_POST['origen'] ?? null;
+$id_usuario = $_POST['id_usuario'] ?? null;
+
+
+function mayusculasEspanol($texto) {
+    return mb_strtoupper($texto, 'UTF-8');
+}
+
+$nombre = mayusculasEspanol($nombre);
 try {
     switch ($opcion) {
         case 1: // Crear nuevo prospecto
 
 
 
-            $consulta = "INSERT INTO prospecto (nombre, telefono, correo, col_asignado, origen)
-                         VALUES (:nombre, :telefono, :correo, :col_asignado, :origen)";
+            $consulta = "INSERT INTO prospecto (nombre, telefono, correo, col_asignado, origen,id_usuario_alta)
+                         VALUES (:nombre, :telefono, :correo, :col_asignado, :origen, :id_usuario)";
 
             $stmt = $conexion->prepare($consulta);
             $stmt->bindParam(':nombre', $nombre);
@@ -30,6 +38,7 @@ try {
             $stmt->bindParam(':correo', $correo);
             $stmt->bindParam(':col_asignado', $col_asignado);
             $stmt->bindParam(':origen', $origen);
+            $stmt->bindParam(':id_usuario', $id_usuario, PDO::PARAM_INT);
             $stmt->execute();
 
 

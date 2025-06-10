@@ -29,7 +29,10 @@ try {
                 nmci,
                 totalcapital,
                 totalinteres,
-                totalpagar 
+                totalpagar,
+                enganchepor,
+                descuentopor
+
               ) VALUES (
                 :id_lote, 
                 :id_proy, 
@@ -49,7 +52,10 @@ try {
                 :nmci,
                 :totalcapital,
                 :totalinteres,
-                :totalpagar 
+                :totalpagar,
+                :enganchepor,
+                :descuentopor
+
               )";
 
     $stmt = $conexion->prepare($query);
@@ -74,6 +80,8 @@ try {
     $stmt->bindParam(':totalcapital', $data['totalcapital']);
     $stmt->bindParam(':totalinteres', $data['totalinteres']);
     $stmt->bindParam(':totalpagar', $data['totalpagar']);
+    $stmt->bindParam(':enganchepor', $data['enganchepor']);
+    $stmt->bindParam(':descuentopor', $data['descuentopor']);
 
     if (!$stmt->execute()) {
         $errorInfo = $stmt->errorInfo();

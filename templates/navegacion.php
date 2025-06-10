@@ -74,14 +74,6 @@
                     <p>Colaboradores</p>
                   </a>
                 </li>
-
-                <li class="nav-item">
-                  <a href="cntaproyecto.php" class="nav-link <?php echo ($pagina == 'cntaproyecto') ? "seleccionado" : ""; ?>  ">
-                    <i class=" fa-duotone fa-regular fa-city nav-icon"></i>
-                    <p>Proyectos</p>
-                  </a>
-                </li>
-
                 <li class="nav-item">
                   <a href="cntacliente.php" class="nav-link <?php echo ($pagina == 'cntacliente') ? "seleccionado" : ""; ?>  ">
                     <i class=" fa-duotone fa-regular fa-user-tie nav-icon"></i>
@@ -91,6 +83,15 @@
               <?php } ?>
 
 
+                <li class="nav-item">
+                  <a href="cntaproyecto.php" class="nav-link <?php echo ($pagina == 'cntaproyecto') ? "seleccionado" : ""; ?>  ">
+                    <i class=" fa-duotone fa-regular fa-city nav-icon"></i>
+                    <p>Proyectos</p>
+                  </a>
+                </li>
+
+                
+
             </ul>
 
           </li>
@@ -98,11 +99,11 @@
           <!-- CIERRA MENU CATALOGOS -->
 
           <?php if ($_SESSION['s_rol'] == '2' || $_SESSION['s_rol'] == '3' || $_SESSION['s_rol'] == '4') { ?>
-            <li class="nav-item  has-treeview <?php echo ($pagina == 'cntaseguimiento' || $pagina == 'seguimiento' || $pagina == 'obracto' ||
-                                                $pagina === 'saldoseggral' || $pagina == "cntapagoordenes" || $pagina == "reportepagos") ? "menu-open" : ""; ?>">
-              <a href="#" class="nav-link  <?php echo ($pagina == 'cntaseguimiento' || $pagina == 'seguimiento' || $pagina == 'obracto' ||
-                                              $pagina === 'saldoseggral' || $pagina == "cntapagocxpgral" || $pagina == "reportepagos") ? "active" : ""; ?>">
-                <i class="fa-sharp-duotone fa-regular fa-circle  nav-icon"></i>
+            <li class="nav-item  has-treeview <?php echo ($pagina == 'cntaseguimiento' || $pagina == 'seguimiento' || $pagina == 'cntapresupuesto' ||
+                                                $pagina === 'presupuesto' || $pagina == "cntapagoordenes" || $pagina == "reportepagos") ? "menu-open" : ""; ?>">
+              <a href="#" class="nav-link  <?php echo ($pagina == 'cntaseguimiento' || $pagina == 'seguimiento' || $pagina == 'cntapresupuesto' ||
+                                              $pagina === 'presupuesto' || $pagina == "cntapagocxpgral" || $pagina == "reportepagos") ? "active" : ""; ?>">
+                <i class="fa-sharp-duotone fa-regular fa-briefcase-blank  nav-icon"></i>
                 <p>
                   Operaciones
                   <i class="right fas fa-angle-left"></i>
@@ -118,17 +119,29 @@
 
                 <li class="nav-item">
                   <a href="cntahistorial.php" class="nav-link <?php echo ($pagina == 'cntaseguimiento') ? " seleccionado" : ""; ?>  ">
-                    <i class="fa-sharp-duotone fa-regular fa-circle nav-icon"></i>
+                    <i class="fa-sharp-duotone fa-regular fa-rectangle-history-circle-user nav-icon"></i>
                     <p>Cnta Seguimiento</p>
+                  </a>
+                </li>
+                <li class="nav-item">
+                  <a href="seguimiento.php" class="nav-link <?php echo ($pagina == 'seguimiento') ? " seleccionado" : ""; ?>  ">
+                    <i class="fa-sharp-duotone fa-regular fa-messages nav-icon"></i>
+                    <p>Seguimiento</p>
+                  </a>
+                </li>
+                <li class="nav-item">
+                  <a href="cntapresupuesto.php" class="nav-link <?php echo ($pagina == 'cntapresupuesto') ? " seleccionado" : ""; ?>  ">
+                    <i class="fa-sharp-duotone fa-regular fa-file-spreadsheet nav-icon"></i>
+                    <p>Cnta Presupuesto</p>
                   </a>
                 </li>
 
 
-                <?php if ($_SESSION['s_rol'] == '3') { ?>
+                <?php if ($_SESSION['s_rol'] == '4' || $_SESSION['s_rol'] == '2' || $_SESSION['s_rol'] == '3')  { ?>
                   <li class="nav-item">
-                    <a href="cotizador.php" class="nav-link <?php echo ($pagina == 'cotizador') ? " seleccionado" : ""; ?>  ">
-                      <i class="fa-sharp-duotone fa-regular fa-circle nav-icon"></i>
-                      <p>Cotizador</p>
+                    <a href="cot.php" class="nav-link <?php echo ($pagina == 'presupuesto') ? " seleccionado" : ""; ?>  ">
+                      <i class="fa-sharp-duotone fa-regular fa-memo nav-icon"></i>
+                      <p>Presupuesto</p>
                     </a>
                   </li>
                 <?php } ?>
@@ -141,7 +154,7 @@
 
           <li class="nav-item  has-treeview <?php echo ($pagina == 'rptprospectos') ? "menu-open" : ""; ?>">
             <a href="#" class="nav-link  <?php echo ($pagina == 'rptprospectos') ? "active" : ""; ?>">
-              <i class="fa-sharp-duotone fa-regular fa-circle  nav-icon"></i>
+              <i class="fa-sharp-duotone fa-regular fa-display-chart-up nav-icon"></i>
               <p>
                 Reportes
                 <i class="right fas fa-angle-left"></i>
@@ -155,7 +168,7 @@
 
               <li class="nav-item">
                 <a href="rptprospectos.php" class="nav-link <?php echo ($pagina == 'rptprospectos') ? " seleccionado" : ""; ?>  ">
-                  <i class="fa-sharp-duotone fa-regular fa-circle nav-icon"></i>
+                  <i class="fa-sharp-duotone fa-regular fa-diagram-project nav-icon"></i>
                   <p>Est. Prospectos</p>
                 </a>
               </li>

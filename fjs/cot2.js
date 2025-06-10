@@ -36,11 +36,117 @@ $(document).ready(function () {
     $("#results").hide();
   }
 
+  function deshabilitarInputsYCalculo() {
+    // Deshabilita todos los inputs, selects y textareas dentro del formulario principal
+    $("input, select, textarea").prop("disabled", true);
+    // Oculta el botón de calcular
+    $("#btnCalcular").hide();
+    $("#btnGuardar").hide();
+  }
 
+  // Buscar presupuesto por folio al cambiar el input
+  $("#folio").on("change", function () {
+    const folio = $(this).val().trim();
+    if (!folio) return;
+
+    $.ajax({
+      url: "bd/buscar_pres.php",
+      method: "POST",
+      dataType: "json",
+      data: { folio: folio },
+      success: function (response) {
+        
+        if (response.success == 0) {
+          Swal.fire("No encontrado", response.error, "warning");
+          limpiarFormulario();
+          $("#folio").val(folio);
+          return;
+        }
+        // Llenar los campos del formulario con los datos recibidos
+        $("#folio").val(response.id_pres);
+        $("#id_prospecto").val(response.id_pros);
+        $("#nombre_prospecto").val(response.nombre_pros);
+        $("#fechacot").val(response.fecha_pres);
+        $("#tasaInteresAnual").val(response.tasa);
+        $("#fechaInicio").val(response.inicial);
+        $("#id_lote").val(response.id_lote);
+        $("#lote").val(response.nlote);
+        $("#id_proyecto").val(response.id_proy);
+        $("#proyecto").val(response.nproyecto);
+        $("#id_manzana").val(response.id_man);
+        $("#manzana").val(response.nmanzana);  
+        $("#frente").val(response.frente);
+        $("#fondo").val(response.fondo);
+        $("#preciom").val(formatCurrency(response.preciom));
+        $("#superficie").val(response.superficie);
+        $("#tipolote").val(response.tipo);
+        $("#valortotal").val(formatCurrency(response.importe));
+        $("#montoTotal").val(formatCurrency(response.importe));
+        $("#descuento").val(formatCurrency(response.descuento));
+        $("#descuentopor").val(response.pordescuento);
+        $("#valorop").val(formatCurrency(response.valorop));
+        $("#montoEnganche").val(formatCurrency(response.enganche));
+        $("#enganchepor").val(response.enganchepor);
+        $("#plazosEnganche").val(response.nenganche);
+        $("#plazosSinInteres").val(response.nmsi);
+        $("#plazosConInteres").val(response.nmci);
+        $("#totalCapital").val(formatCurrency(response.totalcapital));
+        $("#totalIntereses").val(formatCurrency(response.totalinteres));
+        $("#totalPagar").val(formatCurrency(response.totalpagar));
+
+
+        // Mostrar resultados
+        $("#results").show();
+        deshabilitarInputsYCalculo();
+
+        // Buscar detalle de pagos
+        buscarDetallePresupuesto(folio);
+      },
+      error: function () {
+        console.error("Error al buscar presupuesto:", response);
+        Swal.fire("Error", "No se pudo buscar el presupuesto", "error");
+      },
+    });
+  });
+   // Disparar el evento change si hay un valor en el input al cargar la página
+    const initialFolio = $("#folio").val().trim();
+    if (initialFolio) {
+        $("#folio").trigger("change");
+        
+      
+        // buscarPresupuesto(initialFolio);
+    }
+
+  // Función para buscar y mostrar detalle de pagos
+  function buscarDetallePresupuesto(folio) {
+    $.ajax({
+      url: "bd/buscar_detallepres.php",
+      method: "POST",
+      dataType: "json",
+      data: { folio: folio },
+      success: function (response) {
+        if (Array.isArray(response) && response.length > 0) {
+          // Calcular totales
+          
+          const totales = calcularTotales(response);
+          TablaPagos(response, totales);
+          $("#results").show();
+         
+        } else {
+          $("#paymentTable").html("");
+          Swal.fire("Sin pagos", "No se encontraron pagos para este folio", "info");
+        }
+      },
+      error: function () {
+        console.error("Error al buscar detalle de pagos:", response);
+        Swal.fire("Error", "No se pudo buscar el detalle de pagos", "error");
+      },
+    });
+  }
 
   $("#btnImprimir").click(function () {
     $folio = $("#folio").val();
-    window.open('cotizacion.php?id=' + $folio, '_blank');  
+    window.open('formatos/generarcot.php?id=' + $folio, '_blank');  
   });
   // Botón Guardar
   $("#btnGuardar").click(function () {
@@ -88,6 +194,8 @@ $(document).ready(function () {
       totalcapital: parseCurrency( $("#totalCapital").val().replace(/,/g, "")),
       totalinteres: parseCurrency($("#totalIntereses").val().replace(/,/g, "")),
       totalpagar: parseCurrency($("#totalPagar").val().replace(/,/g, "")),
+      descuentopor: parseFloat($("#descuentopor").val()),
+      enganchepor: parseFloat($("#enganchepor").val()),
 
       
     };
@@ -108,7 +216,7 @@ $(document).ready(function () {
         dataType: 'json',
          data: JSON.stringify(encabezado),
         success: function(response) {
-          console.log('Response:', response);
+          
             if (response.success && response.id_pres) {
                 // 2. Si se guardó el encabezado, guardar los detalles
                 const detalles = {
@@ -117,7 +225,7 @@ $(document).ready(function () {
                 };
                 $('#folio').val(response.id_pres);
                 
-                console.log('Detalles:', detalles);
+                
                 $.ajax({
                     url: 'bd/guardar_detalle_pres.php',
                     method: 'POST',
@@ -198,12 +306,7 @@ $(document).ready(function () {
       cancelButtonText: "Cancelar",
     }).then((result) => {
       if (result.value) {
-        limpiarFormulario();
-        Swal.fire(
-          "Listo!",
-          "Formulario listo para nueva cotización.",
-          "success"
-        );
+        window.location.href = "cot.php"; // Redirigir a la misma página para reiniciar
       }
     });
   });
@@ -226,12 +329,16 @@ $(document).ready(function () {
   $("#btnBuscarProspecto").click(function () {
     // Mostrar el modal primero
     $("#modalProspecto").modal("show");
-
+    id_col = $("#idcol").val(); // Obtener el id_col del campo oculto
+    console.log("ID de Colaborador:", id_col);
     // Hacer la petición AJAX
     $.ajax({
       url: "bd/get_prospectos.php",
       method: "POST",
       dataType: "json",
+      data: {
+        id_col: id_col // Puedes enviar parámetros adicionales si es necesario
+      },
       success: function (response) {
         if (response && response.length > 0) {
           tablePros.clear().rows.add(response).draw();
@@ -265,7 +372,7 @@ $(document).ready(function () {
         data: "superficie",
         className: "text-right",
         render: function (data) {
-          return parseFloat(data).toFixed(2) + " m²";
+          return parseFloat(data).toFixed(2) ;
         },
       },
       {
@@ -308,6 +415,24 @@ $(document).ready(function () {
         },
       },
       {
+        data: "frente",
+        className: "text-right",
+        render: function (data) {
+          return parseFloat(data).toFixed(2);
+        },
+      },
+      {
+        data: "fondo",
+        className: "text-right",
+        render: function (data) {
+          return parseFloat(data).toFixed(2);
+        },
+      },
+      {
+        data: "tipo",
+      },
+      
+      {
         data: null,
         render: function (data, type, row) {
           return `<button class="btn btn-sm btn-primary seleccionar-lote" 
@@ -315,20 +440,41 @@ $(document).ready(function () {
                             data-clave="${row.clave_lote}"
                             data-superficie="${row.superficie}"
                             data-preciom="${row.preciom}"
-                            data-valortotal="${row.valortotal}">
-                            <i class="fas fa-check mr-1"></i> Seleccionar
+                            data-valortotal="${row.valortotal}"
+                            data-status="${row.status}"
+                            data-frente="${row.frente}"
+                            data-fondo="${row.fondo}"
+                            data-tipo="${row.tipo}"><i class="fas fa-check mr-1"></i>
                         </button>`;
         },
         orderable: false,
       },
     ],
+    searching:false,
     dom: '<"top"f>rt<"bottom"lip><"clear">',
     responsive: true,
+    info: false,
+    paging:false,
+    language: {
+      lengthMenu: "Mostrar _MENU_ registros",
+      zeroRecords: "No se encontraron resultados",
+      info: "Mostrando registros del _START_ al _END_ de un total de _TOTAL_ registros",
+      infoEmpty: "Mostrando registros del 0 al 0 de un total de 0 registros",
+      infoFiltered: "(filtrado de un total de _MAX_ registros)",
+      sSearch: "Buscar:",
+      oPaginate: {
+        sFirst: "Primero",
+        sLast: "Último",
+        sNext: "Siguiente",
+        sPrevious: "Anterior",
+      },
+      sProcessing: "Procesando...",
+    },
   });
 
   var tablePros = $("#tablaProspecto").DataTable({
     columns: [
-      { data: "id_pros", visible: false },
+      { data: "id_pros", visible: true },
       { data: "nombre" },
       {
         data: null,
@@ -336,7 +482,7 @@ $(document).ready(function () {
           return `<button class="btn btn-sm btn-primary seleccionar-prospecto" 
                             data-id="${row.id_pros}" 
                             data-nombre="${row.nombre}">
-                            <i class="fas fa-check mr-1"></i> Seleccionar
+                            <i class="fas fa-check mr-1"></i>
                         </button>`;
         },
         orderable: false,
@@ -425,24 +571,25 @@ $(document).ready(function () {
         // Mostrar loading en la tabla
         table.clear().draw();
         $("#tablaLote tbody").html(
-          '<tr><td colspan="7" class="text-center">' +
+          '<tr><td colspan="10" class="text-center">' +
             '<i class="fas fa-spinner fa-spin mr-2"></i>Cargando lotes...</td></tr>'
         );
       },
       success: function (response) {
+        console.log("Lotes cargados:", response);
         if (response.length > 0) {
           table.clear().rows.add(response).draw();
         } else {
           table.clear().draw();
           $("#tablaLote tbody").html(
-            '<tr><td colspan="7" class="text-center">No se encontraron lotes</td></tr>'
+            '<tr><td colspan="10" class="text-center">No se encontraron lotes</td></tr>'
           );
         }
       },
       error: function (xhr, status, error) {
         console.error("Error al cargar lotes:", error);
         $("#tablaLote tbody").html(
-          '<tr><td colspan="7" class="text-center text-danger">' +
+          '<tr><td colspan="10" class="text-center text-danger">' +
             '<i class="fas fa-exclamation-triangle mr-2"></i>Error al cargar los datos</td></tr>'
         );
       },
@@ -468,6 +615,11 @@ $(document).ready(function () {
       superficie: $(this).data("superficie"),
       preciom: $(this).data("preciom"),
       valortotal: $(this).data("valortotal"),
+      status: $(this).data("status"),
+      frente: $(this).data("frente"),
+      fondo: $(this).data("fondo"),
+      tipo: $(this).data("tipo"),
+
     };
 
     var proyectoTexto = $("#bproyecto option:selected").text();
@@ -477,8 +629,9 @@ $(document).ready(function () {
     $("#id_lote").val(loteData.id);
     $("#clave_lote").val(loteData.clave);
     $("#superficie").val(loteData.superficie);
-    $("#precio_m2").val(formatCurrency(loteData.preciom));
+    $("#preciom").val(formatCurrency(loteData.preciom));
     $("#montoTotal").val(formatCurrency(loteData.valortotal));
+    $("#valortotal").val(formatCurrency(loteData.valortotal));
 
     $("#valorop").val(formatCurrency(loteData.valortotal));
 
@@ -487,6 +640,11 @@ $(document).ready(function () {
     $("#lote").val(loteData.clave);
     $("#id_proyecto").val($("#bproyecto").val());
     $("#id_manzana").val($("#bmanzana").val());
+    
+    $("#frente").val(loteData.frente);
+    $("#fondo").val(loteData.fondo);
+    $("#tipolote").val(loteData.tipo);
+
 
     $("#modalLote").modal("hide");
   });
@@ -577,39 +735,6 @@ $(document).ready(function () {
   }
 
   // Función para calcular descuentos
-  function calcularDescuentos() {
-    // Convertimos los valores formateados a números
-    const montoTotal = parseCurrency(
-      document.getElementById("montoTotal").value
-    );
-    const descuentoInput = document.getElementById("descuento");
-    const descuentoPorInput = document.getElementById("descuentopor");
-    const valorOpInput = document.getElementById("valorop");
-
-    // Determinar qué campo se está editando
-    const activeElement = document.activeElement.id;
-
-    if (activeElement === "descuentopor") {
-      // Si se edita el porcentaje
-      const porcentaje = parseFloat(descuentoPorInput.value) || 0;
-      const descuento = montoTotal * (porcentaje / 100);
-
-      descuentoInput.value = formatCurrency(descuento);
-      valorOpInput.value = formatCurrency(montoTotal - descuento);
-    } else if (activeElement === "descuento") {
-      // Si se edita el monto de descuento
-      const descuento = parseCurrency(descuentoInput.value);
-      const porcentaje = (descuento / montoTotal) * 100;
-
-      descuentoPorInput.value = porcentaje.toFixed(2);
-      valorOpInput.value = formatCurrency(montoTotal - descuento);
-    }
-
-    // Actualizar el cálculo de la corrida si ya existe
-    if (typeof calcularCorrida === "function") {
-      calcularCorrida();
-    }
-  }
 
   // Event listeners para los campos de descuento
   document
@@ -623,8 +748,78 @@ $(document).ready(function () {
     .getElementById("descuento")
     .addEventListener("blur", handleCurrencyInput);
   document.getElementById("descuento").addEventListener("focus", function () {
+    this.value = parseCurrency(this.value).toString().replace(".", ".");
+  });
+
+  // Mismos eventos para montoEnganche y enganchepor
+  document
+    .getElementById("montoEnganche")
+    .addEventListener("input", calcularEnganche);
+  document
+    .getElementById("enganchepor")
+    .addEventListener("input", calcularEnganche);
+ 
+
+  document
+    .getElementById("montoEnganche")
+    .addEventListener("blur", handleCurrencyInput);
+  document.getElementById("montoEnganche").addEventListener("focus", function () {
     this.value = parseCurrency(this.value).toString().replace(".", ",");
   });
+
+  // Función para calcular enganche y porcentaje
+ function calcularEnganche() {
+    const valorOp = parseCurrency(document.getElementById("valorop").value);
+    const montoEngancheInput = document.getElementById("montoEnganche");
+    const enganchePorInput = document.getElementById("enganchepor");
+    const activeElement = document.activeElement ? document.activeElement.id : null;
+
+    // Si hay un porcentaje definido, mantener la proporción con el nuevo valorOp
+    if (enganchePorInput.value && activeElement !== "montoEnganche") {
+        const porcentaje = parseFloat(enganchePorInput.value) || 0;
+        montoEngancheInput.value = formatCurrency(valorOp * (porcentaje / 100));
+    }
+    // Si hay un monto definido, actualizar el porcentaje
+    else if (montoEngancheInput.value && activeElement !== "enganchepor") {
+        const monto = parseCurrency(montoEngancheInput.value);
+        const porcentaje = valorOp ? (monto / valorOp) * 100 : 0;
+        enganchePorInput.value = porcentaje.toFixed(2);
+    }
+
+    // Actualizar el cálculo de la corrida si ya existe
+    if (typeof calcularCorrida === "function") {
+        calcularCorrida();
+    }
+}
+
+ function calcularDescuentos() {
+    const montoTotal = parseCurrency(document.getElementById("montoTotal").value);
+    const descuentoInput = document.getElementById("descuento");
+    const descuentoPorInput = document.getElementById("descuentopor");
+    const valorOpInput = document.getElementById("valorop");
+
+    const activeElement = document.activeElement.id;
+
+    if (activeElement === "descuentopor") {
+        const porcentaje = parseFloat(descuentoPorInput.value) || 0;
+        const descuento = montoTotal * (porcentaje / 100);
+        descuentoInput.value = formatCurrency(descuento);
+        valorOpInput.value = formatCurrency(montoTotal - descuento);
+    } else if (activeElement === "descuento") {
+        const descuento = parseCurrency(descuentoInput.value);
+        const porcentaje = (descuento / montoTotal) * 100;
+        descuentoPorInput.value = porcentaje.toFixed(2);
+        valorOpInput.value = formatCurrency(montoTotal - descuento);
+    }
+
+    // Siempre recalcular enganche después de cambiar valorOp
+    calcularEnganche();
+
+    if (typeof calcularCorrida === "function") {
+        calcularCorrida();
+    }
+}
+
 
   document
     .getElementById("montoEnganche")
@@ -632,7 +827,7 @@ $(document).ready(function () {
   document
     .getElementById("montoEnganche")
     .addEventListener("focus", function () {
-      this.value = parseCurrency(this.value).toString().replace(".", ",");
+      this.value = parseCurrency(this.value).toString().replace(".", ".");
     });
 
   document
@@ -644,6 +839,13 @@ $(document).ready(function () {
 
   // Para el input de porcentaje (manejo especial)
   document.getElementById("descuentopor").addEventListener("blur", function () {
+    let value = parseFloat(this.value.replace(",", "."));
+    if (!isNaN(value)) {
+      this.value = value.toFixed(2);
+    }
+  });
+
+  document.getElementById("enganchepor").addEventListener("blur", function () {
     let value = parseFloat(this.value.replace(",", "."));
     if (!isNaN(value)) {
       this.value = value.toFixed(2);
@@ -698,7 +900,8 @@ $(document).ready(function () {
 
   // Manejador para el botón editar
 
-  $(document).on("click", ".btnEditar", function () {
+  $(document).on("click", ".btnEditar", function (e) {
+    e.preventDefault();
     const row = $(this).closest("tr");
     const numeroPago = parseInt(row.find("td:eq(0)").text());
 
@@ -1344,6 +1547,133 @@ $(document).ready(function () {
                         <i class='fas fa-edit'></i>
                     </button>
                 </td>
+            </tr>
+        `;
+    });
+
+    tablaHTML += "</tbody></table>";
+
+    // Reemplazar la tabla existente
+    document.getElementById("paymentTable").innerHTML = tablaHTML;
+
+    // Actualizar totales
+    $("#totalCapital").val(
+      totales.capital.toLocaleString("es-MX", {
+        style: "currency",
+        currency: "MXN",
+      })
+    );
+
+    $("#totalIntereses").val(
+      totales.intereses.toLocaleString("es-MX", {
+        style: "currency",
+        currency: "MXN",
+      })
+    );
+
+    $("#totalPagar").val(
+      totales.total.toLocaleString("es-MX", {
+        style: "currency",
+        currency: "MXN",
+      })
+    );
+
+    // Reinicializar DataTables si es necesario
+    if ($.fn.DataTable.isDataTable("#tablaPagos")) {
+      $("#tablaPagos").DataTable().destroy();
+    }
+
+    $("#tablaPagos").DataTable({
+      scrollY: "400px",
+      scrollCollapse: true,
+      paging: false,
+      autoWidth: false,
+      ordering: false,
+      info: false,
+      searching: false,
+      columnDefs: [
+        {
+          targets: [2, 3, 4, 6],
+          className: "dt-body-right",
+          render: $.fn.dataTable.render.number(",", ".", 2, "$"),
+        },
+        {
+          targets: -1,
+          orderable: false,
+          searchable: false,
+        },
+      ],
+      language: {
+        lengthMenu: "Mostrar _MENU_ registros",
+        zeroRecords: "No se encontraron resultados",
+        info: "Mostrando _TOTAL_ registros",
+        infoEmpty: "Mostrando 0 registros",
+        infoFiltered: "(filtrado de un total de _MAX_ registros)",
+        sSearch: "Buscar:",
+        oPaginate: {
+          sFirst: "Primero",
+          sLast: "Último",
+          sNext: "Siguiente",
+          sPrevious: "Anterior",
+        },
+        sProcessing: "Procesando...",
+      },
+    });
+  }
+
+   function TablaPagos(tablaPagos, totales) {
+    let tablaHTML = `
+        <table id="tablaPagos" class="table table-striped table-bordered table-hover table-sm table-condensed">
+            <thead class="bg-green">
+                <tr>
+                    <th>No. Pago</th>
+                    <th>Fecha</th>
+                    <th>Capital</th>
+                    <th>Interés</th>
+                    <th>Total Pago</th>
+                    <th>Tipo</th>
+                    <th>Saldo Insoluto</th>
+
+                </tr>
+            </thead>
+            <tbody>
+    `;
+
+    // Función para formatear como moneda
+    const formatoMoneda = (valor) => {
+      return (
+        "$" +
+        parseFloat(valor)
+          .toFixed(2)
+          .replace(/\d(?=(\d{3})+\.)/g, "$&,")
+      );
+    };
+
+    tablaPagos.forEach((pago) => {
+      let rowClass = "";
+      let detalle = "";
+
+      if (pago.esAjuste) {
+        detalle = `<span class="adjustment-detail">(+${formatoMoneda(
+          pago.ajuste
+        )} al capital)</span>`;
+        rowClass = "adjusted-row";
+      }
+
+      if (pago.infoFecha) {
+        detalle += detalle ? "<br>" : "";
+        detalle += `<span class="date-adjustment">Ajuste de fecha: día ${pago.infoFecha.diaOriginal} no disponible</span>`;
+      }
+
+      tablaHTML += `
+            <tr class="${rowClass}">
+                <td>${pago.numero}</td>
+                <td>${pago.fecha}</td>
+                <td class='text-right'>${formatoMoneda(pago.capital)}</td>
+                <td class='text-right'>${formatoMoneda(pago.interes)}</td>
+                <td class='text-right'>${formatoMoneda(pago.total)}</td>
+                <td>${pago.tipo}</td>
+                <td class='text-right'>${formatoMoneda(pago.saldo)}</td>
             </tr>
         `;
     });

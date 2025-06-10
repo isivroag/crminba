@@ -16,6 +16,59 @@ $(document).ready(function () {
     }
   });
 
+  $("#bprospecto").on("click", function () {
+    // Abrir modal para seleccionar prospecto
+    $("#modalProspectos").modal("show");
+  });
+
+    var tablaProspecto = $("#tablaProspecto").DataTable({
+    language: {
+      lengthMenu: "Mostrar _MENU_ registros por página",
+      zeroRecords: "No se encontraron resultados",
+      info: "Mostrando página _PAGE_ de _PAGES_",
+      infoEmpty: "No hay registros disponibles",
+      infoFiltered: "(filtrado de _MAX_ registros totales)",
+      search: "Buscar:",
+      paginate: {
+        first: "Primero",
+        last: "Último",
+        next: "Siguiente",
+        previous: "Anterior",
+      },
+    },
+    columnDefs: [
+      {
+        targets: -1,
+        data: null,
+        defaultContent:
+          "<div class='text-center'><div class='btn-group'><button class='btn btn-sm btn-primary btnSelPros'><i class='fas fa-hand-pointer'></i></button></div></div>",
+        orderable: false,
+      },
+      {targets:2,className: "hide_column"}, 
+
+    ],
+  });
+
+
+    $(document).on("click", ".btnSelPros", function () {
+    var data = tablaProspecto.row($(this).parents("tr")).data();
+    $("#id_pros").val(data[0]);
+   
+    
+    $("#nombre_prospecto").val(data[1]);
+    $("#id_colaborador").val(data[2]);
+    // Actualiza el valor del select y refresca si usas selectpicker
+    $("#id_col").val(data[2]).trigger("change");
+    if ($("#id_col").hasClass("selectpicker")) {
+      $("#id_col").selectpicker("refresh");
+    }
+
+
+
+    $("#modalProspectos").modal("hide");
+
+  });
+
   // Inicializar el estado del campo al cargar la página
   realizadoSelect.dispatchEvent(new Event("change"));
 
@@ -111,9 +164,11 @@ $(document).ready(function () {
       success: function (response) {
         try {
           const res = JSON.parse(response);
-          console.log("Respuesta del servidor:", res);
+        
           if (res.success) {
-            console.log("Respuesta del servidor:", res);
+          
+            id_seg = res.id_seg || id_seg; // Actualiza id_seg si el servidor lo devuelve
+            console.log("Seguimiento guardado con ID:", id_seg);
             Swal.fire({
               title: "Seguimiento Guardado",
               text: res.message || "La acción ha sido registrada exitosamente.",
@@ -123,13 +178,12 @@ $(document).ready(function () {
               cancelButtonText: "No, gracias",
             }).then((result) => {
               if (result.value) {
-                // Enviar correo por AJAXç
-                console.log("Enviando correo...");
+                // Enviar correo por AJAX
                 $.ajax({
                   url: "bd/usarapicorreoseg.php",
                   type: "POST",
                   contentType: "application/json",
-                  data: JSON.stringify({ id_seg: res.id_seg || id_seg }), // usa el id_seg que devuelva PHP si lo actualizaste ahí
+                  data: JSON.stringify({ id_seg: id_seg }), // usa el id_seg que devuelva PHP si lo actualizaste ahí
                   success: function (correoRes) {
                     try {
                       const correoJson = JSON.parse(correoRes);

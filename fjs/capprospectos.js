@@ -12,6 +12,7 @@ $(document).ready(function () {
     var origen = $('#origen').val();
     var col_asignado = $('#col_asignado').val();
     var nombre_colaborador = $('#col_asignado option:selected').text();
+    var id_usuario =$("#iduser").val();
     
        // Validación básica
     if (!nombre || !col_asignado || !origen) {
@@ -63,6 +64,7 @@ $(document).ready(function () {
       correo: correo,
       origen: origen,
       col_asignado: col_asignado,
+      id_usuario: id_usuario,
       opcion: 1 // Opción 1: Nuevo prospecto
     };
     

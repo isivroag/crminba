@@ -25,8 +25,8 @@ $response = ["success" => false, "message" => ""];
 switch ($opcion) {
     case 1:
         try {
-            $consulta = "INSERT INTO seg_pros (id_pros, tipo_seg, fecha_seg, realizado, observaciones, id_col)
-                         VALUES (:id_pros, :tipo_seg, :fecha_seg, :realizado, :comentarios, :id_col)";
+            $consulta = "INSERT INTO seg_pros (id_pros, tipo_seg, fecha_seg, realizado, observaciones, id_col,obs_cierre,resultado, fecha_cierre)
+                         VALUES (:id_pros, :tipo_seg, :fecha_seg, :realizado, :comentarios, :id_col, :obs_cierre, :resultado, NOW())";
             $resultado = $conexion->prepare($consulta);
             $resultado->bindParam(':id_pros', $id_pros, PDO::PARAM_INT);
             $resultado->bindParam(':tipo_seg', $tipo_seg, PDO::PARAM_STR);
@@ -34,8 +34,10 @@ switch ($opcion) {
             $resultado->bindParam(':realizado', $realizado, PDO::PARAM_INT);
             $resultado->bindParam(':comentarios', $comentarios, PDO::PARAM_STR);
             $resultado->bindParam(':id_col', $id_col, PDO::PARAM_INT);
+            $resultado->bindParam(':obs_cierre', $obs_cierre, PDO::PARAM_STR);
+            $resultado->bindParam(':resultado', $res_seg, PDO::PARAM_STR);
             $resultado->execute();
-            $idGenerado = $conexion->lastInsertId();
+            $id_Seg = $conexion->lastInsertId();
 
             // Actualizar seguimiento en tabla prospecto
             $updateColab = "UPDATE prospecto SET edo_seguimiento = 2 WHERE id_pros = :id_pros";
@@ -49,8 +51,8 @@ switch ($opcion) {
              if (!$bitacora->registrar(
                 'SEGUIMIENTO',
                 'CREACIÓN',
-                $idGenerado,
-                "Nuevo Seguimiento Folio: $idGenerado, Al prospecto ID: $id_pros, Tipo: $tipo_seg"
+                $id_Seg,
+                "Nuevo Seguimiento Folio: $id_Seg, Al prospecto ID: $id_pros, Tipo: $tipo_seg"
             )) {
                 throw new Exception("Error al registrar en bitácora");
             }
@@ -59,7 +61,7 @@ switch ($opcion) {
             $response = [
                 "success" => true,
                 "message" => "Seguimiento guardado correctamente.",
-                "id_seg" => $idGenerado
+                "id_seg" => $id_Seg
             ];
         } catch (PDOException $e) {
             $response = [

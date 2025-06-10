@@ -10,6 +10,12 @@ $correo = (isset($_POST['correo'])) ? $_POST['correo'] : '';
 $id = (isset($_POST['id'])) ? $_POST['id'] : '';
 $opcion = (isset($_POST['opcion'])) ? $_POST['opcion'] : '';
 
+function mayusculasEspanol($texto) {
+    return mb_strtoupper($texto, 'UTF-8');
+}
+
+$nombre = mayusculasEspanol($nombre);
+
 switch($opcion){
     case 1: //alta
         $consulta = "INSERT INTO colaborador (nombre, telefono, correo) VALUES (:nombre, :telefono, :correo)";			

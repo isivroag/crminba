@@ -57,7 +57,9 @@ $message = "";
 
                 <div class="row">
                     <div class="col-lg-12">
+                        <?php if($_SESSION['s_rol'] == 2 || $_SESSION['s_rol'] == 3): ?>
                         <button id="btnNuevo" type="button" class="btn bg-green btn-ms" data-toggle="modal"><i class="fas fa-plus-square text-light"></i><span class="text-light"> Nuevo</span></button>
+                        <?php endif; ?>
                     </div>
                 </div>
                 <br>

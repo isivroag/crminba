@@ -24,9 +24,11 @@ $conexion = $objeto->connect();
 error_log("Conectado a la base de datos"); // Debug 5
 
 $consulta = "SELECT * from vseg_pros 
-             WHERE id_seg = ?"; 
+             WHERE id_seg = :id_seg"; 
 $stmt = $conexion->prepare($consulta);
-$stmt->execute([$data['id_seg']]);
+$stmt->bindParam(':id_seg', $data['id_seg'], PDO::PARAM_INT);
+$stmt->execute();
+
 $colaborador = $stmt->fetch(PDO::FETCH_ASSOC);
 
 // Debugging: imprimir los datos recibidos

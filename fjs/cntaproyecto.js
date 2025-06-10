@@ -1,7 +1,41 @@
 $(document).ready(function () {
   var id, opcion;
   opcion = 4; // Valor por defecto para operaciones
+var textcolumnas = permisos();
 
+  function permisos() {
+    var tipousuario = parseInt($("#tipousuario").val());
+    var columnas = "";
+    console.log("Tipo de usuario:", tipousuario);
+
+    switch (tipousuario) {
+      case 1: // usuario normal
+        columnas =
+         "";
+        break;
+      case 2: // usuario administrador
+      case 3: // usuario supervisor
+        columnas =
+          "<div class='text-center btn-group'>\
+          <button class='btn btn-sm btn-success btnEstructura' data-toggle='tooltip' data-placement='top' title='Estructura'><i class='fa-solid fa-map'></i></button>\
+          </div>";
+          /*<button class='btn btn-sm btn-primary btnEditar' data-toggle='tooltip' data-placement='top' title='Editar'><i class='fas fa-edit'></i></button>\*/
+        break;
+      case 4: // usuario colaborador
+        columnas =
+         "";
+
+        break;
+      case 5: // usuario capturista
+        columnas = "";
+        break;
+      default:
+        columnas = "";
+
+        break;
+    }
+    return columnas;
+  }
   // Inicialización de DataTable
   var tablaVis = $("#tablaV").DataTable({
     dom:
@@ -28,11 +62,8 @@ $(document).ready(function () {
       {
         targets: -1,
         data: null,
-        defaultContent:
-          "<div class='text-center btn-group'>\
-          <button class='btn btn-sm btn-success btnEstructura' data-toggle='tooltip' data-placement='top' title='Estructura'><i class='fa-solid fa-map'></i></button>\
-          </div>",
-          /*<button class='btn btn-sm btn-primary btnEditar' data-toggle='tooltip' data-placement='top' title='Editar'><i class='fas fa-edit'></i></button>\*/
+        defaultContent:textcolumnas
+         
       },
       { className: "hide_column", targets: [3] },
       { className: "hide_column", targets: [4] },

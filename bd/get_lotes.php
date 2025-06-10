@@ -14,8 +14,8 @@ if (!$idProyecto) {
 }
 
 try {
-    $query = "SELECT id_lote, clave_lote, superficie, preciom, valortotal, status 
-              FROM lote 
+    $query = "SELECT id_lote, clave_lote, superficie, preciom, valortotal,frente,fondo,tipo,status 
+              FROM vistalote 
               WHERE id_proy = :id_proy";
     
     $params = [':id_proy' => $idProyecto];
@@ -31,7 +31,7 @@ try {
     $stmt->execute($params);
     
     $lotes = $stmt->fetchAll(PDO::FETCH_ASSOC);
-    echo json_encode($lotes);
+    echo json_encode($lotes, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT);
 } catch (PDOException $e) {
     echo json_encode(['error' => $e->getMessage()]);
 }

@@ -8,6 +8,7 @@ include_once "templates/navegacion.php";
 include_once 'bd/conexion.php';
 $objeto = new conn();
 $conexion = $objeto->connect();
+$id_col = $_SESSION['id_col'];
 
 if (isset($_GET['id_pros'])) {
     $id_pros = $_GET['id_pros'];
@@ -31,10 +32,21 @@ if (isset($_GET['id_pros'])) {
     $prospecto = "";
     $correo = "";
     $telefono = "";
-    $consulta = "SELECT id_pros, nombre, correo, telefono FROM prospecto ORDER BY id_pros";
-    $resultado = $conexion->prepare($consulta);
-    $resultado->execute();
-    $data = $resultado->fetchAll(PDO::FETCH_ASSOC);
+    $id_col = $_SESSION['id_col'];
+    if ($id_col != null && $id_col != 0) {
+
+        $consulta = "SELECT id_pros, nombre, correo, telefono FROM prospecto WHERE col_asignado = :id_col ORDER BY id_pros";
+        $resultado = $conexion->prepare($consulta);
+        $resultado->bindParam(':id_col', $id_col, PDO::PARAM_INT);
+        $resultado->execute();
+        $data = $resultado->fetchAll(PDO::FETCH_ASSOC);
+    } else {
+        $id_col = $_SESSION['id_col']; // Asignar el id del colaborador actual si no se proporciona otro
+        $consulta = "SELECT id_pros, nombre, correo, telefono FROM prospecto ORDER BY id_pros";
+        $resultado = $conexion->prepare($consulta);
+        $resultado->execute();
+        $data = $resultado->fetchAll(PDO::FETCH_ASSOC);
+    }
 }
 
 $message = "";
@@ -65,12 +77,12 @@ $message = "";
         <!-- Default box -->
         <div class="card">
             <div class="card-header bg-green text-light">
-                <h1 class="card-title mx-auto">HISTORIAL DE SEGUIMIENTO</h1>
+                <h1 class="card-title mx-auto">HISTORIAL DE SEGUIMIENTO <?= $id_col ?></h1>
             </div>
 
             <div class="card-body">
-                
-                
+
+
 
                 <div class="container-fluid">
                     <div class="row justify-content-center">
@@ -97,26 +109,26 @@ $message = "";
                                         </div>
                                     </div>
                                     <?php if ($id_pros != null) { ?>
-                                    <div class="row justify-content-center mb-3">
-                                        <div class="col-sm-4">
-                                            <div class="form-group input-group-sm">
-                                                <label for="correo" class="col-form-label">Correo:</label>
-                                                <input type="text" class="form-control" name="correo" id="correo" disabled value="<?php echo $correo; ?>">
+                                        <div class="row justify-content-center mb-3">
+                                            <div class="col-sm-4">
+                                                <div class="form-group input-group-sm">
+                                                    <label for="correo" class="col-form-label">Correo:</label>
+                                                    <input type="text" class="form-control" name="correo" id="correo" disabled value="<?php echo $correo; ?>">
+                                                </div>
+                                            </div>
+                                            <div class="col-sm-4">
+                                                <div class="form-group input-group-sm">
+                                                    <label for="telefono" class="col-form-label">Teléfono:</label>
+                                                    <input type="text" class="form-control" name="telefono" id="telefono" disabled value="<?php echo $telefono; ?>">
+                                                </div>
                                             </div>
                                         </div>
-                                        <div class="col-sm-4">
-                                            <div class="form-group input-group-sm">
-                                                <label for="telefono" class="col-form-label">Teléfono:</label>
-                                                <input type="text" class="form-control" name="telefono" id="telefono" disabled value="<?php echo $telefono; ?>">
-                                            </div>
-                                        </div>
-                                    </div>
                                     <?php } ?>
                                 </div>
                             </div>
                         </div>
                     </div>
-                    
+
                     <?php if ($id_pros != null) { ?>
                         <div class="row justify-content-center">
                             <div class="col-sm-10">
@@ -130,9 +142,9 @@ $message = "";
                                                 <th>OBSERVACIONES</th>
                                                 <th>REALIZADO POR</th>
 
-                                                 <th>ESTADO</th>
-                                                 <th>RESULTADO</th>
-                                                 <th>OBS RESPUESTA</th>
+                                                <th>ESTADO</th>
+                                                <th>RESULTADO</th>
+                                                <th>OBS RESPUESTA</th>
                                                 <th>ACCIONES</th>
                                             </tr>
                                         </thead>
@@ -172,7 +184,7 @@ $message = "";
         <div class="container-fluid">
             <!-- Default box -->
             <div class="modal fade" id="modalProspecto" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                <div class="modal-dialog modal-lg modal-md" role="document">
+                <div class="modal-dialog modal-lg modal-xl" role="document">
                     <div class="modal-content w-auto">
                         <div class="modal-header bg-green">
                             <h5 class="modal-title" id="exampleModalLabel">BUSCAR PROSPECTO</h5>
@@ -182,11 +194,11 @@ $message = "";
                             <table name="tablaProspecto" id="tablaProspecto" class="table table-sm table-striped table-bordered table-condensed" style="width:100%">
                                 <thead class="text-center bg-green">
                                     <tr>
-                                        <th>ID</th>
-                                        <th>NOMBRE</th>
-                                        <th>CORREO</th>
-                                        <th>TELÉFONO</th>
-                                        <th>ACCIONES</th>
+                                        <th style="min-width: 60px; max-width: 80px; width: 8%;">ID</th>
+                                        <th style="min-width: 200px; max-width: 350px; width: 40%;">NOMBRE</th>
+                                        <th style="min-width: 140px; max-width: 220px; width: 22%;">CORREO</th>
+                                        <th style="min-width: 110px; max-width: 180px; width: 18%;">TELÉFONO</th>
+                                        <th style="min-width: 90px; max-width: 120px; width: 12%;">ACCIONES</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -225,14 +237,14 @@ $message = "";
                         <form id="formDatos" action="" method="POST">
                             <div class="modal-body row">
                                 <input type="hidden" id="id_seg" name="id_seg">
-                                
+
                                 <div class="col-sm-6">
                                     <div class="form-group input-group-sm">
                                         <label for="fecha_seg" class="col-form-label">Fecha:</label>
                                         <input type="date" class="form-control" name="fecha_seg" id="fecha_seg" required>
                                     </div>
                                 </div>
-                                
+
                                 <div class="col-sm-6">
                                     <div class="form-group input-group-sm">
                                         <label for="tipo_seg" class="col-form-label">Tipo:</label>
@@ -244,14 +256,14 @@ $message = "";
                                         </select>
                                     </div>
                                 </div>
-                                
+
                                 <div class="col-sm-12">
                                     <div class="form-group input-group-sm">
                                         <label for="observaciones" class="col-form-label">Observaciones:</label>
                                         <textarea class="form-control" name="observaciones" id="observaciones" rows="3" required></textarea>
                                     </div>
                                 </div>
-                                
+
                                 <div class="col-sm-12">
                                     <div class="form-group input-group-sm">
                                         <label for="realizado" class="col-form-label">Realizado por:</label>

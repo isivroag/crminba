@@ -1,5 +1,5 @@
 <?php
-$pagina = "cntaproyecto";
+$pagina = "presupuesto";
 
 include_once "templates/header.php";
 include_once "templates/barra.php";
@@ -25,6 +25,14 @@ $descuentopor = 0;
 $fecha = date("Y-m-d");
 $fechacot = date("Y-m-d");
 
+if(isset($_GET['folio']) && !empty($_GET['folio'])) {
+    $folio = $_GET['folio'];
+    $mostrar = 1;
+ } else {
+   
+    $mostrar = 0;
+}
+
 
 if (isset($_GET['id_proy'])  && isset($_GET['id_man']) && isset($_GET['id_lote'])) {
     $mapa = 1;
@@ -44,7 +52,7 @@ if (isset($_GET['id_proy'])  && isset($_GET['id_man']) && isset($_GET['id_lote']
     $resmanzana->execute();
     $manzana = $resmanzana->fetch(PDO::FETCH_ASSOC);
 
-    $consulta = "SELECT id_lote, clave_lote, superficie, preciom, valortotal, status FROM lote 
+    $consulta = "SELECT id_lote, clave_lote, superficie, preciom, valortotal, status,superficie,tipo,frente,fondo FROM vlote 
                 WHERE id_proy = :id_proy and id_man=:id_man and clave_lote=:id_lote";
     $resultado = $conexion->prepare($consulta);
     $resultado->bindParam(':id_proy', $id_proyecto, PDO::PARAM_INT);
@@ -57,6 +65,13 @@ if (isset($_GET['id_proy'])  && isset($_GET['id_man']) && isset($_GET['id_lote']
     $manzana = $manzana['descripcion'];
     $clave_lote = $lote['clave_lote'];
     $valortotal = $lote['valortotal'];
+    $frente = $lote['frente'];
+    $fondo = $lote['fondo'];
+    $superficie = $lote['superficie'];
+    $preciom = $lote['preciom'];
+    $tipolote = $lote['tipo'];
+    $id_lote = $lote['id_lote'];
+    
 }
 
 $consulta = "SELECT id_proy,nombre FROM proyecto WHERE edo_proy=1 and vendible=1 ORDER BY id_proy";
@@ -128,18 +143,18 @@ $message = "";
                                 </button>
                             </div>
                             <div class="col-sm-3">
-                                <button class="btn bg-green w-100 py-2" type="button" id="btnGuardar">
-                                    <i class="fas fa-save mr-2"></i> GUARDAR COTIZACIÓN
+                                <button class="btn bg-green w-100 py-2" type="button" id="btnGuardar" <?= $mostrar==0 ? '' : 'style="display:none;"' ?>>
+                                    <i class="fas fa-save mr-2"></i> GUARDAR COTIZACIÓN 
                                 </button>
                             </div>
                             <div class="col-sm-3">
                                 <button class="btn btn-info w-100 py-2" type="button" id="btnImprimir">
-                                    <i class="fas fa-print mr-2"></i> IMPRIMIR
+                                    <i class="fas fa-print mr-2"></i> IMPRIMIR 
                                 </button>
                             </div>
                         </div>
-                        <div class="row">
-                            <div class="col-lg-12">
+                        <div class="row justify-content-center">
+                            <div class="col-sm-12">
                                 <div class="container justify-content-center">
                                     <h1>Cotizador de Inmuebles</h1>
 
@@ -149,7 +164,7 @@ $message = "";
 
                                             <div class="col-sm-2 form-group form-group-sm">
                                                 <label for="folio" class="col-form-label">Folio:</label>
-                                                <input type="text" id="folio" name="folio" class="form-control form-control-sm" >
+                                                <input type="text" id="folio" name="folio" class="form-control form-control-sm" value="<?= isset($folio) ? $folio : '' ?>" readonly>
                                             </div>
                                             <div class="col-sm-6 form-group form-group-sm">
                                                 <label for="nombre_prospecto" class="col-form-label">Prospecto:</label>
@@ -176,132 +191,189 @@ $message = "";
                                         </div>
 
 
-
-
-                                        <div class="row justify-content-center">
-                                            <div class="col-sm-4 form-group">
-                                                <label class="col-form-label" for="proyecto">Proyecto:</label>
-                                                <input type="hidden" id="id_proyecto" name="id_proyecto" class="form-control form-control-sm" value="<?= $id_proyecto ?>" disabled>
-                                                <input type="text" id="proyecto" name="proyecto" class="form-control form-control-sm" value="<?= $proyecto ?>" disabled>
-                                            </div>
-
-                                            <div class="col-sm-4 form-group">
-                                                <label class="col-form-label" for="manzana">Manzana:</label>
-                                                <input type="hidden" id="id_manzana" name="id_manzana" class="form-control " value="<?= $id_manzana ?>" disabled>
-                                                <input type="text" id="manzana" name="manzana" class="form-control form-control-sm" value="<?= $manzana ?>" disabled>
-                                            </div>
-
-                                            <div class="col-sm-4 form-group">
-
-                                                <label class="col-form-label" for="lote">Lote:</label>
-                                                <div class="input-group ">
-                                                    <input type="hidden" id="id_lote" name="id_lote" class="form-control" value="<?= $id_lote ?>" disabled>
-                                                    <input type="text" id="lote" name="lote" class="form-control form-control-sm" value="<?= $clave_lote ?>" disabled>
-                                                    <?php if ($mapa == 0) { ?>
-                                                        <span class="input-group-append">
-                                                            <button class="btn  btn-primary btn-sm" type="button" id="btnBuscar"><i class="fas fa-search "></i></button>
-                                                        </span>
-
-                                                    <?php } ?>
-
+                                        <div class="container-fluid p-0 m-0">
+                                            <h4><strong>INFORMACIÓN DEL INMUEBLE</strong></h4>
+                                            <div class="row justify-content-center">
+                                                <div class="col-sm-4 form-group">
+                                                    <label class="col-form-label" for="proyecto">Proyecto:</label>
+                                                    <input type="hidden" id="id_proyecto" name="id_proyecto" class="form-control form-control-sm" value="<?= $id_proyecto ?>" disabled>
+                                                    <input type="text" id="proyecto" name="proyecto" class="form-control form-control-sm" value="<?= $proyecto ?>" disabled>
                                                 </div>
 
-                                            </div>
+                                                <div class="col-sm-4 form-group">
+                                                    <label class="col-form-label" for="manzana">Manzana:</label>
+                                                    <input type="hidden" id="id_manzana" name="id_manzana" class="form-control " value="<?= $id_manzana ?>" disabled>
+                                                    <input type="text" id="manzana" name="manzana" class="form-control form-control-sm" value="<?= $manzana ?>" disabled>
+                                                </div>
 
+                                                <div class="col-sm-4 form-group">
 
-                                        </div>
+                                                    <label class="col-form-label" for="lote">Lote:</label>
+                                                    <div class="input-group ">
+                                                        <input type="hidden" id="id_lote" name="id_lote" class="form-control" value="<?= $id_lote ?>" disabled>
+                                                        <input type="text" id="lote" name="lote" class="form-control form-control-sm" value="<?= $clave_lote ?>" disabled>
+                                                        <?php if ($mapa == 0) { ?>
+                                                            <span class="input-group-append">
+                                                                <button class="btn  btn-primary btn-sm" type="button" id="btnBuscar"><i class="fas fa-search "></i></button>
+                                                            </span>
 
-                                        <div class="row ">
+                                                        <?php } ?>
 
-
-                                            <div class=" col-sm-2 form-group ">
-                                                <label for="fechaInicio" class="col-form-label">Inicio:</label>
-                                                <input type="date" id="fechaInicio" name="fechaInicio" class="form-control form-control-sm" required value="<?= $fecha ?>">
-
-                                            </div>
-
-
-                                            <div class="form-group col-sm-3">
-                                                <label for="montoTotal" class="col-form-label text-right">Importe:</label>
-                                                <div class="input-group input-group-sm">
-                                                    <div class="input-group-prepend">
-                                                        <span class="input-group-text">
-                                                            <i class="fas fa-dollar-sign"></i>
-                                                        </span>
                                                     </div>
-                                                    <input type="text" id="montoTotal" name="montoTotal" class="form-control text-right form-control-sm" min="1" step="0.01" required value="<?= $valortotal ?>" disabled>
+
                                                 </div>
 
+
                                             </div>
-                                            <div class="form-group col-sm-3">
-                                                <label for="descuento" class="col-form-label text-right">Descuento:</label>
-                                                <div class="input-group input-group-sm">
-                                                    <div class="input-group-prepend">
-                                                        <span class="input-group-text">
-                                                            <i class="fas fa-dollar-sign"></i>
-                                                        </span>
+                                            <div class="row justify-content-center ">
+                                                <div class="col-sm-2">
+                                                    <label for="frente" class="col-form-label">Frente:</label>
+                                                    <input type="text" id="frente" name="frente" class="form-control form-control-sm" value="<?= isset($frente) ? $frente : '' ?>" disabled>
+                                                </div>
+                                                <div class="col-sm-2">
+                                                    <label for="fondo" class="col-form-label">Fondo:</label>
+                                                    <input type="text" id="fondo" name="fondo" class="form-control form-control-sm" value="<?= isset($fondo) ? $fondo : '' ?>" disabled>
+                                                </div>
+                                                <div class="col-sm-2 form-group">
+                                                    <label for="superficie" class="col-form-label">Superficie:</label>
+                                                    <input type="text" id="superficie" name="superficie" class="form-control form-control-sm" value="<?= isset($superficie) ? $superficie : '' ?>" disabled>
+
+                                                </div>
+                                                <div class="col-sm-2">
+                                                    <label for="tipolote" class="col-form-label">Tipo de Lote:</label>
+                                                    <input type="text" id="tipolote" name="tipolote" class="form-control form-control-sm" value="<?= isset($tipolote) ? $tipolote : '' ?>" disabled>
+                                                </div>
+                                                <div class="col-sm-2">
+                                                    <label for="preciom" class="col-form-label">Precio m²:</label>
+                                                    <div class="input-group input-group-sm">
+                                                        <div class="input-group-prepend">
+                                                            <span class="input-group-text">
+                                                                <i class="fas fa-dollar-sign"></i>
+                                                            </span>
+                                                        </div>
+                                                        <input type="text" id="preciom" name="preciom" class="form-control text-right form-control-sm" min="1" step="0.01" value="<?= isset($preciom) ? $preciom : '' ?>" disabled>
                                                     </div>
-                                                    <input type="text" id="descuento" name="descuento" class="form-control text-right form-control-sm" min="1" step="0.01" required value="<?= $descuento ?>">
                                                 </div>
 
-                                            </div>
-                                            <div class="form-group col-sm-1">
-                                                <label for="descuentopor" class="col-form-label text-right">% Desc:</label>
-                                                <input type="number" id="descuentopor" name="descuentopor" class="form-control text-right form-control-sm" min="1" step="0.01" required value="<?= $descuentopor ?>">
-                                            </div>
-                                            <div class="form-group col-sm-3">
-                                                <label for="valorop" class="col-form-label text-right">Importe Total:</label>
-                                                <div class="input-group input-group-sm">
-                                                    <div class="input-group-prepend">
-                                                        <span class="input-group-text">
-                                                            <i class="fas fa-dollar-sign"></i>
-                                                        </span>
+                                                <div class="col-sm-2">
+                                                    <label for="valortotal" class="col-form-label">Valor Lote:</label>
+                                                    <div class="input-group input-group-sm">
+                                                        <div class="input-group-prepend">
+                                                            <span class="input-group-text">
+                                                                <i class="fas fa-dollar-sign"></i>
+                                                            </span>
+                                                        </div>
+                                                        <input type="text" id="valortotal" name="valortotal" class="form-control text-right form-control-sm" min="1" step="0.01" value="<?= $valortotal ?>" disabled>
                                                     </div>
-                                                    <input type="text" id="valorop" name="valorop" class="form-control text-right form-control-sm" min="1" step="0.01" required value="<?= $valorop ?>" disabled>
                                                 </div>
 
-                                            </div>
 
 
-
-
-                                            <div class="form-group col-sm-3">
-                                                <label for="montoEnganche" class="col-form-label">Monto de Enganche:</label>
-                                                <div class="input-group input-group-sm">
-                                                    <div class="input-group-prepend">
-                                                        <span class="input-group-text">
-                                                            <i class="fas fa-dollar-sign"></i>
-                                                        </span>
-                                                    </div>
-                                                    <input type="text" id="montoEnganche" name="montoEnganche" class="form-control text-right form-control-sm" min="0" step="0.01" required>
-                                                </div>
-
-                                                <div id="engancheError" class="error"></div>
-                                            </div>
-
-                                            <div class="form-group col-sm-3">
-                                                <label for="plazosEnganche" class="col-form-label">Plazos Enganche (meses):</label>
-                                                <input type="number" id="plazosEnganche" name="plazosEnganche" class="form-control form-control-sm" min="0" value="0">
-                                            </div>
-
-                                            <div class="form-group col-sm-3">
-                                                <label for="plazosSinInteres" class="col-form-label">Plazos sin Interés (meses):</label>
-                                                <input type="number" id="plazosSinInteres" name="plazosSinInteres" class="form-control form-control-sm" min="0" value="0">
-                                            </div>
-
-                                            <div class="form-group col-sm-3">
-                                                <label class="col-form-label" for="plazosConInteres">Plazos con Interés (meses):</label>
-                                                <input type="number" id="plazosConInteres" name="plazosConInteres" class="form-control form-control-sm" min="0" value="0">
                                             </div>
                                         </div>
 
-                                        <div class="row justify-content-center">
-                                            <div class="col-sm-6 d-block">
-                                                <button class="btn bg-green w-100 py-2" type="button" id="btnCalcular">
-                                                    <i class="fas fa-calculator mr-2"></i> CALCULAR CORRIDA FINANCIERA
-                                                </button>
+                                        <div class="container-fluid p-0 m-0">
+                                            <h4><strong>INFORMACIÓN DEL PRESUPUESTO</strong></h4>
+                                            <div class="row justify-content-center">
+
+
+                                                <div class=" col-sm-2 form-group ">
+                                                    <label for="fechaInicio" class="col-form-label">Inicio:</label>
+                                                    <input type="date" id="fechaInicio" name="fechaInicio" class="form-control form-control-sm" required value="<?= $fecha ?>">
+
+                                                </div>
+
+
+                                                <div class="form-group col-sm-3">
+                                                    <label for="montoTotal" class="col-form-label text-right">Importe:</label>
+                                                    <div class="input-group input-group-sm">
+                                                        <div class="input-group-prepend">
+                                                            <span class="input-group-text">
+                                                                <i class="fas fa-dollar-sign"></i>
+                                                            </span>
+                                                        </div>
+                                                        <input type="text" id="montoTotal" name="montoTotal" class="form-control text-right form-control-sm" min="1" step="0.01" required value="<?= $valortotal ?>" disabled>
+                                                    </div>
+
+                                                </div>
+                                                <div class="form-group col-sm-1">
+                                                    <label for="descuentopor" class="col-form-label text-right">% Desc:</label>
+                                                    <input type="number" id="descuentopor" name="descuentopor" class="form-control text-right form-control-sm" min="1" step="0.01" required value="<?= $descuentopor ?>">
+                                                </div>
+                                                <div class="form-group col-sm-3">
+                                                    <label for="descuento" class="col-form-label text-right">Descuento:</label>
+                                                    <div class="input-group input-group-sm">
+                                                        <div class="input-group-prepend">
+                                                            <span class="input-group-text">
+                                                                <i class="fas fa-dollar-sign"></i>
+                                                            </span>
+                                                        </div>
+                                                        <input type="text" id="descuento" name="descuento" class="form-control text-right form-control-sm" min="1" step="0.01" required value="<?= $descuento ?>">
+                                                    </div>
+
+                                                </div>
+                                                
+                                                <div class="form-group col-sm-3">
+                                                    <label for="valorop" class="col-form-label text-right">Importe Total:</label>
+                                                    <div class="input-group input-group-sm">
+                                                        <div class="input-group-prepend">
+                                                            <span class="input-group-text">
+                                                                <i class="fas fa-dollar-sign"></i>
+                                                            </span>
+                                                        </div>
+                                                        <input type="text" id="valorop" name="valorop" class="form-control text-right form-control-sm" min="1" step="0.01" required value="<?= $valorop ?>" disabled>
+                                                    </div>
+
+                                                </div>
+
+
+                                                <div class="form-group col-sm-1">
+                                                    <label for="enganchepor" class="col-form-label text-right">% Eng:</label>
+                                                    <input type="number" id="enganchepor" name="enganchepor" class="form-control text-right form-control-sm" min="1" step="0.01" required value="<?= $enganchepor ?>">
+                                                </div>
+
+                                                <div class="form-group col-sm-3">
+                                                    <label for="montoEnganche" class="col-form-label">Monto de Enganche:</label>
+                                                    <div class="input-group input-group-sm">
+                                                        <div class="input-group-prepend">
+                                                            <span class="input-group-text">
+                                                                <i class="fas fa-dollar-sign"></i>
+                                                            </span>
+                                                        </div>
+                                                        <input type="text" id="montoEnganche" name="montoEnganche" class="form-control text-right form-control-sm" min="0" step="0.01" required>
+                                                    </div>
+
+                                                    <div id="engancheError" class="error"></div>
+                                                </div>
+
+                                                <div class="form-group col-sm-2">
+                                                    <label for="plazosEnganche" class="col-form-label">MENG:</label>
+                                                    <input type="number" id="plazosEnganche" name="plazosEnganche" class="form-control form-control-sm" min="0" value="0">
+                                                </div>
+                                              
+
+                                                <div class="form-group col-sm-2">
+                                                    <label for="plazosSinInteres" class="col-form-label">MSI:</label>
+                                                    <input type="number" id="plazosSinInteres" name="plazosSinInteres" class="form-control form-control-sm" min="0" value="0">
+                                                </div>
+
+                                                <div class="form-group col-sm-2">
+                                                    <label class="col-form-label" for="plazosConInteres">MCI:</label>
+                                                    <input type="number" id="plazosConInteres" name="plazosConInteres" class="form-control form-control-sm" min="0" value="0">
+                                                </div>
                                             </div>
+
+                                            <div class="row justify-content-center">
+                                                <div class="col-sm-6 d-block">
+                                                    <button class="btn bg-green w-100 py-2" type="button" id="btnCalcular">
+                                                        <i class="fas fa-calculator mr-2"></i> CALCULAR CORRIDA FINANCIERA
+                                                    </button>
+                                                </div>
+                                            </div>
+
                                         </div>
+
+
 
 
                                         <div id="results" class="col-sm-12">
@@ -426,10 +498,13 @@ $message = "";
                                         <tr>
                                             <th>ID</th>
                                             <th>CLAVE</th>
-                                            <th>SUPERFICIE</th>
+                                            <th>SUPERFICIE M²</th>
                                             <th>PRECIO M²</th>
                                             <th>VALOR TOTAL</th>
                                             <th>ESTATUS</th>
+                                            <th>FRENTE M</th>
+                                            <th>FONDO M</th>
+                                            <th>TIPO</th>
                                             <th>ACCIONES</th>
                                         </tr>
                                     </thead>

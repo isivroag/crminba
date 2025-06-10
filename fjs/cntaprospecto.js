@@ -376,6 +376,7 @@ $(document).ready(function () {
     var correo = $.trim($("#correo").val());
     var col_asignado = $("#col_asignado").val();
     var origen = $("#origen").val();
+    var id_usuario = $("#iduser").val();
     console.log(
       "Datos a enviar:",
       nombre,
@@ -455,6 +456,7 @@ $(document).ready(function () {
         id: id,
         opcion: opcion,
         origen: origen,
+        id_usuario: id_usuario, // Agregar ID de usuario que realiza la acción
       },
       success: function (data) {
         console.log("Respuesta del servidor:", data); // Debug

@@ -1,0 +1,260 @@
+[27-May-2025 17:30:11 UTC] Conectado a la base de datos
+[27-May-2025 17:30:11 UTC] Array
+(
+    [id_pros] => 11
+    [nombre] => israel ivan romero aguilar
+    [telefono] => 2281199040
+    [correo] => isivroag@hotmail.com
+    [colaborador] => Alejandro Alarcón Palma
+)
+
+[27-May-2025 17:30:11 UTC] Enviando a la API: {"id_pros":"11","nombre":"israel ivan romero aguilar","telefono":"2281199040","correo":"isivroag@hotmail.com","colaborador":"Alejandro Alarc\u00f3n Palma","email_colaborador":"isivroag@hotmail.com"}
+[27-May-2025 17:30:11 UTC] PHP Warning:  file_get_contents(): http:// wrapper is disabled in the server configuration by allow_url_fopen=0 in /home/tecniemc/inba.tecniem.com/bd/usarapicorreo.php on line 56
+[27-May-2025 17:30:11 UTC] PHP Warning:  file_get_contents(http://intranet.bosquedelasanimas.com.mx/api/correoinba.php): failed to open stream: no suitable wrapper could be found in /home/tecniemc/inba.tecniem.com/bd/usarapicorreo.php on line 56
+[27-May-2025 17:37:50 UTC] Conectado a la base de datos
+[27-May-2025 17:37:50 UTC] Array
+(
+    [id_seg] => 9
+)
+
+[27-May-2025 17:37:50 UTC] Enviando a la API: {"id_seg":"9","id_pros":"9","nombre":"Prospecto Whatsapp","telefono":"2255556690","correo":"asdas@h.com","nom_colaborador":"Roberto Robles Amores","correo_colaborador":"isivroag@hotmail.com","fecha_seg":"2025-05-27","tipo_seg":"Llamada","observaciones":""}
+[27-May-2025 17:37:50 UTC] PHP Warning:  file_get_contents(): http:// wrapper is disabled in the server configuration by allow_url_fopen=0 in /home/tecniemc/inba.tecniem.com/bd/usarapicorreoseg.php on line 68
+[27-May-2025 17:37:50 UTC] PHP Warning:  file_get_contents(http://intranet.bosquedelasanimas.com.mx/api/correocita.php): failed to open stream: no suitable wrapper could be found in /home/tecniemc/inba.tecniem.com/bd/usarapicorreoseg.php on line 68
+[27-May-2025 20:07:16 UTC] PHP Notice:  Undefined variable: _SESSION in /home/tecniemc/inba.tecniem.com/bd/crudusuario.php on line 27
+[27-May-2025 20:07:16 UTC] PHP Notice:  Trying to access array offset on value of type null in /home/tecniemc/inba.tecniem.com/bd/crudusuario.php on line 27
+[03-Jun-2025 17:12:17 UTC] PHP Notice:  Undefined variable: _SESSION in /home/tecniemc/inba.tecniem.com/bd/crudusuario.php on line 27
+[03-Jun-2025 17:12:17 UTC] PHP Notice:  Trying to access array offset on value of type null in /home/tecniemc/inba.tecniem.com/bd/crudusuario.php on line 27
+[06-Jun-2025 17:21:30 UTC] Conectado a la base de datos
+[06-Jun-2025 17:21:30 UTC] Array
+(
+    [id_pros] => 1
+    [nombre] => Mahogany Pérez
+    [telefono] => 2294628687
+    [correo] => mahoganyp@gmail.com
+    [colaborador] => Alejandro Alarcón Palma
+)
+
+[06-Jun-2025 17:21:30 UTC] Enviando a la API: {"id_pros":"1","nombre":"Mahogany P\u00e9rez","telefono":"2294628687","correo":"mahoganyp@gmail.com","colaborador":"Alejandro Alarc\u00f3n Palma","email_colaborador":"aalarcon@gpoferche.com.mx"}
+[06-Jun-2025 17:21:30 UTC] PHP Warning:  file_get_contents(): http:// wrapper is disabled in the server configuration by allow_url_fopen=0 in /home/tecniemc/inba.tecniem.com/bd/usarapicorreo.php on line 56
+[06-Jun-2025 17:21:30 UTC] PHP Warning:  file_get_contents(http://intranet.bosquedelasanimas.com.mx/api/correoinba.php): failed to open stream: no suitable wrapper could be found in /home/tecniemc/inba.tecniem.com/bd/usarapicorreo.php on line 56
+[06-Jun-2025 19:53:15 UTC] Conectado a la base de datos
+[06-Jun-2025 19:53:15 UTC] Array
+(
+    [id_pros] => 2
+    [nombre] => Alejandro Galván
+    [telefono] => 2288240946
+    [correo] => 
+    [colaborador] => Roberto Robles Amores
+)
+
+[06-Jun-2025 19:53:15 UTC] Enviando a la API: {"id_pros":"2","nombre":"Alejandro Galv\u00e1n","telefono":"2288240946","correo":"","colaborador":"Roberto Robles Amores","email_colaborador":"rramores@hotmail.com"}
+[06-Jun-2025 19:53:15 UTC] PHP Warning:  file_get_contents(): http:// wrapper is disabled in the server configuration by allow_url_fopen=0 in /home/tecniemc/inba.tecniem.com/bd/usarapicorreo.php on line 56
+[06-Jun-2025 19:53:15 UTC] PHP Warning:  file_get_contents(http://intranet.bosquedelasanimas.com.mx/api/correoinba.php): failed to open stream: no suitable wrapper could be found in /home/tecniemc/inba.tecniem.com/bd/usarapicorreo.php on line 56
+[06-Jun-2025 19:54:21 UTC] Conectado a la base de datos
+[06-Jun-2025 19:54:21 UTC] Array
+(
+    [id_pros] => 3
+    [nombre] => Sugeidy López
+    [telefono] => 2282278279
+    [correo] => 
+    [colaborador] => Citlalic Villareal Jurado
+)
+
+[06-Jun-2025 19:54:21 UTC] Enviando a la API: {"id_pros":"3","nombre":"Sugeidy L\u00f3pez","telefono":"2282278279","correo":"","colaborador":"Citlalic Villareal Jurado","email_colaborador":"villajurado@yahoo.com.mx"}
+[06-Jun-2025 19:54:21 UTC] PHP Warning:  file_get_contents(): http:// wrapper is disabled in the server configuration by allow_url_fopen=0 in /home/tecniemc/inba.tecniem.com/bd/usarapicorreo.php on line 56
+[06-Jun-2025 19:54:21 UTC] PHP Warning:  file_get_contents(http://intranet.bosquedelasanimas.com.mx/api/correoinba.php): failed to open stream: no suitable wrapper could be found in /home/tecniemc/inba.tecniem.com/bd/usarapicorreo.php on line 56
+[06-Jun-2025 22:58:19 UTC] Conectado a la base de datos
+[06-Jun-2025 22:58:19 UTC] Array
+(
+    [id_pros] => 4
+    [nombre] => Jaime Castillo
+    [telefono] => 7851123846
+    [correo] => 
+    [colaborador] => Alejandro Alarcón Palma
+)
+
+[06-Jun-2025 22:58:19 UTC] Enviando a la API: {"id_pros":"4","nombre":"Jaime Castillo","telefono":"7851123846","correo":"","colaborador":"Alejandro Alarc\u00f3n Palma","email_colaborador":"aalarcon@gpoferche.com.mx"}
+[06-Jun-2025 22:58:19 UTC] PHP Warning:  file_get_contents(): http:// wrapper is disabled in the server configuration by allow_url_fopen=0 in /home/tecniemc/inba.tecniem.com/bd/usarapicorreo.php on line 56
+[06-Jun-2025 22:58:19 UTC] PHP Warning:  file_get_contents(http://intranet.bosquedelasanimas.com.mx/api/correoinba.php): failed to open stream: no suitable wrapper could be found in /home/tecniemc/inba.tecniem.com/bd/usarapicorreo.php on line 56
+[09-Jun-2025 16:47:05 UTC] Conectado a la base de datos
+[09-Jun-2025 16:47:05 UTC] Array
+(
+    [id_pros] => 5
+    [nombre] => Erika Montero
+    [telefono] => 0000000000
+    [correo] => erikamontero84@hotmail.com
+    [colaborador] => Roberto Robles Amores
+)
+
+[09-Jun-2025 16:47:05 UTC] Enviando a la API: {"id_pros":"5","nombre":"Erika Montero","telefono":"0000000000","correo":"erikamontero84@hotmail.com","colaborador":"Roberto Robles Amores","email_colaborador":"rramores@hotmail.com"}
+[09-Jun-2025 16:47:05 UTC] PHP Warning:  file_get_contents(): http:// wrapper is disabled in the server configuration by allow_url_fopen=0 in /home/tecniemc/inba.tecniem.com/bd/usarapicorreo.php on line 56
+[09-Jun-2025 16:47:05 UTC] PHP Warning:  file_get_contents(http://intranet.bosquedelasanimas.com.mx/api/correoinba.php): failed to open stream: no suitable wrapper could be found in /home/tecniemc/inba.tecniem.com/bd/usarapicorreo.php on line 56
+[09-Jun-2025 16:47:51 UTC] Conectado a la base de datos
+[09-Jun-2025 16:47:51 UTC] Array
+(
+    [id_pros] => 6
+    [nombre] => Dayana J Padilla
+    [telefono] => 0000000000
+    [correo] => dayanajpadilla@gmail.com
+    [colaborador] => Citlalic Villareal Jurado
+)
+
+[09-Jun-2025 16:47:51 UTC] Enviando a la API: {"id_pros":"6","nombre":"Dayana J Padilla","telefono":"0000000000","correo":"dayanajpadilla@gmail.com","colaborador":"Citlalic Villareal Jurado","email_colaborador":"villajurado@yahoo.com.mx"}
+[09-Jun-2025 16:47:51 UTC] PHP Warning:  file_get_contents(): http:// wrapper is disabled in the server configuration by allow_url_fopen=0 in /home/tecniemc/inba.tecniem.com/bd/usarapicorreo.php on line 56
+[09-Jun-2025 16:47:51 UTC] PHP Warning:  file_get_contents(http://intranet.bosquedelasanimas.com.mx/api/correoinba.php): failed to open stream: no suitable wrapper could be found in /home/tecniemc/inba.tecniem.com/bd/usarapicorreo.php on line 56
+[09-Jun-2025 16:48:39 UTC] Conectado a la base de datos
+[09-Jun-2025 16:48:39 UTC] Array
+(
+    [id_pros] => 7
+    [nombre] => Gustavo Valencia Segura
+    [telefono] => 2288262389
+    [correo] => 
+    [colaborador] => Alejandro Alarcón Palma
+)
+
+[09-Jun-2025 16:48:39 UTC] Enviando a la API: {"id_pros":"7","nombre":"Gustavo Valencia Segura","telefono":"2288262389","correo":"","colaborador":"Alejandro Alarc\u00f3n Palma","email_colaborador":"aalarcon@gpoferche.com.mx"}
+[09-Jun-2025 16:48:39 UTC] PHP Warning:  file_get_contents(): http:// wrapper is disabled in the server configuration by allow_url_fopen=0 in /home/tecniemc/inba.tecniem.com/bd/usarapicorreo.php on line 56
+[09-Jun-2025 16:48:39 UTC] PHP Warning:  file_get_contents(http://intranet.bosquedelasanimas.com.mx/api/correoinba.php): failed to open stream: no suitable wrapper could be found in /home/tecniemc/inba.tecniem.com/bd/usarapicorreo.php on line 56
+[09-Jun-2025 16:49:13 UTC] Conectado a la base de datos
+[09-Jun-2025 16:49:13 UTC] Array
+(
+    [id_pros] => 8
+    [nombre] => Ricardo Alarcón
+    [telefono] => 0000000000
+    [correo] => rialca92@gmail.com
+    [colaborador] => Roberto Robles Amores
+)
+
+[09-Jun-2025 16:49:13 UTC] Enviando a la API: {"id_pros":"8","nombre":"Ricardo Alarc\u00f3n","telefono":"0000000000","correo":"rialca92@gmail.com","colaborador":"Roberto Robles Amores","email_colaborador":"rramores@hotmail.com"}
+[09-Jun-2025 16:49:13 UTC] PHP Warning:  file_get_contents(): http:// wrapper is disabled in the server configuration by allow_url_fopen=0 in /home/tecniemc/inba.tecniem.com/bd/usarapicorreo.php on line 56
+[09-Jun-2025 16:49:13 UTC] PHP Warning:  file_get_contents(http://intranet.bosquedelasanimas.com.mx/api/correoinba.php): failed to open stream: no suitable wrapper could be found in /home/tecniemc/inba.tecniem.com/bd/usarapicorreo.php on line 56
+[09-Jun-2025 16:49:50 UTC] Conectado a la base de datos
+[09-Jun-2025 16:49:50 UTC] Array
+(
+    [id_pros] => 9
+    [nombre] => Vanessa Ruiz
+    [telefono] => 2281434599
+    [correo] => 
+    [colaborador] => Citlalic Villareal Jurado
+)
+
+[09-Jun-2025 16:49:50 UTC] Enviando a la API: {"id_pros":"9","nombre":"Vanessa Ruiz","telefono":"2281434599","correo":"","colaborador":"Citlalic Villareal Jurado","email_colaborador":"villajurado@yahoo.com.mx"}
+[09-Jun-2025 16:49:50 UTC] PHP Warning:  file_get_contents(): http:// wrapper is disabled in the server configuration by allow_url_fopen=0 in /home/tecniemc/inba.tecniem.com/bd/usarapicorreo.php on line 56
+[09-Jun-2025 16:49:50 UTC] PHP Warning:  file_get_contents(http://intranet.bosquedelasanimas.com.mx/api/correoinba.php): failed to open stream: no suitable wrapper could be found in /home/tecniemc/inba.tecniem.com/bd/usarapicorreo.php on line 56
+[09-Jun-2025 16:50:38 UTC] Conectado a la base de datos
+[09-Jun-2025 16:50:38 UTC] Array
+(
+    [id_pros] => 10
+    [nombre] => Rafa Bgl
+    [telefono] => 2288266178
+    [correo] => 
+    [colaborador] => Alejandro Alarcón Palma
+)
+
+[09-Jun-2025 16:50:38 UTC] Enviando a la API: {"id_pros":"10","nombre":"Rafa Bgl","telefono":"2288266178","correo":"","colaborador":"Alejandro Alarc\u00f3n Palma","email_colaborador":"aalarcon@gpoferche.com.mx"}
+[09-Jun-2025 16:50:38 UTC] PHP Warning:  file_get_contents(): http:// wrapper is disabled in the server configuration by allow_url_fopen=0 in /home/tecniemc/inba.tecniem.com/bd/usarapicorreo.php on line 56
+[09-Jun-2025 16:50:38 UTC] PHP Warning:  file_get_contents(http://intranet.bosquedelasanimas.com.mx/api/correoinba.php): failed to open stream: no suitable wrapper could be found in /home/tecniemc/inba.tecniem.com/bd/usarapicorreo.php on line 56
+[09-Jun-2025 16:51:51 UTC] Conectado a la base de datos
+[09-Jun-2025 16:51:51 UTC] Array
+(
+    [id_pros] => 11
+    [nombre] => Christian Martínez
+    [telefono] => 2281241356
+    [correo] => liamg17@hotmail.com
+    [colaborador] => Roberto Robles Amores
+)
+
+[09-Jun-2025 16:51:51 UTC] Enviando a la API: {"id_pros":"11","nombre":"Christian Mart\u00ednez","telefono":"2281241356","correo":"liamg17@hotmail.com","colaborador":"Roberto Robles Amores","email_colaborador":"rramores@hotmail.com"}
+[09-Jun-2025 16:51:51 UTC] PHP Warning:  file_get_contents(): http:// wrapper is disabled in the server configuration by allow_url_fopen=0 in /home/tecniemc/inba.tecniem.com/bd/usarapicorreo.php on line 56
+[09-Jun-2025 16:51:51 UTC] PHP Warning:  file_get_contents(http://intranet.bosquedelasanimas.com.mx/api/correoinba.php): failed to open stream: no suitable wrapper could be found in /home/tecniemc/inba.tecniem.com/bd/usarapicorreo.php on line 56
+[09-Jun-2025 18:34:31 UTC] Conectado a la base de datos
+[09-Jun-2025 18:34:31 UTC] Array
+(
+    [id_pros] => 12
+    [nombre] => Natalia Barranco
+    [telefono] => 2281119876
+    [correo] => 
+    [colaborador] => Citlalic Villareal Jurado
+)
+
+[09-Jun-2025 18:34:31 UTC] Enviando a la API: {"id_pros":"12","nombre":"Natalia Barranco","telefono":"2281119876","correo":"","colaborador":"Citlalic Villareal Jurado","email_colaborador":"villajurado@yahoo.com.mx"}
+[09-Jun-2025 18:34:31 UTC] PHP Warning:  file_get_contents(): http:// wrapper is disabled in the server configuration by allow_url_fopen=0 in /home/tecniemc/inba.tecniem.com/bd/usarapicorreo.php on line 56
+[09-Jun-2025 18:34:31 UTC] PHP Warning:  file_get_contents(http://intranet.bosquedelasanimas.com.mx/api/correoinba.php): failed to open stream: no suitable wrapper could be found in /home/tecniemc/inba.tecniem.com/bd/usarapicorreo.php on line 56
+[09-Jun-2025 19:34:49 UTC] Conectado a la base de datos
+[09-Jun-2025 19:34:49 UTC] Array
+(
+    [id_pros] => 1
+    [nombre] => Mahogany Pérez
+    [telefono] => 2294628687
+    [correo] => mahoganyp@gmail.com
+    [colaborador] => Alejandro Alarcón Palma
+)
+
+[09-Jun-2025 19:34:49 UTC] Enviando a la API: {"id_pros":1,"nombre":"Mahogany P\u00e9rez","telefono":"2294628687","correo":"mahoganyp@gmail.com","colaborador":"Alejandro Alarc\u00f3n Palma","email_colaborador":"aalarcon@gpoferche.com.mx"}
+[09-Jun-2025 19:34:49 UTC] PHP Warning:  file_get_contents(): http:// wrapper is disabled in the server configuration by allow_url_fopen=0 in /home/tecniemc/inba.tecniem.com/bd/usarapicorreo.php on line 56
+[09-Jun-2025 19:34:49 UTC] PHP Warning:  file_get_contents(http://intranet.bosquedelasanimas.com.mx/api/correoinba.php): failed to open stream: no suitable wrapper could be found in /home/tecniemc/inba.tecniem.com/bd/usarapicorreo.php on line 56
+[09-Jun-2025 19:35:00 UTC] Conectado a la base de datos
+[09-Jun-2025 19:35:00 UTC] Array
+(
+    [id_pros] => 4
+    [nombre] => Jaime Castillo
+    [telefono] => 7851123846
+    [correo] => 
+    [colaborador] => Alejandro Alarcón Palma
+)
+
+[09-Jun-2025 19:35:00 UTC] Enviando a la API: {"id_pros":4,"nombre":"Jaime Castillo","telefono":"7851123846","correo":"","colaborador":"Alejandro Alarc\u00f3n Palma","email_colaborador":"aalarcon@gpoferche.com.mx"}
+[09-Jun-2025 19:35:00 UTC] PHP Warning:  file_get_contents(): http:// wrapper is disabled in the server configuration by allow_url_fopen=0 in /home/tecniemc/inba.tecniem.com/bd/usarapicorreo.php on line 56
+[09-Jun-2025 19:35:00 UTC] PHP Warning:  file_get_contents(http://intranet.bosquedelasanimas.com.mx/api/correoinba.php): failed to open stream: no suitable wrapper could be found in /home/tecniemc/inba.tecniem.com/bd/usarapicorreo.php on line 56
+[09-Jun-2025 19:35:09 UTC] Conectado a la base de datos
+[09-Jun-2025 19:35:09 UTC] Array
+(
+    [id_pros] => 1
+    [nombre] => Mahogany Pérez
+    [telefono] => 2294628687
+    [correo] => mahoganyp@gmail.com
+    [colaborador] => Alejandro Alarcón Palma
+)
+
+[09-Jun-2025 19:35:09 UTC] Enviando a la API: {"id_pros":1,"nombre":"Mahogany P\u00e9rez","telefono":"2294628687","correo":"mahoganyp@gmail.com","colaborador":"Alejandro Alarc\u00f3n Palma","email_colaborador":"aalarcon@gpoferche.com.mx"}
+[09-Jun-2025 19:35:09 UTC] PHP Warning:  file_get_contents(): http:// wrapper is disabled in the server configuration by allow_url_fopen=0 in /home/tecniemc/inba.tecniem.com/bd/usarapicorreo.php on line 56
+[09-Jun-2025 19:35:09 UTC] PHP Warning:  file_get_contents(http://intranet.bosquedelasanimas.com.mx/api/correoinba.php): failed to open stream: no suitable wrapper could be found in /home/tecniemc/inba.tecniem.com/bd/usarapicorreo.php on line 56
+[09-Jun-2025 19:36:49 UTC] Conectado a la base de datos
+[09-Jun-2025 19:36:49 UTC] Array
+(
+    [id_pros] => 1
+    [nombre] => Mahogany Pérez
+    [telefono] => 2294628687
+    [correo] => mahoganyp@gmail.com
+    [colaborador] => Alejandro Alarcón Palma
+)
+
+[09-Jun-2025 19:36:49 UTC] Enviando a la API: {"id_pros":1,"nombre":"Mahogany P\u00e9rez","telefono":"2294628687","correo":"mahoganyp@gmail.com","colaborador":"Alejandro Alarc\u00f3n Palma","email_colaborador":"aalarcon@gpoferche.com.mx"}
+[09-Jun-2025 19:36:49 UTC] PHP Warning:  file_get_contents(): http:// wrapper is disabled in the server configuration by allow_url_fopen=0 in /home/tecniemc/inba.tecniem.com/bd/usarapicorreo.php on line 56
+[09-Jun-2025 19:36:49 UTC] PHP Warning:  file_get_contents(http://intranet.bosquedelasanimas.com.mx/api/correoinba.php): failed to open stream: no suitable wrapper could be found in /home/tecniemc/inba.tecniem.com/bd/usarapicorreo.php on line 56
+[09-Jun-2025 19:37:25 UTC] Conectado a la base de datos
+[09-Jun-2025 19:37:25 UTC] Array
+(
+    [id_pros] => 1
+    [nombre] => Mahogany Pérez
+    [telefono] => 2294628687
+    [correo] => mahoganyp@gmail.com
+    [colaborador] => Alejandro Alarcón Palma
+)
+
+[09-Jun-2025 19:37:25 UTC] Enviando a la API: {"id_pros":1,"nombre":"Mahogany P\u00e9rez","telefono":"2294628687","correo":"mahoganyp@gmail.com","colaborador":"Alejandro Alarc\u00f3n Palma","email_colaborador":"aalarcon@gpoferche.com.mx"}
+[09-Jun-2025 19:37:25 UTC] PHP Warning:  file_get_contents(): http:// wrapper is disabled in the server configuration by allow_url_fopen=0 in /home/tecniemc/inba.tecniem.com/bd/usarapicorreo.php on line 56
+[09-Jun-2025 19:37:25 UTC] PHP Warning:  file_get_contents(http://intranet.bosquedelasanimas.com.mx/api/correoinba.php): failed to open stream: no suitable wrapper could be found in /home/tecniemc/inba.tecniem.com/bd/usarapicorreo.php on line 56
+[09-Jun-2025 19:38:04 UTC] Conectado a la base de datos
+[09-Jun-2025 19:38:04 UTC] Array
+(
+    [id_pros] => 2
+    [nombre] => Alejandro Galván
+    [telefono] => 2288240946
+    [correo] => 
+    [colaborador] => Roberto Robles Amores
+)
+
+[09-Jun-2025 19:38:04 UTC] Enviando a la API: {"id_pros":2,"nombre":"Alejandro Galv\u00e1n","telefono":"2288240946","correo":"","colaborador":"Roberto Robles Amores","email_colaborador":"rramores@hotmail.com"}
+[09-Jun-2025 19:38:04 UTC] PHP Warning:  file_get_contents(): http:// wrapper is disabled in the server configuration by allow_url_fopen=0 in /home/tecniemc/inba.tecniem.com/bd/usarapicorreo.php on line 56
+[09-Jun-2025 19:38:04 UTC] PHP Warning:  file_get_contents(http://intranet.bosquedelasanimas.com.mx/api/correoinba.php): failed to open stream: no suitable wrapper could be found in /home/tecniemc/inba.tecniem.com/bd/usarapicorreo.php on line 56

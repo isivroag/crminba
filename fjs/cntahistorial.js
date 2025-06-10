@@ -154,6 +154,7 @@ $(document).ready(function () {
           "<div class='text-center'><div class='btn-group'><button class='btn btn-sm btn-primary btnSelPros'><i class='fas fa-hand-pointer'></i></button></div></div>",
         orderable: false,
       },
+     
     ],
   });
 

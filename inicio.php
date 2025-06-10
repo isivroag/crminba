@@ -118,7 +118,7 @@ if ($_SESSION['s_rol'] == 4) {
           <div class="col-lg-12 text-center">
 
             <br>
-            <img src="img/logoverde.png" alt="">
+            <img src="img/logoVerde.png" alt="">
           </div>
         </div>
       </div>

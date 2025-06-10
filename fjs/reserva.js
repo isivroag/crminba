@@ -21,7 +21,7 @@ $(document).ready(function () {
     idproy = $("#idproy").val();
     idman = $("#idman").val();
     window.location.href =
-      "cotizador.php?id_lote=" +
+      "cot.php?id_lote=" +
       idlote +
       "&id_proy=" +
       idproy +

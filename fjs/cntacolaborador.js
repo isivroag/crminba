@@ -5,17 +5,17 @@ $(document).ready(function () {
   // TOOLTIP DATATABLE
   $('[data-toggle="tooltip"]').tooltip();
 
-  $(document).off('show.bs.modal');
-  $(document).on('show.bs.modal', function(e) {
+  $(document).off("show.bs.modal");
+  $(document).on("show.bs.modal", function (e) {
     var $modal = $(e.target);
     $modal
-      .removeAttr('aria-hidden')
-      .attr('aria-modal', 'true')
-      .css('display', 'block')
-      .css('padding-right', '17px');
-    
-    $('body').addClass('modal-open');
-    $('.modal-backdrop').attr('aria-hidden', 'true');
+      .removeAttr("aria-hidden")
+      .attr("aria-modal", "true")
+      .css("display", "block")
+      .css("padding-right", "17px");
+
+    $("body").addClass("modal-open");
+    $(".modal-backdrop").attr("aria-hidden", "true");
   });
 
   tablaVis = $("#tablaV").DataTable({
@@ -93,7 +93,6 @@ $(document).ready(function () {
     telefono = fila.find("td:eq(2)").text();
 
     correo = fila.find("td:eq(3)").text();
-    
 
     $("#nombre").val(nombre);
     $("#telefono").val(telefono);
@@ -113,7 +112,7 @@ $(document).ready(function () {
     fila = $(this);
 
     id = parseInt($(this).closest("tr").find("td:eq(0)").text());
-    console.log(id);
+   
     opcion = 3;
     swal
       .fire({
@@ -149,128 +148,103 @@ $(document).ready(function () {
     var nombre = $("#nombre").val();
     var telefono = $("#telefono").val();
     var correo = $("#correo").val();
- 
 
     // Validación de campos
-    if (!nombre || !telefono || !correo ) {
-        Swal.fire({
-            title: "Datos Faltantes",
-            text: "Debe ingresar todos los datos marcados con *",
-            icon: "warning",
-        });
-        return false;
+    if (!nombre || !telefono || !correo) {
+      Swal.fire({
+        title: "Datos Faltantes",
+        text: "Debe ingresar todos los datos marcados con *",
+        icon: "warning",
+      });
+      return false;
     }
 
     // Validación de email
     if (!validarEmail(correo)) {
-        Swal.fire({
-            title: "Correo Inválido",
-            text: "Por favor ingrese un correo electrónico válido",
-            icon: "warning",
-        });
-        return false;
+      Swal.fire({
+        title: "Correo Inválido",
+        text: "Por favor ingrese un correo electrónico válido",
+        icon: "warning",
+      });
+      return false;
     }
 
     $.ajax({
-        url: "bd/crudcolaborador.php",
-        type: "POST",
-        dataType: "json",
-        data: {
-            nombre: nombre,
-            telefono: telefono,
-            correo: correo,
-            id: id,
-            opcion: opcion
-        },
-        success: function (data) {
-            if (data.success) {
-                // Mostrar notificación diferente si el correo no se envió
-                if (data.email_sent === false) {
-                    Swal.fire({
-                        title: "Prospecto Guardado",
-                        html: "El prospecto se creó correctamente pero <strong>no se pudo enviar la notificación</strong> al colaborador.<br><br>" +
-                              "Por favor notifíquele manualmente.",
-                        icon: "warning",
-                        confirmButtonText: "Entendido"
-                    });
-                } else {
-                    Swal.fire({
-                        title: "¡Éxito!",
-                        text: "Prospecto guardado y notificación enviada",
-                        icon: "success",
-                        timer: 2000,
-                        showConfirmButton: false
-                    });
-                }
+      url: "bd/crudcolaborador.php",
+      type: "POST",
+      dataType: "json",
+      data: {
+        nombre: nombre,
+        telefono: telefono,
+        correo: correo,
+        id: id,
+        opcion: opcion,
+      },
+      success: function (data) {
+        Swal.fire({
+          title: "Éxito",
+          text: "Datos guardados correctamente",
+          icon: "success",
+          confirmButtonText: "Aceptar",
+          confirmButtonColor: "#28B463",
+        });
+          id_col = data[0].id_col;
+              nombre = data[0].nombre;
+              telefono = data[0].telefono;  
+              correo = data[0].correo;
+          
+          // Actualizar DataTable
+          if (opcion == 1) {
+           
+            
+             
+           
+            // Nuevo registro
+            tablaVis.row
+              .add([
+                id_col,
+                nombre,
+                telefono,
+                correo,
 
-                // Actualizar DataTable
-                if (opcion == 1) { // Nuevo registro
-                    tablaVis.row.add([
-                        data.id_pros,
-                        data.nombre,
-                        data.telefono,
-                        data.correo,
-                        data.nombre_colaborador,
-                        data.fecha_registro,
-                        '<span class="badge badge-asignado">Asignado</span>',
-                        generarBotonesAccion(data.id_pros)
-                    ]).draw();
-                } else { // Edición
-                    tablaVis.row(fila).data([
-                        data.id_pros,
-                        data.nombre,
-                        data.telefono,
-                        data.correo,
-                        data.nombre_colaborador,
-                        data.fecha_registro,
-                        '<span class="badge badge-asignado">Asignado</span>',
-                        generarBotonesAccion(data.id_pros)
-                    ]).draw();
-                }
+              ])
+              .draw();
+          } else {
+            // Edición
+            // Actualizar la fila existente 
+            tablaVis
+              .row(fila)
+              .data([
+                id_col,
+                nombre,
+                telefono,
+                correo,
+              ])
+              .draw();
+          }
 
-                // Cerrar modal y limpiar
-                $("#modalCRUD").modal("hide");
-                $("#formDatos").trigger("reset");
-                
-            } else {
-                // Error en el servidor
-                Swal.fire({
-                    title: "Error",
-                    text: data.message || "Ocurrió un error al guardar el prospecto",
-                    icon: "error"
-                });
-            }
-        },
-        error: function (jqXHR, textStatus, errorThrown) {
-            // Error de conexión
-            console.error("Error en AJAX:", textStatus, errorThrown);
-            Swal.fire({
-                title: "Error de Conexión",
-                text: "No se pudo conectar al servidor. Por favor intente nuevamente.",
-                icon: "error"
-            });
-        }
+          // Cerrar modal y limpiar
+          $("#modalCRUD").modal("hide");
+          $("#formDatos").trigger("reset");
+       
+      },
+      error: function (jqXHR, textStatus, errorThrown) {
+        // Error de conexión
+        console.error("Error en AJAX:", textStatus, errorThrown);
+        Swal.fire({
+          title: "Error de Conexión",
+          text: "No se pudo conectar al servidor. Por favor intente nuevamente.",
+          icon: "error",
+        });
+      },
     });
-});
+  });
 
-// Función para validar email
-function validarEmail(email) {
+  // Función para validar email
+  function validarEmail(email) {
     var re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     return re.test(email);
-}
+  }
 
-// Función para generar botones de acción (debe coincidir con tu implementación)
-function generarBotonesAccion(id) {
-    return '<div class="btn-group">' +
-        '<button class="btn btn-sm btn-primary btnEditar" data-toggle="tooltip" title="Editar">' +
-            '<i class="fas fa-edit"></i>' +
-        '</button>' +
-        '<button class="btn btn-sm btn-success btnConvertir" data-toggle="tooltip" title="Convertir a Cliente">' +
-            '<i class="fas fa-user-check"></i>' +
-        '</button>' +
-        '<button class="btn btn-sm btn-danger btnDescartar" data-toggle="tooltip" title="Descartar Prospecto">' +
-            '<i class="fas fa-trash-alt"></i>' +
-        '</button>' +
-    '</div>';
-}
+ 
 });
