@@ -16,6 +16,7 @@ $correo = $_POST['correo'] ?? null;
 $col_asignado = $_POST['col_asignado'] ?? null;
 $origen = $_POST['origen'] ?? null;
 $id_usuario = $_POST['id_usuario'] ?? null;
+$interes = $_POST['interes'] ?? null; // Nuevo campo para interés
 
 
 function mayusculasEspanol($texto) {
@@ -29,8 +30,8 @@ try {
 
 
 
-            $consulta = "INSERT INTO prospecto (nombre, telefono, correo, col_asignado, origen,id_usuario_alta)
-                         VALUES (:nombre, :telefono, :correo, :col_asignado, :origen, :id_usuario)";
+            $consulta = "INSERT INTO prospecto (nombre, telefono, correo, col_asignado, origen,id_usuario_alta,interes)
+                         VALUES (:nombre, :telefono, :correo, :col_asignado, :origen, :id_usuario, :interes)";
 
             $stmt = $conexion->prepare($consulta);
             $stmt->bindParam(':nombre', $nombre);
@@ -39,6 +40,7 @@ try {
             $stmt->bindParam(':col_asignado', $col_asignado);
             $stmt->bindParam(':origen', $origen);
             $stmt->bindParam(':id_usuario', $id_usuario, PDO::PARAM_INT);
+            $stmt->bindParam(':interes', $interes);
             $stmt->execute();
 
 
@@ -73,7 +75,8 @@ try {
                 'correo' => $data['correo'],
                 'nombre_colaborador' => $data['nombre_colaborador'],
                 'fecha_registro' => date('d/m/Y', strtotime($data['fecha_registro'])),
-                'origen' => $data['origen']
+                'origen' => $data['origen'],
+                'interes' => $data['interes']
             ];
             break;
 
@@ -87,7 +90,8 @@ try {
 
 
             $consulta = "UPDATE prospecto SET 
-                         nombre =:nombre, telefono = :telefono, correo = :correo, col_asignado = :col_asignado,origen = :origen 
+                         nombre =:nombre, telefono = :telefono, correo = :correo, col_asignado = :col_asignado,origen = :origen,
+                         interes = :interes 
                          WHERE id_pros = :id";
 
 
@@ -98,6 +102,7 @@ try {
             $stmt->bindParam(':col_asignado', $col_asignado);
             $stmt->bindParam(':origen', $origen);
             $stmt->bindParam(':id', $id, PDO::PARAM_INT);
+            $stmt->bindParam(':interes', $interes);
             // Ejecutar la consulta
             $stmt->execute();
             if ($stmt->rowCount() === 0) {
@@ -122,6 +127,7 @@ try {
             if ($old_data['correo'] != $correo) $cambios[] = "Correo: {$old_data['correo']} → $correo";
             if ($old_data['col_asignado'] != $col_asignado) $cambios[] = "Asignado a: ID {$old_data['col_asignado']} → $col_asignado";
             if ($old_data['origen'] != $origen) $cambios[] = "Origen: {$old_data['origen']} → $origen";
+            if ($old_data['interes'] != $interes) $cambios[] = "Interés: {$old_data['interes']} → $interes";
 
             $descripcion = "Actualización: " . implode(", ", $cambios);
 
@@ -143,7 +149,8 @@ try {
                 'correo' => $data['correo'],
                 'nombre_colaborador' => $data['nombre_colaborador'],
                 'fecha_registro' => date('d/m/Y', strtotime($data['fecha_registro'])),
-                'origen' => $data['origen']
+                'origen' => $data['origen'],
+                'interes' => $data['interes']
             ];
             break;
 

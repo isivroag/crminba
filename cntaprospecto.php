@@ -11,30 +11,29 @@ $conexion = $objeto->connect();
 
 // Consulta para obtener prospectos activos (edo_pros = 1)
 
-if($_SESSION['s_rol'] == 4) {
-     $colaborador_id = $_SESSION['id_col'];
+if ($_SESSION['s_rol'] == 4) {
+    $colaborador_id = $_SESSION['id_col'];
     $consulta = "SELECT p.*, c.nombre as nombre_colaborador 
                  FROM prospecto p
                  JOIN colaborador c ON p.col_asignado = c.id_col
                  WHERE p.edo_pros = 1 
+                 and p.edo_seguimiento <> 3
                  AND p.col_asignado = :colaborador_id
                  ORDER BY p.id_pros";
     $resultado = $conexion->prepare($consulta);
     $resultado->bindParam(':colaborador_id', $colaborador_id, PDO::PARAM_INT);
     // Si no es administrador, filtrar por el colaborador asignado
-   
+
 } else {
-     
+
     $consulta = "SELECT p.*, c.nombre as nombre_colaborador 
                  FROM prospecto p
                  JOIN colaborador c ON p.col_asignado = c.id_col
-                 WHERE p.edo_pros = 1 
+                 WHERE p.edo_pros <>0 
                  ORDER BY p.id_pros";
     $resultado = $conexion->prepare($consulta);
- 
-
 }
-    // Administrador puede ver todos los prospectos activos
+// Administrador puede ver todos los prospectos activos
 /*
 $consulta = "SELECT p.*, c.nombre as nombre_colaborador 
              FROM prospecto p
@@ -77,10 +76,11 @@ $message = "";
         background-color: #17a2b8;
     }
 
-    .badge-finalizado{
+    .badge-finalizado {
         background-color: #6c757d;
     }
-     .badge-pendiente{
+
+    .badge-pendiente {
         background-color: #6c757d;
     }
 </style>
@@ -111,7 +111,7 @@ $message = "";
                                 <table name="tablaV" id="tablaV" class="table table-sm table-striped table-bordered table-condensed text-nowrap w-auto mx-auto" style="width:100%; font-size:14px">
                                     <thead class="text-center  bg-green">
                                         <tr>
-                                            <th>ID  </th>
+                                            <th>ID </th>
                                             <th>NOMBRE</th>
                                             <th>TELÉFONO</th>
                                             <th>CORREO</th>
@@ -119,6 +119,7 @@ $message = "";
                                             <th>FECHA REGISTRO</th>
                                             <th>ESTADO</th>
                                             <th>ORIGEN</th>
+                                            <th>INTERES</th>
                                             <th>ACCIONES</th>
                                         </tr>
                                     </thead>
@@ -148,7 +149,7 @@ $message = "";
                                                             $badge_class = 'bg-green';
                                                             $estado_text = 'Finalizado';
                                                             break;
-                                                         case 4:
+                                                        case 4:
                                                             $badge_class = 'bg-secondary';
                                                             $estado_text = 'Pendiente';
                                                             break;
@@ -175,12 +176,16 @@ $message = "";
                                                         case 'llamada':
                                                             echo '<i class="fas fa-phone text-dark"></i> Llamada';
                                                             break;
+                                                        case 'vendedor':
+                                                            echo '<i class="fas fa-user text-green"></i> Vendedor';
+                                                            break;
                                                         default:
                                                             echo ucfirst($origen);
                                                             break;
                                                     }
                                                     ?>
                                                 </td>
+                                                <td><?php echo $dat['interes']; ?></td>
                                                 <td></td>
                                             </tr>
                                         <?php endforeach; ?>
@@ -220,18 +225,18 @@ $message = "";
                                 <div class="col-12 col-sm-4">
                                     <div class="form-group input-group-sm">
                                         <label for="telefono" class="col-form-label form-control-sm">*TELÉFONO:</label>
-                                        <input type="text" class="form-control form-control-sm" name="telefono" id="telefono" autocomplete="off" placeholder="TELÉFONO"  maxlength="10" oninput="this.value = this.value.replace(/[^0-9]/g, '')">
+                                        <input type="tel" class="form-control form-control-sm" name="telefono" id="telefono" autocomplete="off" placeholder="TELÉFONO (10 dígitos o +código)" maxlength="20">
                                     </div>
                                 </div>
 
                                 <div class="col-12 col-sm-4">
                                     <div class="form-group input-group-sm">
                                         <label for="correo" class="col-form-label form-control-sm">*CORREO:</label>
-                                        <input type="email" class="form-control form-control-sm" name="correo" id="correo" autocomplete="off" placeholder="CORREO ELECTRÓNICO" >
+                                        <input type="email" class="form-control form-control-sm" name="correo" id="correo" autocomplete="off" placeholder="CORREO ELECTRÓNICO">
                                     </div>
                                 </div>
 
-                               <div class="col-12 col-sm-4">
+                                <div class="col-12 col-sm-4">
                                     <div class="form-group input-group-sm">
                                         <label for="origen" class="col-form-label form-control-sm">*Origen:</label>
                                         <select id="origen" name="origen" class="selectpicker form-control form-control-sm" data-live-search="false" title="Seleccione el origen...">
@@ -240,7 +245,29 @@ $message = "";
                                             <option value="web" data-icon="fas fa-globe text-info">Web</option>
                                             <option value="whatsapp" data-icon="fab fa-whatsapp text-success">WhatsApp</option>
                                             <option value="llamada" data-icon="fas fa-phone text-dark">Llamada</option>
+                                            <option value="vendedor" data-icon="fas fa-user text-green">Vendedor</option>
                                         </select>
+                                    </div>
+                                </div>
+
+                                <div class="col-12">
+                                    <div class="form-group input-group-sm">
+                                        <label for="interes_select" class="col-form-label form-control-sm">*MOSTRÓ INTERÉS EN:</label>
+                                        <select class="form-control form-control-sm" name="interes_select" id="interes_select" required>
+                                            <option value="" disabled selected>Seleccione un proyecto...</option>
+                                            <?php
+                                            // Cargar proyectos desde la base de datos
+                                            $consulta_proy = "SELECT nombre FROM proyecto ORDER BY nombre";
+                                            $resultado_proy = $conexion->prepare($consulta_proy);
+                                            $resultado_proy->execute();
+                                            $proyectos = $resultado_proy->fetchAll(PDO::FETCH_ASSOC);
+                                            foreach ($proyectos as $proy) {
+                                                echo '<option value="' . htmlspecialchars($proy['nombre']) . '">' . htmlspecialchars($proy['nombre']) . '</option>';
+                                            }
+                                            ?>
+                                            <option value="otro">Otro</option>
+                                        </select>
+                                        <input type="text" class="form-control form-control-sm mt-2" name="interes" id="interes" autocomplete="off" placeholder="Especifique el proyecto" style="display:none;">
                                     </div>
                                 </div>
 
@@ -266,44 +293,144 @@ $message = "";
             </div>
         </div>
     </section>
+    <section>
+        <!-- Modal para Convertir a Cliente -->
+        <div class="modal fade" id="modalCliente" tabindex="-1" role="dialog" aria-labelledby="modalClienteLabel">
+            <div class="modal-dialog modal-lg" role="document">
+                <div class="modal-content">
+                    <div class="modal-header  bg-green text-white">
+                        <h5 class="modal-title" id="modalClienteLabel">CONVERTIR A CLIENTE</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <form id="formCliente row" class="row p-3">
+                            <input type="hidden" id="id_prospecto" name="id_prospecto">
 
-    <!-- Modal para Convertir a Cliente -->
-    <div class="modal fade" id="modalConvertir" tabindex="-1" role="dialog" aria-labelledby="modalConvertirLabel">
-        <div class="modal-dialog modal-lg" role="document">
-            <div class="modal-content">
-                <div class="modal-header  bg-green text-white">
-                    <h5 class="modal-title" id="modalConvertirLabel">CONVERTIR A CLIENTE</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body">
-                    <form id="formCliente" class="row p-3">
-                        <input type="hidden" id="id_prospecto" name="id_prospecto">
+                            <div class="col-12 col-sm-4">
+                                <div class="form-group input-group-sm">
+                                    <label for="rfc" class="col-form-label form-control-sm">RFC:</label>
+                                    <input type="text" class="form-control form-control-sm" name="rfc" id="rfc" autocomplete="off" placeholder="RFC" maxlength="13">
+                                </div>
+                            </div>
 
-                        <div class="col-md-6 form-group">
-                            <label for="rfc">RFC:</label>
-                            <input type="text" class="form-control" id="rfc" name="rfc" placeholder="RFC">
-                        </div>
+                            <div class="col-12 col-sm-4">
+                                <div class="form-group input-group-sm">
+                                    <label for="tipo_ide" class="col-form-label form-control-sm">*TIPO IDENTIFICACIÓN:</label>
+                                    <select class="form-control form-control-sm" name="tipo_ide" id="tipo_ide" require>
+                                        <option value="INE">INE</option>
+                                        <option value="PASAPORTE">PASAPORTE</option>
+                                        <option value="CURP">CURP</option>
+                                        <option value="LICENCIA">LICENCIA</option>
+                                        <option value="CARTILLA MILITAR">CARTILLA MILITAR</option>
+                                        <option value="TARJETA DE RESIDENCIA">TARJETA DE RESIDENCIA</option>
+                                        <option value="OTRO">OTRO</option>
+                                    </select>
+                                </div>
+                            </div>
 
-                        <div class="col-md-6 form-group">
-                            <label for="fecha_nacimiento">FECHA DE NACIMIENTO:</label>
-                            <input type="date" class="form-control" id="fecha_nacimiento" name="fecha_nacimiento">
-                        </div>
 
-                        <div class="col-12 form-group">
-                            <label for="direccion">DIRECCIÓN COMPLETA:</label>
-                            <textarea class="form-control" id="direccion" name="direccion" rows="3" placeholder="CALLE, NÚMERO, COLONIA, CÓDIGO POSTAL, CIUDAD, ESTADO"></textarea>
-                        </div>
-                    </form>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
-                    <button type="button" id="btnConvertir" class="btn btn-success">Guardar como Cliente</button>
+
+                            <div class="col-12 col-sm-4">
+                                <div class="form-group input-group-sm">
+                                    <label for="folio_ide" class="col-form-label form-control-sm">*FOLIO IDENTIFICACIÓN:</label>
+                                    <input type="text" class="form-control form-control-sm" name="folio_ide" id="folio_ide" autocomplete="off" placeholder="FOLIO" required>
+                                </div>
+                            </div>
+
+
+
+                            <div class="col-12 col-sm-12">
+                                <div class="form-group input-group-sm">
+                                    <label for="nombre_clie" class="col-form-label">*NOMBRE COMPLETO:</label>
+                                    <input type="text" class="form-control form-control-sm" id="nombre_clie" name="nombre_clie" placeholder="NOMBRE COMPLETO" required>
+                                </div>
+                            </div>
+
+
+                            <div class="col-12 col-sm-4">
+                                <div class="form-group input-group-sm">
+                                    <label for="tel_clie" class="col-form-label">*TELÉFONO:</label>
+                                    <input type="text" class="form-control form-control-sm" id="tel_clie" name="tel_clie" placeholder="TELÉFONO" required>
+                                </div>
+                            </div>
+
+                            <div class="col-12 col-sm-4">
+                                <div class="form-group input-group-sm">
+                                    <label for="correo_clie" class="col-form-label">CORREO:</label>
+                                    <input type="email" class="form-control form-control-sm" id="correo_clie" name="correo_clie" placeholder="CORREO">
+                                </div>
+                            </div>
+
+                            <div class="col-12 col-sm-4">
+                                <div class="form-group input-group-sm">
+                                    <label for="nacionalidad" class="col-form-label ">NACIONALIDAD:</label>
+                                    <select class="form-control form-control-sm" name="nacionalidad" id="nacionalidad">
+                                        <option value="MEXICANA">MEXICANA</option>
+                                        <option value="EXTRANJERA">EXTRANJERA</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="col-12 col-sm-8">
+                                <div class="form-group input-group-sm">
+                                    <label for="dir_calle" class="col-form-label form-control-sm">CALLE Y NÚMERO:</label>
+                                    <input type="text" class="form-control form-control-sm" name="dir_calle" id="dir_calle" autocomplete="off" placeholder="CALLE Y NÚMERO">
+                                </div>
+                            </div>
+
+                            <div class="col-12 col-sm-4">
+                                <div class="form-group input-group-sm">
+                                    <label for="dir_colonia" class="col-form-label form-control-sm">COLONIA:</label>
+                                    <input type="text" class="form-control form-control-sm" name="dir_colonia" id="dir_colonia" autocomplete="off" placeholder="COLONIA">
+                                </div>
+                            </div>
+
+                            <div class="col-12 col-sm-4">
+                                <div class="form-group input-group-sm">
+                                    <label for="dir_ciudad" class="col-form-label form-control-sm">CIUDAD:</label>
+                                    <input type="text" class="form-control form-control-sm" name="dir_ciudad" id="dir_ciudad" autocomplete="off" placeholder="CIUDAD">
+                                </div>
+                            </div>
+
+                            <div class="col-12 col-sm-4">
+                                <div class="form-group input-group-sm">
+                                    <label for="dir_edo" class="col-form-label form-control-sm">ESTADO:</label>
+                                    <input type="text" class="form-control form-control-sm" name="dir_edo" id="dir_edo" autocomplete="off" placeholder="ESTADO">
+                                </div>
+                            </div>
+
+                            <div class="col-12 col-sm-4">
+                                <div class="form-group input-group-sm">
+                                    <label for="dir_cp" class="col-form-label form-control-sm">CÓDIGO POSTAL:</label>
+                                    <input type="text" class="form-control form-control-sm" name="dir_cp" id="dir_cp" autocomplete="off" placeholder="CP" maxlength="5">
+                                </div>
+                            </div>
+
+                            <div class="col-12">
+                                <div class="form-group input-group-sm">
+                                    <div class="form-check">
+                                        <input type="checkbox" class="form-check-input" name="especial" id="especial" value="1">
+                                        <label class="form-check-label" for="especial">
+                                            <strong>CLIENTE ESPECIAL</strong> <small class="text-muted">(Requiere atención prioritaria)</small>
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+
+
+
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                        <button type="button" id="btnGuardarCliente" class="btn btn-success">Guardar como Cliente</button>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
+    </section>
 </div>
 
 <?php include_once 'templates/footer.php'; ?>

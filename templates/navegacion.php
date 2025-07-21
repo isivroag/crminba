@@ -83,14 +83,14 @@
               <?php } ?>
 
 
-                <li class="nav-item">
-                  <a href="cntaproyecto.php" class="nav-link <?php echo ($pagina == 'cntaproyecto') ? "seleccionado" : ""; ?>  ">
-                    <i class=" fa-duotone fa-regular fa-city nav-icon"></i>
-                    <p>Proyectos</p>
-                  </a>
-                </li>
+              <li class="nav-item">
+                <a href="cntaproyecto.php" class="nav-link <?php echo ($pagina == 'cntaproyecto') ? "seleccionado" : ""; ?>  ">
+                  <i class=" fa-duotone fa-regular fa-city nav-icon"></i>
+                  <p>Proyectos</p>
+                </a>
+              </li>
 
-                
+
 
             </ul>
 
@@ -100,9 +100,9 @@
 
           <?php if ($_SESSION['s_rol'] == '2' || $_SESSION['s_rol'] == '3' || $_SESSION['s_rol'] == '4') { ?>
             <li class="nav-item  has-treeview <?php echo ($pagina == 'cntaseguimiento' || $pagina == 'seguimiento' || $pagina == 'cntapresupuesto' ||
-                                                $pagina === 'presupuesto' || $pagina == "cntapagoordenes" || $pagina == "reportepagos") ? "menu-open" : ""; ?>">
+                                                $pagina === 'presupuesto' || $pagina == "apartado" || $pagina == "cntaapartado") ? "menu-open" : ""; ?>">
               <a href="#" class="nav-link  <?php echo ($pagina == 'cntaseguimiento' || $pagina == 'seguimiento' || $pagina == 'cntapresupuesto' ||
-                                              $pagina === 'presupuesto' || $pagina == "cntapagocxpgral" || $pagina == "reportepagos") ? "active" : ""; ?>">
+                                              $pagina === 'presupuesto' || $pagina == "apartado" || $pagina == "cntaapartado") ? "active" : ""; ?>">
                 <i class="fa-sharp-duotone fa-regular fa-briefcase-blank  nav-icon"></i>
                 <p>
                   Operaciones
@@ -119,31 +119,46 @@
 
                 <li class="nav-item">
                   <a href="cntahistorial.php" class="nav-link <?php echo ($pagina == 'cntaseguimiento') ? " seleccionado" : ""; ?>  ">
-                    <i class="fa-sharp-duotone fa-regular fa-rectangle-history-circle-user nav-icon"></i>
+                    <i class="fa-sharp-duotone fa-solid fa-rectangle-history-circle-user nav-icon"></i>
                     <p>Cnta Seguimiento</p>
                   </a>
                 </li>
                 <li class="nav-item">
                   <a href="seguimiento.php" class="nav-link <?php echo ($pagina == 'seguimiento') ? " seleccionado" : ""; ?>  ">
-                    <i class="fa-sharp-duotone fa-regular fa-messages nav-icon"></i>
+                    <i class="fa-sharp-duotone fa-solid fa-messages nav-icon"></i>
                     <p>Seguimiento</p>
                   </a>
                 </li>
                 <li class="nav-item">
                   <a href="cntapresupuesto.php" class="nav-link <?php echo ($pagina == 'cntapresupuesto') ? " seleccionado" : ""; ?>  ">
-                    <i class="fa-sharp-duotone fa-regular fa-file-spreadsheet nav-icon"></i>
+                    <i class="fa-sharp-duotone fa-solid fa-file-spreadsheet nav-icon"></i>
                     <p>Cnta Presupuesto</p>
                   </a>
                 </li>
 
 
-                <?php if ($_SESSION['s_rol'] == '4' || $_SESSION['s_rol'] == '2' || $_SESSION['s_rol'] == '3')  { ?>
+                <?php if ($_SESSION['s_rol'] == '4' || $_SESSION['s_rol'] == '2' || $_SESSION['s_rol'] == '3') { ?>
                   <li class="nav-item">
                     <a href="cot.php" class="nav-link <?php echo ($pagina == 'presupuesto') ? " seleccionado" : ""; ?>  ">
-                      <i class="fa-sharp-duotone fa-regular fa-memo nav-icon"></i>
+                      <i class="fa-sharp-duotone fa-solid fa-memo nav-icon"></i>
                       <p>Presupuesto</p>
                     </a>
                   </li>
+
+                  <li class="nav-item">
+                    <a href="apartado.php" class="nav-link <?php echo ($pagina == 'apartado') ? " seleccionado" : ""; ?>  ">
+                      <i class="fa-sharp-duotone fa-solid fa-handshake nav-icon"></i>
+                      <p>Apartado</p>
+                    </a>
+                  </li>
+
+                  <li class="nav-item">
+                    <a href="cntaapartado.php" class="nav-link <?php echo ($pagina == 'cntaapartado') ? " seleccionado" : ""; ?>  ">
+                      <i class="fa-sharp-duotone fa-solid fa-mound nav-icon"></i>
+                      <p>Cnta Apartado</p>
+                    </a>
+                  </li>
+
                 <?php } ?>
 
 

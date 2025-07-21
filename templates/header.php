@@ -2,6 +2,12 @@
 include_once('bd/funcion.php');
 session_start();
 
+$inicio = 0;
+if ($inicio == 0) {
+    header("Location: mantenimiento.html");
+    exit();
+}
+
 if ($_SESSION['s_usuario'] === null) {
   header("Location:index.php");
 } else {

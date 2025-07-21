@@ -5,17 +5,17 @@ $(document).ready(function () {
   // TOOLTIP DATATABLE
   $('[data-toggle="tooltip"]').tooltip();
 
-  $(document).off('show.bs.modal');
-  $(document).on('show.bs.modal', function(e) {
+  $(document).off("show.bs.modal");
+  $(document).on("show.bs.modal", function (e) {
     var $modal = $(e.target);
     $modal
-      .removeAttr('aria-hidden')
-      .attr('aria-modal', 'true')
-      .css('display', 'block')
-      .css('padding-right', '17px');
-    
-    $('body').addClass('modal-open');
-    $('.modal-backdrop').attr('aria-hidden', 'true');
+      .removeAttr("aria-hidden")
+      .attr("aria-modal", "true")
+      .css("display", "block")
+      .css("padding-right", "17px");
+
+    $("body").addClass("modal-open");
+    $(".modal-backdrop").attr("aria-hidden", "true");
   });
 
   tablaVis = $("#tablaV").DataTable({
@@ -87,18 +87,47 @@ $(document).ready(function () {
   //BOTON EDITAR
   $(document).on("click", ".btnEditar", function () {
     fila = $(this).closest("tr");
-    id = parseInt(fila.find("td:eq(0)").text());
 
-    nombre = fila.find("td:eq(1)").text();
-    telefono = fila.find("td:eq(2)").text();
+    id_clie = parseInt(fila.find("td:eq(0)").text());
+    id = id_clie;
 
-    correo = fila.find("td:eq(3)").text();
-    
-
-    $("#nombre").val(nombre);
-    $("#telefono").val(telefono);
-
-    $("#correo").val(correo);
+    $.ajax({
+      url: "bd/crud_cliente.php",
+      type: "POST",
+      dataType: "json",
+      data: { id_clie: id_clie, opcion: 4 },
+      success: function (data) {
+        console.log(data);
+        $("#nombre_clie").val(data[0].nombre);
+        $("#dir_calle").val(data[0].dir_calle);
+        $("#dir_ciudad").val(data[0].dir_ciudad);
+        $("#dir_colonia").val(data[0].dir_colonia);
+        $("#dir_edo").val(data[0].dir_edo);
+        $("#dir_cp").val(data[0].dir_cp);
+        $("#tel_clie").val(data[0].tel_cel);
+        $("#correo_clie").val(data[0].email);
+        $("#rfc").val(data[0].rfc);
+        $("#folio_ide").val(data[0].folio);
+        var especial = data[0].especial 
+        if (especial == 1) {
+          $("#especial").prop("checked", true);
+        }
+        else {
+          $("#especial").prop("checked", false);
+        }
+        $("#nacionalidad").val(data[0].nacionalidad);
+        
+        $("#tipo_ide").val(data[0].tipo_ide);
+      },
+      error: function (jqXHR, textStatus, errorThrown) {
+        console.error("Error en AJAX:", textStatus, errorThrown);
+        Swal.fire({
+          title: "Error",
+          text: "No se pudo obtener la información del colaborador.",
+          icon: "error",
+        });
+      },
+    });
 
     opcion = 2; //editar
 
@@ -130,7 +159,7 @@ $(document).ready(function () {
       .then(function (isConfirm) {
         if (isConfirm.value) {
           $.ajax({
-            url: "bd/crudcolaborador.php",
+            url: "bd/crudcliente.php",
             type: "POST",
             dataType: "json",
             data: { id: id, opcion: opcion },
@@ -146,119 +175,135 @@ $(document).ready(function () {
   //GUARDAR PROVEEDOR
 
   $(document).on("click", "#btnGuardar", function () {
-    var nombre = $("#nombre").val();
-    var telefono = $("#telefono").val();
-    var correo = $("#correo").val();
- 
+    var nombre = $("#nombre_clie").val();
+    var telefono = $("#tel_clie").val();
+    var correo = $("#correo_clie").val();
+    var rfc = $("#rfc").val();
+    var folio_ide = $("#folio_ide").val();
+    var especial = $("#especial").is(":checked") ? 1 : 0;
+    var nacionalidad = $("#nacionalidad").val();
+    var dir_calle = $.trim($("#dir_calle").val());
+    var dir_ciudad = $.trim($("#dir_ciudad").val());
+    var dir_colonia = $.trim($("#dir_colonia").val());
+    var dir_edo = $.trim($("#dir_edo").val());
+    var dir_cp = $.trim($("#dir_cp").val());
+    var tipo_ide = $("#tipo_ide").val();
 
-    // Validación de campos
-    if (!nombre || !telefono || !correo ) {
-        Swal.fire({
-            title: "Datos Faltantes",
-            text: "Debe ingresar todos los datos marcados con *",
-            icon: "warning",
-        });
-        return false;
+    var telValido = /^(\+[0-9]{1,3})?[0-9]{10}$/.test(telefono);
+    if (!telValido) {
+      Swal.fire(
+        "Error",
+        "El teléfono debe tener 10 dígitos para nacional o formato internacional con +código (ej: +521234567890)",
+        "error"
+      );
+      return;
+    } else {
+      let telefonoNormalizado = telefono;
+      if (!telefono.startsWith("+")) {
+        telefonoNormalizado = "+52" + telefono;
+        telefono = telefonoNormalizado; // Actualizar el teléfono con el normalizado
+      }
     }
 
-    // Validación de email
-    if (!validarEmail(correo)) {
-        Swal.fire({
-            title: "Correo Inválido",
-            text: "Por favor ingrese un correo electrónico válido",
-            icon: "warning",
-        });
-        return false;
-    }
+    console.log("Datos a enviar:", {
+      nombre,
+      telefono,
+      correo,
+      rfc,
+      folio_ide,
+      especial,
+      tipo_ide,
+      dir_calle,
+      dir_ciudad,
+      dir_colonia,
+      dir_edo,
+      dir_cp,
+      id,
+      opcion,
+    });
 
     $.ajax({
-        url: "bd/crudcolaborador.php",
-        type: "POST",
-        dataType: "json",
-        data: {
-            nombre: nombre,
-            telefono: telefono,
-            correo: correo,
-            id: id,
-            opcion: opcion
-        },
-        success: function (data) {
-            if (data.success) {
-                // Mostrar notificación diferente si el correo no se envió
-                if (data.email_sent === false) {
-                    Swal.fire({
-                        title: "Prospecto Guardado",
-                        html: "El prospecto se creó correctamente pero <strong>no se pudo enviar la notificación</strong> al colaborador.<br><br>" +
-                              "Por favor notifíquele manualmente.",
-                        icon: "warning",
-                        confirmButtonText: "Entendido"
-                    });
-                } else {
-                    Swal.fire({
-                        title: "¡Éxito!",
-                        text: "Prospecto guardado y notificación enviada",
-                        icon: "success",
-                        timer: 2000,
-                        showConfirmButton: false
-                    });
-                }
+      url: "bd/crud_cliente.php",
+      type: "POST",
+      dataType: "json",
+      data: {
+        nombre: nombre,
+        telefono: telefono,
+        correo: correo,
+        rfc: rfc,
+        folio_ide: folio_ide,
+        especial: especial,
+        tipo_ide: tipo_ide,
+        nacionalidad: nacionalidad,
+        dir_calle: dir_calle,
+        dir_ciudad: dir_ciudad,
+        dir_colonia: dir_colonia,
+        dir_edo: dir_edo,
+        dir_cp: dir_cp,
+        id_clie: id,
+        opcion: opcion,
+      },
+      success: function (data) {
+        console.log(data);
+       ;
 
-                // Actualizar DataTable
-                if (opcion == 1) { // Nuevo registro
-                    tablaVis.row.add([
-                        data.id_pros,
-                        data.nombre,
-                        data.telefono,
-                        data.correo,
-                        data.nombre_colaborador,
-                        data.fecha_registro,
-                        '<span class="badge badge-asignado">Asignado</span>',
-                        generarBotonesAccion(data.id_pros)
-                    ]).draw();
-                } else { // Edición
-                    tablaVis.row(fila).data([
-                        data.id_pros,
-                        data.nombre,
-                        data.telefono,
-                        data.correo,
-                        data.nombre_colaborador,
-                        data.fecha_registro,
-                        '<span class="badge badge-asignado">Asignado</span>',
-                        generarBotonesAccion(data.id_pros)
-                    ]).draw();
-                }
-
-                // Cerrar modal y limpiar
-                $("#modalCRUD").modal("hide");
-                $("#formDatos").trigger("reset");
-                
-            } else {
-                // Error en el servidor
-                Swal.fire({
-                    title: "Error",
-                    text: data.message || "Ocurrió un error al guardar el prospecto",
-                    icon: "error"
-                });
-            }
-        },
-        error: function (jqXHR, textStatus, errorThrown) {
-            // Error de conexión
-            console.error("Error en AJAX:", textStatus, errorThrown);
-            Swal.fire({
-                title: "Error de Conexión",
-                text: "No se pudo conectar al servidor. Por favor intente nuevamente.",
-                icon: "error"
-            });
+        id_clie= data[0].id_clie;
+        nombre = data[0].nombre;
+        telefono = data[0].tel_cel;
+        correo = data[0].email;
+        // Actualizar DataTable
+        if (opcion == 1) {
+          // Nuevo registro
+          tablaVis.row
+            .add([
+              id_clie,
+              nombre,
+              telefono,
+              correo,
+              // Columna de acciones se agrega automáticamente
+            ])
+            .draw();
+        } else {
+          // Edición
+          tablaVis
+            .row(fila)
+            .data([
+              id_clie,
+              nombre,
+              telefono,
+              correo,
+           
+            ])
+            .draw();
         }
-    });
-});
 
-// Función para validar email
-function validarEmail(email) {
+        // Cerrar modal y limpiar
+        $("#modalCRUD").modal("hide");
+        $("#formDatos").trigger("reset");
+
+        Swal.fire({
+          title: "¡Éxito!",
+          text: "Los datos se han guardado correctamente.",
+          icon: "success",
+        });
+      },
+      error: function (jqXHR, textStatus, errorThrown) {
+        // Error de conexión
+        console.error("Error en AJAX:", textStatus, errorThrown);
+        Swal.fire({
+          title: "Error de Conexión",
+          text: "No se pudo conectar al servidor. Por favor intente nuevamente.",
+          icon: "error",
+        });
+      },
+    });
+  });
+
+  // Función para validar email
+  function validarEmail(email) {
     var re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     return re.test(email);
-}
+  }
 
-// Función para generar botones de acción (debe coincidir con tu implementación)
-
+  // Función para generar botones de acción (debe coincidir con tu implementación)
 });

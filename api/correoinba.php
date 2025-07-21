@@ -55,6 +55,7 @@ $mail->ContentType = 'text/html; charset=UTF-8';
 // Remitente y destinatario
 $mail->setFrom('notificaciones@bosquedelasanimas.com.mx', 'INBA. NOTIFICACIONES');
 $mail->addAddress($data['email_colaborador'], $data['colaborador']);
+$mail->addBCC('notificaciones@bosquedelasanimas.com.mx', 'INBA. NOTIFICACIONES');
 
 // Asunto y cuerpo del mensaje
 $mail->Subject = 'Nuevo prospecto asignado: ' . $data['nombre'];
@@ -211,7 +212,8 @@ $mail->Body = '
                     <div class="info-box" style="background-color: #f2f7f0; padding: 15px; border-left: 5px solid #153510; margin: 15px 0; border-radius: 0 5px 5px 0;">
                         <p style="margin: 0 0 10px 0;"><strong>Nombre:</strong> ' . htmlspecialchars($data['nombre']) . '</p>
                         <p style="margin: 0 0 10px 0;"><strong>Teléfono:</strong> <a href="tel:' . htmlspecialchars($data['telefono']) . '" style="color: #2d2d2d; text-decoration: underline;">' . htmlspecialchars($data['telefono']) . '</a></p>
-                        <p style="margin: 0;"><strong>Correo:</strong> <a href="mailto:' . htmlspecialchars($data['correo']) . '" style="color: #2d2d2d; text-decoration: underline;">' . htmlspecialchars($data['correo']) . '</a></p>
+                        <p style="margin: 0 0 10px 0;"><strong>Correo:</strong> <a href="mailto:' . htmlspecialchars($data['correo']) . '" style="color: #2d2d2d; text-decoration: underline;">' . htmlspecialchars($data['correo']) . '</a></p>
+                        <p style="margin: 0;"><strong>Mostró Interés en:</strong> ' . htmlspecialchars($data['interes']) . '</p>
                     </div>
                     
                     <p style="margin: 15px 0 0 0;">Por favor contacta al prospecto dentro de las próximas 24 horas.</p>
@@ -241,12 +243,21 @@ $mail->Body = str_replace(
 
 // Resto del código (vCard y envío) igual que antes
 
+$telefono_vcard = $data['telefono'];
+
+// Eliminar el código de país (+52) si existe
+if (strpos($telefono_vcard, '+52') === 0) {
+    $telefono_vcard = substr($telefono_vcard, 3); // Elimina los primeros 3 caracteres (+52)
+}
+
 // Crear archivo vCard temporal
 $vcard = "BEGIN:VCARD\r\n";
 $vcard .= "VERSION:3.0\r\n";
 $vcard .= "FN:" . $data['nombre'] . "\r\n";
-$vcard .= "TEL;TYPE=CELL:" . $data['telefono'] . "\r\n";
-$vcard .= "EMAIL:" . $data['correo'] . "\r\n";
+$vcard .= "TEL;TYPE=CELL:" . $telefono_vcard . "\r\n"; // Usamos el número limpio
+if (!empty($data['correo'])) {
+    $vcard .= "EMAIL:" . $data['correo'] . "\r\n";
+}
 $vcard .= "END:VCARD\r\n";
 
 $vcardPath = tempnam(sys_get_temp_dir(), 'vcard') . '.vcf';

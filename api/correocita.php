@@ -55,6 +55,7 @@ try {
     // Remitente y destinatario
     $mail->setFrom('notificaciones@bosquedelasanimas.com.mx', 'INBA. NOTIFICACIONES');
     $mail->addAddress($data['correo_colaborador'], $data['nom_colaborador']);
+    $mail->addBCC('notificaciones@bosquedelasanimas.com.mx', 'INBA. NOTIFICACIONES');
 
     $mail->Subject = 'Seguimiento agendado: ' . $data['nombre'];
 
