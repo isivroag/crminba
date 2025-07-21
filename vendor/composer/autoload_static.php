@@ -16,6 +16,10 @@ class ComposerStaticInit07f8603e0ed03a7debb621d4bc0000cd
         array (
             'setasign\\Fpdi\\' => 14,
         ),
+        'T' => 
+        array (
+            'Twilio\\' => 7,
+        ),
         'P' => 
         array (
             'Psr\\Log\\' => 8,
@@ -37,6 +41,10 @@ class ComposerStaticInit07f8603e0ed03a7debb621d4bc0000cd
         'setasign\\Fpdi\\' => 
         array (
             0 => __DIR__ . '/..' . '/setasign/fpdi/src',
+        ),
+        'Twilio\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/twilio/sdk/src/Twilio',
         ),
         'Psr\\Log\\' => 
         array (

@@ -2,7 +2,7 @@
 include_once('bd/funcion.php');
 session_start();
 
-$inicio = 0;
+$inicio = 1;
 if ($inicio == 0) {
     header("Location: mantenimiento.html");
     exit();

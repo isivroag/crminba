@@ -43,10 +43,10 @@ $(document).ready(function () {
   }
 
   var tablaNuevo = $("#tablaNuevo").DataTable({
-    dom: "<'row'<'col-sm-12'tr>>", // Solo la tabla (sin l, B, f, i, p)
-    paging: false, // Sin paginación
-    info: false, // Sin leyenda de "Mostrando registros del..."
-    searching: false, // Sin buscador
+    //dom: "<'row'<'col-sm-12'tr>>", // Solo la tabla (sin l, B, f, i, p)
+    paging: true, // Sin paginación
+    info: true, // Sin leyenda de "Mostrando registros del..."
+    searching: true, // Sin buscador
     language: {
       lengthMenu: "Mostrar _MENU_ registros",
       zeroRecords: "No se encontraron resultados",
@@ -73,10 +73,10 @@ $(document).ready(function () {
   });
 
   var tablaRealizado = $("#tablaRealizado").DataTable({
-    dom: "<'row'<'col-sm-12'tr>>", // Solo la tabla (sin l, B, f, i, p)
-    paging: false, // Sin paginación
-    info: false, // Sin leyenda de "Mostrando registros del..."
-    searching: false, // Sin buscador
+    //dom: "<'row'<'col-sm-12'tr>>", // Solo la tabla (sin l, B, f, i, p)
+    paging: true, // Sin paginación
+    info: true, // Sin leyenda de "Mostrando registros del..."
+    searching: true, // Sin buscador
     language: {
       lengthMenu: "Mostrar _MENU_ registros",
       zeroRecords: "No se encontraron resultados",
@@ -105,10 +105,10 @@ $(document).ready(function () {
   });
 
   var tablaAgenda = $("#tablaAgenda").DataTable({
-    dom: "<'row'<'col-sm-12'tr>>", // Solo la tabla (sin l, B, f, i, p)
-    paging: false, // Sin paginación
-    info: false, // Sin leyenda de "Mostrando registros del..."
-    searching: false, // Sin buscador
+    //dom: "<'row'<'col-sm-12'tr>>", // Solo la tabla (sin l, B, f, i, p)
+    paging: true, // Sin paginación
+    info: true, // Sin leyenda de "Mostrando registros del..."
+    searching: true, // Sin buscador
 
     language: {
       lengthMenu: "Mostrar _MENU_ registros",
