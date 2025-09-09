@@ -1,5 +1,5 @@
 <?php
-$pagina = "presupuesto";
+$pagina = "cotizacion";
 
 include_once "templates/header.php";
 include_once "templates/barra.php";
@@ -130,7 +130,7 @@ $message = "";
         <!-- Default box -->
         <div class="card">
             <div class="card-header bg-green text-light">
-                <h1 class="card-title mx-auto">PRESUPUESTOS</h1>
+                <h1 class="card-title mx-auto">COTIZACIÓN</h1>
             </div>
 
             <div class="card-body">
@@ -139,12 +139,12 @@ $message = "";
                         <div class="row justify-content-center mt-4">
                             <div class="col-sm-3">
                                 <button class="btn btn-danger w-100 py-2" type="button" id="btnNuevo">
-                                    <i class="fas fa-file-alt mr-2"></i> NUEVO PRESUPUESTO
+                                    <i class="fas fa-file-alt mr-2"></i> NUEVA COTIZACIÓN
                                 </button>
                             </div>
                             <div class="col-sm-3">
                                 <button class="btn bg-green w-100 py-2" type="button" id="btnGuardar" <?= $mostrar==0 ? '' : 'style="display:none;"' ?>>
-                                    <i class="fas fa-save mr-2"></i> GUARDAR PRESUPUESTO
+                                    <i class="fas fa-save mr-2"></i> GUARDAR COTIZACIÓN
                                 </button>
                             </div>
                             <div class="col-sm-3">
@@ -156,7 +156,7 @@ $message = "";
                         <div class="row justify-content-center">
                             <div class="col-sm-12">
                                 <div class="container justify-content-center">
-                                    <h1>PRESUPUESTO</h1>
+                                    <h1>COTIZACIÓN</h1>
 
                                     <form id="creditForm" class=" p-3">
                                         <div class="row">
@@ -191,12 +191,12 @@ $message = "";
                                             </div>
 
                                             <div class="col-sm-12 form-group form-group-sm">
-                                                <label for="nombre_clie" class="col-form-label">Cliente:</label>
+                                                <label for="nombre_pros" class="col-form-label">Prospecto:</label>
                                                 <div class="input-group">
-                                                    <input type="hidden" id="id_clie" name="id_clie" class="form-control">
-                                                    <input type="text" id="nombre_clie" name="nombre_clie" class="form-control form-control-sm" placeholder="Buscar Cliente">
+                                                    <input type="hidden" id="id_pros" name="id_pros" class="form-control">
+                                                    <input type="text" id="nombre_pros" name="nombre_pros" class="form-control form-control-sm" placeholder="Buscar Prospecto">
                                                     <span class="input-group-append">
-                                                        <button class="btn btn-success btn-sm" type="button" id="btnBuscarCliente"><i class="fas fa-search"></i></button>
+                                                        <button class="btn btn-success btn-sm" type="button" id="btnBuscarProspecto"><i class="fas fa-search"></i></button>
                                                     </span>
                                                 </div>
                                             </div>
@@ -285,7 +285,7 @@ $message = "";
                                         </div>
 
                                         <div class="container-fluid p-0 m-0">
-                                            <h4><strong>INFORMACIÓN DEL PRESUPUESTO</strong></h4>
+                                            <h4><strong>INFORMACIÓN DE LA COTIZACIÓN</strong></h4>
                                             <div class="row justify-content-center">
 
 
@@ -537,18 +537,18 @@ $message = "";
     <section>
         <div class="container-fluid">
             <!-- Modal de Búsqueda de Prospectos -->
-            <div class="modal fade" id="modalCliente" tabindex="-1" role="dialog" aria-labelledby="modalClienteLabel" aria-hidden="true">
+            <div class="modal fade" id="modalProspecto" tabindex="-1" role="dialog" aria-labelledby="modalProspectoLabel" aria-hidden="true">
                 <div class="modal-dialog modal-lg" role="document">
                     <div class="modal-content">
                         <div class="modal-header bg-gradient-green">
-                            <h5 class="modal-title" id="modalClienteLabel">BUSCAR CLIENTE</h5>
+                            <h5 class="modal-title" id="modalProspectoLabel">BUSCAR PROSPECTO</h5>
                             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                 <span aria-hidden="true">&times;</span>
                             </button>
                         </div>
                         <div class="modal-body">
                             <div class="table-responsive">
-                                <table id="tablaCliente" class="table table-sm table-striped table-bordered table-hover" style="width:100%">
+                                <table id="tablaProspecto" class="table table-sm table-striped table-bordered table-hover" style="width:100%">
                                     <thead class="text-center bg-gradient-green">
                                         <tr>
                                             <th>ID</th>
@@ -613,7 +613,7 @@ $message = "";
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <?php include_once 'templates/footer.php'; ?>
-<script src="fjs/cot2.js?v=<?php echo (rand()); ?>"></script>
+<script src="fjs/pcot2.js?v=<?php echo (rand()); ?>"></script>
 <script src="plugins/datatables/jquery.dataTables.min.js"></script>
 <script src="plugins/datatables-bs4/js/dataTables.bootstrap4.min.js"></script>
 <script src="plugins/datatables-responsive/js/dataTables.responsive.min.js"></script>
@@ -624,6 +624,6 @@ $message = "";
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/pdfmake.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/vfs_fonts.js"></script>
 <script src="https://cdn.datatables.net/buttons/1.6.2/js/buttons.html5.min.js"></script>
-<script src="http://cdn.datatables.net/plug-ins/1.10.21/sorting/formatted-numbers.js"></script>
+<script src="https://cdn.datatables.net/plug-ins/1.10.21/sorting/formatted-numbers.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap-select@1.13.14/dist/js/bootstrap-select.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>

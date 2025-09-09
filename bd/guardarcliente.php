@@ -21,6 +21,8 @@ try {
     $dir_edo = $_POST['dir_edo'] ?? null;
     $dir_cp = $_POST['dir_cp'] ?? null;
     $especial = $_POST['especial'] ?? 0;
+    $col_asignado = $_POST['col_asignado'] ?? null;
+    $origen = $_POST['origen'] ?? null;
    
 
     // Validar campos obligatorios
@@ -64,8 +66,9 @@ try {
         status, 
         especial,
         tipo_ide,
-        id_pros
-       
+        id_pros,
+        col_asignado,
+        origen
     ) VALUES (
         :nombre,
         :dir_calle,
@@ -81,7 +84,9 @@ try {
         'CORRECTO',
         :especial,
         :tipo_ide,
-        :id_prospecto
+        :id_prospecto,
+        :col_asignado,
+        :origen
     )";
 
     $stmtCliente = $conexion->prepare($consultaCliente);
@@ -99,6 +104,8 @@ try {
     $stmtCliente->bindParam(':especial', $especial);
     $stmtCliente->bindParam(':tipo_ide', $tipo_ide);
     $stmtCliente->bindParam(':id_prospecto', $id_prospecto);
+    $stmtCliente->bindParam(':col_asignado', $col_asignado);
+    $stmtCliente->bindParam(':origen', $origen);
 
     if (!$stmtCliente->execute()) {
         throw new Exception("Error al crear el cliente");
@@ -108,12 +115,13 @@ try {
 
     // Actualizar el estado del prospecto a "convertido" (edo_pros = 3)
     $consultaUpdateProspecto = "UPDATE prospecto SET 
-                               edo_seguimiento = 3, fecha_conversion = NOW()                          
+                               edo_seguimiento = 3, edo_pros = 2,id_cliente = :id_cliente, fecha_conversion = NOW()                          
                                WHERE id_pros = :id_prospecto";
     
     $stmtUpdateProspecto = $conexion->prepare($consultaUpdateProspecto);
 
     $stmtUpdateProspecto->bindParam(':id_prospecto', $id_prospecto);
+    $stmtUpdateProspecto->bindParam(':id_cliente', $id_cliente);
 
     if (!$stmtUpdateProspecto->execute()) {
         throw new Exception("Error al actualizar el estado del prospecto");

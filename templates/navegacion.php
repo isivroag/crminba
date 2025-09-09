@@ -99,10 +99,10 @@
           <!-- CIERRA MENU CATALOGOS -->
 
           <?php if ($_SESSION['s_rol'] == '2' || $_SESSION['s_rol'] == '3' || $_SESSION['s_rol'] == '4') { ?>
-            <li class="nav-item  has-treeview <?php echo ($pagina == 'cntaseguimiento' || $pagina == 'seguimiento' || $pagina == 'cntapresupuesto' ||
-                                                $pagina === 'presupuesto' || $pagina == "apartado" || $pagina == "cntaapartado") ? "menu-open" : ""; ?>">
-              <a href="#" class="nav-link  <?php echo ($pagina == 'cntaseguimiento' || $pagina == 'seguimiento' || $pagina == 'cntapresupuesto' ||
-                                              $pagina === 'presupuesto' || $pagina == "apartado" || $pagina == "cntaapartado") ? "active" : ""; ?>">
+            <li class="nav-item  has-treeview <?php echo ($pagina == 'cntaseguimiento' || $pagina == 'seguimiento' || $pagina == 'cntacot' ||
+                                                $pagina === 'cotizacion' || $pagina == "apartado" || $pagina == "cntaapartado") ? "menu-open" : ""; ?>">
+              <a href="#" class="nav-link  <?php echo ($pagina == 'cntaseguimiento' || $pagina == 'seguimiento' || $pagina == 'cntacot' ||
+                                              $pagina === 'cotizacions' || $pagina == "apartado" || $pagina == "cntaapartado") ? "active" : ""; ?>">
                 <i class="fa-sharp-duotone fa-regular fa-briefcase-blank  nav-icon"></i>
                 <p>
                   Operaciones
@@ -130,18 +130,18 @@
                   </a>
                 </li>
                 <li class="nav-item">
-                  <a href="cntapresupuesto.php" class="nav-link <?php echo ($pagina == 'cntapresupuesto') ? " seleccionado" : ""; ?>  ">
+                  <a href="cntacot.php" class="nav-link <?php echo ($pagina == 'cntacot') ? " seleccionado" : ""; ?>  ">
                     <i class="fa-sharp-duotone fa-solid fa-file-spreadsheet nav-icon"></i>
-                    <p>Cnta Presupuesto</p>
+                    <p>Cnta Cotizaciones</p>
                   </a>
                 </li>
 
 
                 <?php if ($_SESSION['s_rol'] == '4' || $_SESSION['s_rol'] == '2' || $_SESSION['s_rol'] == '3') { ?>
                   <li class="nav-item">
-                    <a href="cot.php" class="nav-link <?php echo ($pagina == 'presupuesto') ? " seleccionado" : ""; ?>  ">
+                    <a href="pcot.php" class="nav-link <?php echo ($pagina == 'cotizacion') ? " seleccionado" : ""; ?>  ">
                       <i class="fa-sharp-duotone fa-solid fa-memo nav-icon"></i>
-                      <p>Presupuesto</p>
+                      <p>Cotizador</p>
                     </a>
                   </li>
 

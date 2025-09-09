@@ -7,6 +7,14 @@ include_once "templates/navegacion.php";
 include_once 'bd/conexion.php';
 $objeto = new conn();
 $conexion = $objeto->connect();
+$prospectosactivos = 0;
+$totalprospectos = 0;
+$prospectostotales = 0;
+$prospectosclientes = 0;
+$efectividad = 0;
+$totalvtas= 0;
+$ventas=0;
+$seguimientoact = 0;
 
 // Consulta para obtener prospectos activos (edo_pros = 1)
 if ($_SESSION['s_rol'] == 4) {
@@ -17,7 +25,47 @@ if ($_SESSION['s_rol'] == 4) {
   $resultado->bindParam(':col_id', $colaborador_id, PDO::PARAM_INT);
   $resultado->execute();
   $data = $resultado->fetchAll(PDO::FETCH_ASSOC);
+
   $resultado->closeCursor();
+
+
+
+  $consulta = "SELECT * from vprospecto WHERE edo_pros = 1 AND col_asignado = :col_id  ORDER BY id_pros";
+
+  $colaborador_id = $_SESSION['id_col'];
+  $resultado = $conexion->prepare($consulta);
+  $resultado->bindParam(':col_id', $colaborador_id, PDO::PARAM_INT);
+  $resultado->execute();
+  $totalprospectos = $resultado->rowCount();
+  $prospectosactivos = $resultado->rowCount();
+  $resultado->closeCursor();
+
+
+  $consulta = "SELECT * from vprospecto WHERE edo_pros <>3 AND col_asignado = :col_id  ORDER BY id_pros";
+
+  $colaborador_id = $_SESSION['id_col'];
+  $resultado = $conexion->prepare($consulta);
+  $resultado->bindParam(':col_id', $colaborador_id, PDO::PARAM_INT);
+  $resultado->execute();
+  $prospectostotales = $resultado->rowCount();
+
+  $resultado->closeCursor();
+
+  $consulta = "SELECT * from vprospecto WHERE edo_pros =2 AND col_asignado = :col_id  ORDER BY id_pros";
+
+  $colaborador_id = $_SESSION['id_col'];
+  $resultado = $conexion->prepare($consulta);
+  $resultado->bindParam(':col_id', $colaborador_id, PDO::PARAM_INT);
+  $resultado->execute();
+  $prospectosclientes = $resultado->rowCount();
+
+  $resultado->closeCursor();
+  if ($prospectosclientes != 0) {
+    $efectividad = ($prospectosclientes / $prospectostotales) * 100;
+  } else {
+    $efectividad = 0;
+  }
+
 
   // Consulta 1: Agendados no realizados
   $consulta1 = "SELECT * FROM vseg_pros WHERE edo_pros = 1 AND col_asignado = :col_id AND realizado = 0 ORDER BY fecha_seg";
@@ -45,17 +93,73 @@ if ($_SESSION['s_rol'] == 4) {
   $data_realizados = $stmt2->fetchAll(PDO::FETCH_ASSOC);
   $stmt2->closeCursor(); // Opcional
 
+  $consulta="SELECT * from venta where edo_venta=1";
+  $stmt = $conexion->prepare($consulta);
+  $stmt->execute();
+  $totalvtas = $stmt->rowCount();
+  $stmt->closeCursor();
+  
+  $consulta="SELECT * from venta where edo_venta=1 and id_vendedor=:col_id";
+  $stmt = $conexion->prepare($consulta);
+  $stmt->bindParam(':col_id', $colaborador_id, PDO::PARAM_INT);
+  $stmt->execute();
+  $ventas = $stmt->rowCount();
+  $stmt->closeCursor();
+
 } else {
   $consulta = "SELECT * from vprospecto WHERE edo_pros = 1 AND edo_seguimiento = 1 ORDER BY id_pros";
   $resultado = $conexion->prepare($consulta);
   $resultado->execute();
   $data = $resultado->fetchAll(PDO::FETCH_ASSOC);
 
+  $resultado->closeCursor();
+
+
+  $consulta = "SELECT * from vprospecto WHERE edo_pros = 1 ORDER BY id_pros";
+  $resultado = $conexion->prepare($consulta);
+  $resultado->execute();
+  $prospectosactivos = $resultado->rowCount();
+  $totalprospectos = $resultado->rowCount();
+  $resultado->closeCursor();
+
+  
+  $consulta = "SELECT * from vprospecto WHERE edo_pros <>3 ORDER BY id_pros";
+
+  $colaborador_id = $_SESSION['id_col'];
+  $resultado = $conexion->prepare($consulta);
+  $resultado->bindParam(':col_id', $colaborador_id, PDO::PARAM_INT);
+  $resultado->execute();
+  $prospectostotales = $resultado->rowCount();
+
+  $resultado->closeCursor();
+
+  $consulta = "SELECT * from vprospecto WHERE edo_pros =2 ORDER BY id_pros";
+
+  $colaborador_id = $_SESSION['id_col'];
+  $resultado = $conexion->prepare($consulta);
+  $resultado->bindParam(':col_id', $colaborador_id, PDO::PARAM_INT);
+  $resultado->execute();
+  $prospectosclientes = $resultado->rowCount();
+
+  $resultado->closeCursor();
+  if ($prospectosclientes != 0) {
+    $efectividad = ($prospectosclientes / $prospectostotales) * 100;
+  } else {
+    $efectividad = 0;
+  }
+
+  $consulta="SELECT count(*) as nventas from venta where edo_venta=1";
+  $stmt = $conexion->prepare($consulta);
+  $stmt->execute();
+  $totalvtas = $stmt->fetchColumn();
+  $stmt->closeCursor();
+
   // Consulta 1: Agendados no realizados
   $consulta1 = "SELECT * FROM vseg_pros WHERE edo_pros = 1 AND realizado = 0 ORDER BY fecha_seg";
   $stmt1 = $conexion->prepare($consulta1);
   $stmt1->bindParam(':col_id', $colaborador_id, PDO::PARAM_INT);
   $stmt1->execute();
+  $seguimientoact = $stmt1->rowCount();
   $data_agendados = $stmt1->fetchAll(PDO::FETCH_ASSOC);
   $stmt1->closeCursor(); // Limpieza opcional si vas a seguir consultando con la misma conexión
 
@@ -102,12 +206,12 @@ if ($_SESSION['s_rol'] == 4) {
   }
 </style>
 <!-- Content Wrapper. Contains page content -->
-<div class="content-wrapper">
+<div class="content-wrapper" style="background-color: white!important;">
   <!-- Content Header (Page header) -->
 
 
   <!-- Main content -->
-  <section class="content ">
+  <section class="content " >
 
   </section>
   <section>
@@ -122,7 +226,70 @@ if ($_SESSION['s_rol'] == 4) {
           </div>
         </div>
       </div>
-      
+      <div class="container-fluid mt-3">
+        <div class="row justify-content-center mx-3">
+          <div class="col-sm-3 ">
+
+            <div class="small-box bg-gradient-orange text-white">
+              <div class="inner">
+                <h3><?php echo $prospectosactivos ?>/<?php echo $totalprospectos ?></h3>
+
+                <p>PROSPECTOS ACTIVOS</p>
+              </div>
+              <div class="icon">
+                <i class="fa-duotone fa-regular fa-users-viewfinder "></i>
+              </div>
+              <a href="cntapresupuesto.php" class="small-box-footer">Más Información <i class="fas fa-arrow-circle-right"></i></a>
+            </div>
+          </div>
+
+          <div class="col-sm-3">
+
+            <div class="small-box bg-warning text-white">
+              <div class="inner">
+                <h3 class="text-white"><?php echo $seguimientoact ?></h3>
+
+                <p class="text-white">SEGUIMIENTOS PENDIENTES</p>
+              </div>
+              <div class="icon ">
+                <i class="fa-solid fa-calendar-days"></i>
+              </div>
+              <a href="#divAgenda" class="small-box-footer" style="color: white!important;">Más Información <i class="fas fa-arrow-circle-right text-white"></i></a>
+            </div>
+          </div>
+
+          <div class="col-sm-3 ">
+
+            <div class="small-box bg-gradient-success text-white">
+              <div class="inner">
+                <h3><?php echo $prospectosclientes ?>/<?php echo $prospectostotales ?> (<?php echo number_format($efectividad, 2) ?>%)</h3>
+                <p>PROS. CONVERTIDOS A CLIENTES (EFECTIVIDAD) </p>
+              </div>
+              <div class="icon">
+                <i class="fa-duotone fa-regular fa-user-tie"></i>
+              </div>
+              <a href="" class="small-box-footer">Más Información <i class="fas fa-arrow-circle-right"></i></a>
+            </div>
+          </div>
+
+          <div class="col-sm-3 ">
+
+            <div class="small-box bg-gradient-primary">
+              <div class="inner">
+                <h3><?php echo  $ventas <> 0 ? $ventas."/":"" ?> <?php echo ($totalvtas) ?></h3>
+
+                <p>VENTAS</p>
+              </div>
+              <div class="icon">
+                <i class="fas fa-dollar-sign"></i>
+              </div>
+              <a href="" class="small-box-footer">Más Información <i class="fas fa-arrow-circle-right"></i></a>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
       <div class="card-deck">
         <div class="card text-center">
           <div class="card-header bg-green text-white">
@@ -190,208 +357,208 @@ if ($_SESSION['s_rol'] == 4) {
         </div>
 
       </div>
-      <?php if ($_SESSION['s_rol'] != '5' && $_SESSION['s_rol']!=1) { ?>
-      <div class="card-deck">
-        <div class="card text-center">
-          <div class="card-header bg-green text-white">
-            <h3 class="card-title">SEGUIMIENTO</h3>
-          </div>
-          <div class="card-body">
-            <div class="container-fluid">
-              <div class="row">
-                <div class="col-lg-12">
-                  <div class="table-responsive">
-                    <table name="tablaRealizado" id="tablaRealizado" class="table table-sm table-striped table-bordered table-condensed text-nowrap w-auto mx-auto" style="width:100%; font-size:14px">
-                      <thead class="text-center  bg-green">
-                        <tr>
-                          <th>ID</th>
-                          <th>NOMBRE</th>
-                          <th>TELÉFONO</th>
-                          <th>CORREO</th>
-                          <th>ASIGNADO A</th>
-                          <th>ULTIMO SEG</th>
-                          <th>ACCION SEG</th>
-                          <th>OBSERVACIONES</th>
-                          <th>RESULTADO</th>
-
-                        </tr>
-                      </thead>
-                      <tbody>
-                        <?php foreach ($data_realizados as $dat):
-                        ?>
+      <?php if ($_SESSION['s_rol'] != '5' && $_SESSION['s_rol'] != 1) { ?>
+        <div class="card-deck">
+          <div class="card text-center">
+            <div class="card-header bg-green text-white">
+              <h3 class="card-title">SEGUIMIENTO</h3>
+            </div>
+            <div class="card-body">
+              <div class="container-fluid">
+                <div class="row">
+                  <div class="col-lg-12">
+                    <div class="table-responsive">
+                      <table name="tablaRealizado" id="tablaRealizado" class="table table-sm table-striped table-bordered table-condensed text-nowrap w-auto mx-auto" style="width:100%; font-size:14px">
+                        <thead class="text-center  bg-green">
                           <tr>
-                            <td><?php echo $dat['id_pros'] ?></td>
-                            <td><?php echo $dat['nombre'] ?></td>
-                            <td><?php echo $dat['telefono'] ?></td>
-                            <td><?php echo $dat['correo'] ?></td>
-                            <td><?php echo $dat['nombre_col'] ?></td>
-                            <td><?php echo date('d/m/Y', strtotime($dat['fecha_seg'])) ?></td>
+                            <th>ID</th>
+                            <th>NOMBRE</th>
+                            <th>TELÉFONO</th>
+                            <th>CORREO</th>
+                            <th>ASIGNADO A</th>
+                            <th>ULTIMO SEG</th>
+                            <th>ACCION SEG</th>
+                            <th>OBSERVACIONES</th>
+                            <th>RESULTADO</th>
 
-                            <td class="text-center">
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <?php foreach ($data_realizados as $dat):
+                          ?>
+                            <tr>
+                              <td><?php echo $dat['id_pros'] ?></td>
+                              <td><?php echo $dat['nombre'] ?></td>
+                              <td><?php echo $dat['telefono'] ?></td>
+                              <td><?php echo $dat['correo'] ?></td>
+                              <td><?php echo $dat['nombre_col'] ?></td>
+                              <td><?php echo date('d/m/Y', strtotime($dat['fecha_seg'])) ?></td>
+
+                              <td class="text-center">
+                                <?php
+                                $icono_tipo = '';
+                                $estado_text = $dat['tipo_seg']; // Muestra el texto como está en la opción
+
+                                switch ($dat['tipo_seg']) {
+                                  case 'Llamada':
+                                    $icono_tipo = '<i class="fas fa-phone-alt text-success"></i>';
+
+                                    break;
+                                  case 'Mensaje':
+                                    $icono_tipo = '<i class="fas fa-comment-dots text-info"></i>';
+                                    break;
+                                  case 'Correo':
+                                    $icono_tipo = '<i class="fas fa-envelope text-warning"></i>';
+                                    break;
+                                  case 'Reunión':
+                                    $icono_tipo = '<i class="fas fa-handshake text-primary"></i>';
+                                    break;
+                                  case 'Otro':
+                                    $icono_tipo = '<i class="fas fa-ellipsis-h text-secondary"></i>';
+                                    break;
+                                }
+                                ?>
+
+                                <span class=><?php echo $icono_tipo . " " . $dat['tipo_seg'] ?></span>
+                              </td>
+                              <td><?= $dat['obs_cierre'] ?></td>
                               <?php
-                              $icono_tipo = '';
-                              $estado_text = $dat['tipo_seg']; // Muestra el texto como está en la opción
+                              $resultado = $dat['resultado'];
+                              $clase = '';
+                              $icono = '';
 
-                              switch ($dat['tipo_seg']) {
-                                case 'Llamada':
-                                  $icono_tipo = '<i class="fas fa-phone-alt text-success"></i>';
-
+                              // Evaluar el resultado
+                              switch (strtolower(trim($resultado))) {
+                                case 'éxito':
+                                case 'exito':
+                                  $clase = 'text-success font-weight-bold';
+                                  $icono = '<i class="fas fa-check-circle"></i>';
                                   break;
-                                case 'Mensaje':
-                                  $icono_tipo = '<i class="fas fa-comment-dots text-info"></i>';
+                                case 'sin_respuesta':
+                                  $clase = 'text-warning font-weight-bold';
+                                  $icono = '<i class="fas fa-exclamation-circle"></i>';
                                   break;
-                                case 'Correo':
-                                  $icono_tipo = '<i class="fas fa-envelope text-warning"></i>';
+                                case 'rechazado':
+                                case 'cancelado':
+                                  $clase = 'text-danger font-weight-bold';
+                                  $icono = '<i class="fas fa-times-circle"></i>';
                                   break;
-                                case 'Reunión':
-                                  $icono_tipo = '<i class="fas fa-handshake text-primary"></i>';
-                                  break;
-                                case 'Otro':
-                                  $icono_tipo = '<i class="fas fa-ellipsis-h text-secondary"></i>';
+                                default:
+                                  $clase = '';
+                                  $icono = '<i class="fas fa-info-circle text-muted"></i>';
                                   break;
                               }
                               ?>
-
-                              <span class=><?php echo $icono_tipo . " " . $dat['tipo_seg'] ?></span>
-                            </td>
-                            <td><?= $dat['obs_cierre'] ?></td>
-                            <?php
-                            $resultado = $dat['resultado'];
-                            $clase = '';
-                            $icono = '';
-
-                            // Evaluar el resultado
-                            switch (strtolower(trim($resultado))) {
-                              case 'éxito':
-                              case 'exito':
-                                $clase = 'text-success font-weight-bold';
-                                $icono = '<i class="fas fa-check-circle"></i>';
-                                break;
-                              case 'sin_respuesta':
-                                $clase = 'text-warning font-weight-bold';
-                                $icono = '<i class="fas fa-exclamation-circle"></i>';
-                                break;
-                              case 'rechazado':
-                              case 'cancelado':
-                                $clase = 'text-danger font-weight-bold';
-                                $icono = '<i class="fas fa-times-circle"></i>';
-                                break;
-                              default:
-                                $clase = '';
-                                $icono = '<i class="fas fa-info-circle text-muted"></i>';
-                                break;
-                            }
-                            ?>
-                            <td class="<?= $clase ?>"><?= $icono . ' ' . htmlspecialchars($resultado) ?></td>
+                              <td class="<?= $clase ?>"><?= $icono . ' ' . htmlspecialchars($resultado) ?></td>
 
 
 
-                          </tr>
-                        <?php endforeach; ?>
-                      </tbody>
-                    </table>
+                            </tr>
+                          <?php endforeach; ?>
+                        </tbody>
+                      </table>
+                    </div>
                   </div>
                 </div>
               </div>
             </div>
           </div>
+
         </div>
 
-      </div>
-
-      <div class="card-deck">
-        <div class="card text-center">
-          <div class="card-header bg-green text-white">
-            <h3 class="card-title">AGENDA</h3>
-          </div>
-          <div class="card-body">
-            <div class="container-fluid">
-              <div class="row">
-                <div class="col-lg-12">
-                  <div class="table-responsive">
-                    <table name="tablaAgenda" id="tablaAgenda" class="table table-sm table-striped table-bordered table-condensed text-nowrap w-auto mx-auto" style="width:100%; font-size:14px">
-                      <thead class="text-center  bg-green">
-                        <tr>
-                          <th>ID SEG</th>
-                          <th>ID</th>
-                          <th>NOMBRE</th>
-                          <th>TELÉFONO</th>
-                          <th>CORREO</th>
-                          <th>ASIGNADO A</th>
-                          <th>ULTIMO SEG</th>
-                          <th>ACCION SEG</th>
-                          <th>OBSERVACIONES</th>
-                          <th>RESPONSABLE</th>
-                          <th>ACCIONES</th>
-
-                        </tr>
-                      </thead>
-                      <tbody>
-                        <?php foreach ($data_agendados as $dat): ?>
+        <div class="card-deck" ID="divAgenda">
+          <div class="card text-center">
+            <div class="card-header bg-green text-white">
+              <h3 class="card-title">AGENDA</h3>
+            </div>
+            <div class="card-body">
+              <div class="container-fluid">
+                <div class="row">
+                  <div class="col-lg-12">
+                    <div class="table-responsive">
+                      <table name="tablaAgenda" id="tablaAgenda" class="table table-sm table-striped table-bordered table-condensed text-nowrap w-auto mx-auto" style="width:100%; font-size:14px">
+                        <thead class="text-center  bg-green">
                           <tr>
-                            <td><?= $dat['id_seg'] ?></td>
-
-
-                            <td><?php echo $dat['id_pros'] ?></td>
-                            <td><?php echo $dat['nombre'] ?></td>
-                            <td><?php echo $dat['telefono'] ?></td>
-                            <td><?php echo $dat['correo'] ?></td>
-                            <td><?php echo $dat['nombre_col'] ?></td>
-                            <td><?php echo date('d/m/Y', strtotime($dat['fecha_seg'])) ?></td>
-
-                            <td class="text-center">
-                              <?php
-                              $icono_tipo = '';
-                              $estado_text = $dat['tipo_seg']; // Muestra el texto como está en la opción
-
-                              switch ($dat['tipo_seg']) {
-                                case 'Llamada':
-                                  $icono_tipo = '<i class="fas fa-phone-alt text-success"></i>';
-
-                                  break;
-                                case 'Mensaje':
-                                  $icono_tipo = '<i class="fas fa-comment-dots text-info"></i>';
-                                  break;
-                                case 'Correo':
-                                  $icono_tipo = '<i class="fas fa-envelope text-warning"></i>';
-                                  break;
-                                case 'Reunión':
-                                  $icono_tipo = '<i class="fas fa-handshake text-primary"></i>';
-                                  break;
-                                case 'Otro':
-                                  $icono_tipo = '<i class="fas fa-ellipsis-h text-secondary"></i>';
-                                  break;
-                              }
-                              ?>
-
-                              <span class=><?php echo $icono_tipo . " " . $dat['tipo_seg'] ?></span>
-                            </td>
-                            <td><?= $dat['observaciones'] ?></td>
-                            <td class="text-left"><?= $dat['nom_col_seg'] ?></td>
-                            <td>
-                              <div class="btn-group">
-                                <button class="btn btn-sm btn-primary btnSeguir" data-toggle="tooltip" title="Seguimiento">
-                                  <i class="fa-duotone fa-solid fa-phone"></i>
-                                </button>
-
-                              </div>
-                            </td>
-
-
+                            <th>ID SEG</th>
+                            <th>ID</th>
+                            <th>NOMBRE</th>
+                            <th>TELÉFONO</th>
+                            <th>CORREO</th>
+                            <th>ASIGNADO A</th>
+                            <th>ULTIMO SEG</th>
+                            <th>ACCION SEG</th>
+                            <th>OBSERVACIONES</th>
+                            <th>RESPONSABLE</th>
+                            <th>ACCIONES</th>
 
                           </tr>
-                        <?php endforeach; ?>
-                      </tbody>
-                    </table>
+                        </thead>
+                        <tbody>
+                          <?php foreach ($data_agendados as $dat): ?>
+                            <tr>
+                              <td><?= $dat['id_seg'] ?></td>
+
+
+                              <td><?php echo $dat['id_pros'] ?></td>
+                              <td><?php echo $dat['nombre'] ?></td>
+                              <td><?php echo $dat['telefono'] ?></td>
+                              <td><?php echo $dat['correo'] ?></td>
+                              <td><?php echo $dat['nombre_col'] ?></td>
+                              <td><?php echo date('d/m/Y', strtotime($dat['fecha_seg'])) ?></td>
+
+                              <td class="text-center">
+                                <?php
+                                $icono_tipo = '';
+                                $estado_text = $dat['tipo_seg']; // Muestra el texto como está en la opción
+
+                                switch ($dat['tipo_seg']) {
+                                  case 'Llamada':
+                                    $icono_tipo = '<i class="fas fa-phone-alt text-success"></i>';
+
+                                    break;
+                                  case 'Mensaje':
+                                    $icono_tipo = '<i class="fas fa-comment-dots text-info"></i>';
+                                    break;
+                                  case 'Correo':
+                                    $icono_tipo = '<i class="fas fa-envelope text-warning"></i>';
+                                    break;
+                                  case 'Reunión':
+                                    $icono_tipo = '<i class="fas fa-handshake text-primary"></i>';
+                                    break;
+                                  case 'Otro':
+                                    $icono_tipo = '<i class="fas fa-ellipsis-h text-secondary"></i>';
+                                    break;
+                                }
+                                ?>
+
+                                <span class=><?php echo $icono_tipo . " " . $dat['tipo_seg'] ?></span>
+                              </td>
+                              <td><?= $dat['observaciones'] ?></td>
+                              <td class="text-left"><?= $dat['nom_col_seg'] ?></td>
+                              <td>
+                                <div class="btn-group">
+                                  <button class="btn btn-sm btn-primary btnSeguir" data-toggle="tooltip" title="Seguimiento">
+                                    <i class="fa-duotone fa-solid fa-phone"></i>
+                                  </button>
+
+                                </div>
+                              </td>
+
+
+
+                            </tr>
+                          <?php endforeach; ?>
+                        </tbody>
+                      </table>
+                    </div>
                   </div>
                 </div>
               </div>
             </div>
           </div>
-        </div>
 
-      </div>
-      <?php }?>
+        </div>
+      <?php } ?>
     </div>
   </section>
   <!-- /.content -->

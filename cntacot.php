@@ -1,6 +1,6 @@
 
 <?php
-$pagina = "cntapresupuesto";
+$pagina = "cntacot";
 
 include_once "templates/header.php";
 include_once "templates/barra.php";
@@ -14,7 +14,7 @@ $conexion = $objeto->connect();
 $consulta = "SELECT 
     p.id_pres,
     p.fecha_pres,
-    p.nombre_clie AS cliente,
+    p.nombre_pros AS prospecto,
     p.nproyecto AS proyecto,
     p.nmanzana AS manzana,
     p.nlote AS lote,
@@ -23,7 +23,7 @@ $consulta = "SELECT
     p.nenganche,
     p.nmsi,
     p.nmci
-FROM vpresupuesto p
+FROM vcotizacion p
 where p.edo_pres = 1
 ORDER BY p.id_pres DESC";
 $resultado = $conexion->prepare($consulta);
@@ -39,7 +39,7 @@ $data = $resultado->fetchAll(PDO::FETCH_ASSOC);
     <section class="content">
         <div class="card">
             <div class="card-header bg-green text-light">
-                <h1 class="card-title mx-auto">PRESUPUESTOS</h1>
+                <h1 class="card-title mx-auto">COTIZACIONES</h1>
             </div>
             <div class="card-body">
                 <div class="container-fluid">
@@ -51,7 +51,7 @@ $data = $resultado->fetchAll(PDO::FETCH_ASSOC);
                                         <tr>
                                             <th>ID</th>
                                             <th>Fecha</th>
-                                            <th>Cliente</th>
+                                            <th>Prospecto</th>
                                             <th>Proyecto</th>
                                             <th>Manzana</th>
                                             <th>Lote</th>
@@ -68,7 +68,7 @@ $data = $resultado->fetchAll(PDO::FETCH_ASSOC);
                                             <tr>
                                                 <td class="text-center"><?php echo $row['id_pres']; ?></td>
                                                 <td class="text-center"><?php echo $row['fecha_pres']; ?></td>
-                                                <td><?php echo htmlspecialchars($row['cliente']); ?></td>
+                                                <td><?php echo htmlspecialchars($row['prospecto']); ?></td>
                                                 <td><?php echo htmlspecialchars($row['proyecto']); ?></td>
                                                 <td><?php echo htmlspecialchars($row['manzana']); ?></td>
                                                 <td class="text-center"><?php echo htmlspecialchars($row['lote']); ?></td>
@@ -94,7 +94,7 @@ $data = $resultado->fetchAll(PDO::FETCH_ASSOC);
 </div>
 
 <?php include_once 'templates/footer.php'; ?>
-<script src="fjs/cntapresupuesto.js?v=<?php echo (rand()); ?>"></script>
+<script src="fjs/cntacot.js?v=<?php echo (rand()); ?>"></script>
 <script src="plugins/datatables/jquery.dataTables.min.js"></script>
 <script src="plugins/datatables-bs4/js/dataTables.bootstrap4.min.js"></script>
 <script src="plugins/datatables-responsive/js/dataTables.responsive.min.js"></script>

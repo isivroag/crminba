@@ -192,6 +192,48 @@ try {
             ];
 
             break;
+        case 5: // Inactivar prospecto
+            $consulta = "UPDATE prospecto SET edo_pros = 3 WHERE id_pros = :id";
+            $stmt = $conexion->prepare($consulta);
+            $stmt->bindParam(':id', $id, PDO::PARAM_INT);
+            $stmt->execute();
+
+            // Registrar en bitácora
+            if (!$bitacora->registrar(
+                'PROSPECTO',
+                'INACTIVACIÓN',
+                $id,
+                "Prospecto inactivado (ID: $id)"
+            )) {
+                throw new Exception("Error al registrar en bitácora");
+            }
+
+            $response = [
+                'success' => true,
+                'message' => 'Prospecto inactivado'
+            ];
+            break;
+            case 6: // Activar prospecto
+                $consulta = "UPDATE prospecto SET edo_pros = 1 WHERE id_pros = :id";
+                $stmt = $conexion->prepare($consulta);
+                $stmt->bindParam(':id', $id, PDO::PARAM_INT);
+                $stmt->execute();
+
+                // Registrar en bitácora
+                if (!$bitacora->registrar(
+                    'PROSPECTO',
+                    'ACTIVACIÓN',
+                    $id,
+                    "Prospecto activado (ID: $id)"
+                )) {
+                    throw new Exception("Error al registrar en bitácora");
+                }
+
+                $response = [
+                    'success' => true,
+                    'message' => 'Prospecto activado'
+                ];
+                break;
 
         default:
             $response['message'] = 'Operación no válida';

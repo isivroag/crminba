@@ -1,6 +1,6 @@
 
 <?php
-$pagina = "cntapresupuesto";
+$pagina = "cntaventa";
 
 include_once "templates/header.php";
 include_once "templates/barra.php";
@@ -12,20 +12,19 @@ $conexion = $objeto->connect();
 
 // Consulta para obtener los presupuestos con datos relacionados
 $consulta = "SELECT 
-    p.id_pres,
-    p.fecha_pres,
-    p.nombre_clie AS cliente,
-    p.nproyecto AS proyecto,
-    p.nmanzana AS manzana,
-    p.nlote AS lote,
-    p.valorop,
-    p.enganche,
-    p.nenganche,
-    p.nmsi,
-    p.nmci
-FROM vpresupuesto p
-where p.edo_pres = 1
-ORDER BY p.id_pres DESC";
+    v.folio_venta,
+    v.fecha,
+    v.nombre_clie AS cliente,
+    v.nproyecto AS proyecto,
+    v.nmanzana AS manzana,
+    v.nlote AS lote,
+    v.total,
+    v.saldo,
+    v.saldo_mod_met,
+    v.vendedor
+FROM vventa v
+where v.edo_venta = 1
+ORDER BY v.folio_venta DESC";
 $resultado = $conexion->prepare($consulta);
 $resultado->execute();
 $data = $resultado->fetchAll(PDO::FETCH_ASSOC);
@@ -39,7 +38,7 @@ $data = $resultado->fetchAll(PDO::FETCH_ASSOC);
     <section class="content">
         <div class="card">
             <div class="card-header bg-green text-light">
-                <h1 class="card-title mx-auto">PRESUPUESTOS</h1>
+                <h1 class="card-title mx-auto">VENTAS</h1>
             </div>
             <div class="card-body">
                 <div class="container-fluid">
@@ -56,33 +55,45 @@ $data = $resultado->fetchAll(PDO::FETCH_ASSOC);
                                             <th>Manzana</th>
                                             <th>Lote</th>
                                             <th>Valor Operación</th>
-                                            <th>Enganche</th>
-                                            <th># MENG</th>
-                                            <th># MSI</th>
-                                            <th># MCI</th>
+                                            <th>Saldo</th>
+                                            <th>Saldo Mod. Met.</th>
+                                            <th>Vendedor</th>
                                             <th>Acciones</th>
                                         </tr>
                                     </thead>
                                     <tbody>
                                         <?php foreach ($data as $row) { ?>
                                             <tr>
-                                                <td class="text-center"><?php echo $row['id_pres']; ?></td>
-                                                <td class="text-center"><?php echo $row['fecha_pres']; ?></td>
+                                                <td class="text-center"><?php echo $row['folio_venta']; ?></td>
+                                                <td class="text-center"><?php echo $row['fecha']; ?></td>
                                                 <td><?php echo htmlspecialchars($row['cliente']); ?></td>
                                                 <td><?php echo htmlspecialchars($row['proyecto']); ?></td>
                                                 <td><?php echo htmlspecialchars($row['manzana']); ?></td>
                                                 <td class="text-center"><?php echo htmlspecialchars($row['lote']); ?></td>
-                                                <td class="text-right"><?php echo number_format($row['valorop'], 2); ?></td>
-                                                <td class="text-right"><?php echo number_format($row['enganche'], 2); ?></td>
-                                                <td class="text-center"><?php echo number_format($row['nenganche'], 0); ?></td>
-                                                <td class="text-center"><?php echo number_format($row['nmsi'], 0); ?></td>
-                                                <td class="text-center"><?php echo number_format($row['nmci'], 0); ?></td>
+                                                <td class="text-right"><?php echo number_format($row['total'], 2); ?></td>
+                                                <td class="text-right"><?php echo number_format($row['saldo'], 2); ?></td>
+                                                <td class="text-center"><?php echo number_format($row['saldo_mod_met'], 2); ?></td>
+                                                <td class="text-center"><?php echo $row['vendedor']; ?></td>
                                                 <td class="text-center">
                                                     
                                                 </td>
                                             </tr>
                                         <?php } ?>
                                     </tbody>
+
+                                    <tfoot>
+                                        <th></th>
+                                        <th></th>
+                                        <th></th>
+                                        <th></th>
+                                        <th></th>
+                                        <th></th>
+                                        <th></th>
+                                        <th></th>
+                                        <th></th>
+                                        <th></th>
+                                        <th></th>
+                                    </tfoot>
                                 </table>
                             </div>
                         </div>
@@ -94,7 +105,7 @@ $data = $resultado->fetchAll(PDO::FETCH_ASSOC);
 </div>
 
 <?php include_once 'templates/footer.php'; ?>
-<script src="fjs/cntapresupuesto.js?v=<?php echo (rand()); ?>"></script>
+<script src="fjs/cntaventa.js?v=<?php echo (rand()); ?>"></script>
 <script src="plugins/datatables/jquery.dataTables.min.js"></script>
 <script src="plugins/datatables-bs4/js/dataTables.bootstrap4.min.js"></script>
 <script src="plugins/datatables-responsive/js/dataTables.responsive.min.js"></script>

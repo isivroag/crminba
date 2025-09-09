@@ -2,8 +2,8 @@ $(document).ready(function () {
   function limpiarFormulario() {
     // Limpiar campos principales
     $("#folio").val("");
-    $("#id_clie").val("");
-    $("#nombre_clie").val("");
+    $("#id_pros").val("");
+    $("#nombre_pros").val("");
     $("#fechacot").val(new Date().toISOString().split("T")[0]);
     $("#tasaInteresAnual").val("17.00");
 
@@ -52,7 +52,7 @@ $(document).ready(function () {
     if (!folio) return;
 
     $.ajax({
-      url: "bd/buscar_pres.php",
+      url: "bd/buscar_pres2.php",
       method: "POST",
       dataType: "json",
       data: { folio: folio },
@@ -65,8 +65,8 @@ $(document).ready(function () {
         }
         // Llenar los campos del formulario con los datos recibidos
         $("#folio").val(response.id_pres);
-        $("#id_clie").val(response.id_clie);
-        $("#nombre_clie").val(response.nombre_clie);
+        $("#id_pros").val(response.id_pros);
+        $("#nombre_pros").val(response.nombre_pros);
         $("#fechacot").val(response.fecha_pres);
         $("#tasaInteresAnual").val(response.tasa);
         $("#fechaInicio").val(response.inicial);
@@ -121,7 +121,7 @@ $(document).ready(function () {
   // Función para buscar y mostrar detalle de pagos
   function buscarDetallePresupuesto(folio) {
     $.ajax({
-      url: "bd/buscar_detallepres.php",
+      url: "bd/buscar_detallepres2.php",
       method: "POST",
       dataType: "json",
       data: { folio: folio },
@@ -150,14 +150,14 @@ $(document).ready(function () {
 
   $("#btnImprimir").click(function () {
     $folio = $("#folio").val();
-    window.open("formatos/generarcot.php?id=" + $folio, "_blank");
+    window.open("formatos/generarcot2.php?id=" + $folio, "_blank");
   });
   // Botón Guardar
   $("#btnGuardar").click(function () {
     // Validar campos obligatorios
 
-    if ($("#id_clie").val() === "") {
-      Swal.fire("Error", "Debes seleccionar un cliente", "error");
+    if ($("#id_pros").val() === "") {
+      Swal.fire("Error", "Debes seleccionar un prospecto", "error");
       return;
     }
 
@@ -179,8 +179,8 @@ $(document).ready(function () {
     // Recolectar datos del formulario
     const encabezado = {
       folio: $("#folio").val(),
-      id_clie: $("#id_clie").val(),
-      nombre_clie: $("#nombre_clie").val(),
+      id_pros: $("#id_pros").val(),
+      nombre_pros: $("#nombre_pros").val(),
       fecha_pres: $("#fechacot").val(),
       tasa: $("#tasaInteresAnual").val(),
       inicial: $("#fechaInicio").val(),
@@ -214,7 +214,7 @@ $(document).ready(function () {
     });
 
     $.ajax({
-      url: "bd/guardar_presupuesto.php",
+      url: "bd/guardar_presupuesto2.php",
       method: "POST",
       dataType: "json",
       data: JSON.stringify(encabezado),
@@ -228,7 +228,7 @@ $(document).ready(function () {
           $("#folio").val(response.id_pres);
 
           $.ajax({
-            url: "bd/guardar_detalle_pres.php",
+            url: "bd/guardar_detalle_pres2.php",
             method: "POST",
             dataType: "json",
             data: JSON.stringify(detalles),
@@ -242,7 +242,6 @@ $(document).ready(function () {
                 );
                 // Opcional: Actualizar folio si es necesario
                 $("#folio").val(response.nuevo_folio || $("#folio").val());
-                deshabilitarInputsYCalculo();
               } else {
                 Swal.fire(
                   "Error",
@@ -316,7 +315,7 @@ $(document).ready(function () {
       cancelButtonText: "Cancelar",
     }).then((result) => {
       if (result.value) {
-        window.location.href = "cot.php"; // Redirigir a la misma página para reiniciar
+        window.location.href = "pcot.php"; // Redirigir a la misma página para reiniciar
       }
     });
   });
@@ -336,14 +335,14 @@ $(document).ready(function () {
     }
   });
 
-  $("#btnBuscarCliente").click(function () {
+  $("#btnBuscarProspecto").click(function () {
     // Mostrar el modal primero
-    $("#modalCliente").modal("show");
+    $("#modalProspecto").modal("show");
     id_col = $("#idcol").val(); // Obtener el id_col del campo oculto
 
     // Hacer la petición AJAX
     $.ajax({
-      url: "bd/get_cliente.php",
+      url: "bd/get_prospectos.php",
       method: "POST",
       dataType: "json",
       data: {
@@ -351,27 +350,26 @@ $(document).ready(function () {
       },
       success: function (response) {
         if (response && response.length > 0) {
-          tableCliente.clear().rows.add(response).draw();
+          tableProspecto.clear().rows.add(response).draw();
         } else {
-          tableCliente.clear().draw();
         }
       },
       error: function (xhr, status, error) {
-        console.error("Error al cargar Clientes:", error);
+        console.error("Error al cargar Prospectos:", error);
       },
     });
   });
 
-  $("#tablaCliente").on("click", ".seleccionar-cliente", function () {
+  $("#tablaProspecto").on("click", ".seleccionar-prospecto", function () {
     var id = $(this).data("id");
     var nombre = $(this).data("nombre");
 
     // Asignar valores a los campos correspondientes
-    $("#id_clie").val(id);
-    $("#nombre_clie").val(nombre);
+    $("#id_pros").val(id);
+    $("#nombre_pros").val(nombre);
 
     // Cerrar el modal
-    $("#modalCliente").modal("hide");
+    $("#modalProspecto").modal("hide");
   });
   // 2. Inicializar DataTable para la tabla de lotes
   var table = $("#tablaLote").DataTable({
@@ -482,14 +480,14 @@ $(document).ready(function () {
     },
   });
 
-  var tableCliente = $("#tablaCliente").DataTable({
+  var tableProspecto = $("#tablaProspecto").DataTable({
     columns: [
-      { data: "id_clie", visible: true },
+      { data: "id_pros", visible: true },
       { data: "nombre" },
       {
         data: null,
         render: function (data, type, row) {
-          return `<button class="btn btn-sm btn-primary seleccionar-cliente" 
+          return `<button class="btn btn-sm btn-primary seleccionar-prospecto" 
                             data-id="${row.id_clie}" 
                             data-nombre="${row.nombre}">
                             <i class="fas fa-check mr-1"></i>

@@ -11,26 +11,51 @@ $conexion = $objeto->connect();
 
 // Consulta para obtener prospectos activos (edo_pros = 1)
 
+$filtro= $_GET['estado'] ?? 'activos';
+
 if ($_SESSION['s_rol'] == 4) {
     $colaborador_id = $_SESSION['id_col'];
+
+    if ($filtro == 'todos') {
+        $consulta = "SELECT p.*, c.nombre as nombre_colaborador 
+                     FROM prospecto p
+                     JOIN colaborador c ON p.col_asignado = c.id_col
+                     WHERE p.edo_pros IN (1,2,3)
+                     and p.edo_seguimiento <> 3
+                     AND p.col_asignado = :colaborador_id
+                     ORDER BY p.id_pros";
+        $resultado = $conexion->prepare($consulta);
+        $resultado->bindParam(':colaborador_id', $colaborador_id, PDO::PARAM_INT);
+    } else {    
     $consulta = "SELECT p.*, c.nombre as nombre_colaborador 
                  FROM prospecto p
                  JOIN colaborador c ON p.col_asignado = c.id_col
-                 WHERE p.edo_pros = 1 
+                 WHERE p.edo_pros IN (1)
                  and p.edo_seguimiento <> 3
                  AND p.col_asignado = :colaborador_id
                  ORDER BY p.id_pros";
+    }
+
     $resultado = $conexion->prepare($consulta);
     $resultado->bindParam(':colaborador_id', $colaborador_id, PDO::PARAM_INT);
     // Si no es administrador, filtrar por el colaborador asignado
 
 } else {
-
+    if ($filtro == 'todos') {
+        $consulta = "SELECT p.*, c.nombre as nombre_colaborador 
+                     FROM prospecto p
+                     JOIN colaborador c ON p.col_asignado = c.id_col
+                     WHERE p.edo_pros IN (1,2,3)
+                     and p.edo_seguimiento <> 3
+                     ORDER BY p.id_pros";
+    } else {
     $consulta = "SELECT p.*, c.nombre as nombre_colaborador 
                  FROM prospecto p
                  JOIN colaborador c ON p.col_asignado = c.id_col
-                 WHERE p.edo_pros <>0 
+                 WHERE p.edo_pros IN (1)
                  ORDER BY p.id_pros";
+    }
+
     $resultado = $conexion->prepare($consulta);
 }
 // Administrador puede ver todos los prospectos activos
@@ -108,6 +133,12 @@ $message = "";
                     <div class="row">
                         <div class="col-lg-12">
                             <div class="table-responsive">
+                                <div class="form-check mb-2">
+                                    <input class="form-check-input" type="checkbox" id="chkInactivos" <?php echo ($filtro == 'todos') ? 'checked' : ''; ?>>
+                                    <label class="form-check-label" for="chkInactivos">
+                                        Mostrar prospectos inactivos
+                                    </label>
+                                </div>
                                 <table name="tablaV" id="tablaV" class="table table-sm table-striped table-bordered table-condensed text-nowrap w-auto mx-auto" style="width:100%; font-size:14px">
                                     <thead class="text-center  bg-green">
                                         <tr>
@@ -120,6 +151,8 @@ $message = "";
                                             <th>ESTADO</th>
                                             <th>ORIGEN</th>
                                             <th>INTERES</th>
+                                            <th>Estado</th>
+                                            <th>ESTADO PROSPECTO</th>
                                             <th>ACCIONES</th>
                                         </tr>
                                     </thead>
@@ -152,6 +185,10 @@ $message = "";
                                                         case 4:
                                                             $badge_class = 'bg-secondary';
                                                             $estado_text = 'Pendiente';
+                                                            break;
+                                                        case 5:
+                                                            $badge_class = 'bg-dark';
+                                                            $estado_text = 'Inactivo';
                                                             break;
                                                     }
                                                     ?>
@@ -186,6 +223,14 @@ $message = "";
                                                     ?>
                                                 </td>
                                                 <td><?php echo $dat['interes']; ?></td>
+                                                <td><?php echo $dat['edo_pros']; ?></td>
+                                                <td class="text-center">
+                                                    <?php if ($dat['edo_pros'] == 1): ?>
+                                                        <span class="badge bg-success">Activo</span>
+                                                    <?php else: ?>
+                                                        <span class="badge bg-secondary">Inactivo</span>
+                                                    <?php endif; ?>
+                                                </td>
                                                 <td></td>
                                             </tr>
                                         <?php endforeach; ?>
@@ -407,6 +452,30 @@ $message = "";
                                     <input type="text" class="form-control form-control-sm" name="dir_cp" id="dir_cp" autocomplete="off" placeholder="CP" maxlength="5">
                                 </div>
                             </div>
+
+                             <div class="col-12 col-sm-4">
+                                    <div class="form-group input-group-sm">
+                                        <label for="origenc" class="col-form-label form-control-sm">*ORIGEN:</label>
+                                        <select id="origenc" name="origenc" class="selectpicker form-control form-control-sm" data-live-search="false" title="Seleccione el origen...">
+                                            <option value="facebook" data-icon="fab fa-facebook text-primary">Facebook</option>
+                                            <option value="instagram" data-icon="fab fa-instagram text-danger">Instagram</option>
+                                            <option value="web" data-icon="fas fa-globe text-info">Web</option>
+                                            <option value="whatsapp" data-icon="fab fa-whatsapp text-success">WhatsApp</option>
+                                            <option value="llamada" data-icon="fas fa-phone text-dark">Llamada</option>
+                                            <option value="vendedor" data-icon="fas fa-user text-green">Vendedor</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-12 col-sm-8">
+                                    <div class="form-group input-group-sm">
+                                        <label for="col_asignadoc" class="col-form-label form-control-sm">*ASIGNADO A:</label>
+                                        <select class="form-control form-control-sm selectpicker" name="col_asignadoc" id="col_asignadoc" data-live-search="true" title="SELECCIONA COLABORADOR" required>
+                                            <?php foreach ($colaboradores as $colab): ?>
+                                                <option value="<?php echo $colab['id_col'] ?>"><?php echo $colab['nombre'] ?></option>
+                                            <?php endforeach; ?>
+                                        </select>
+                                    </div>
+                                </div>
 
                             <div class="col-12">
                                 <div class="form-group input-group-sm">

@@ -17,6 +17,8 @@ $folio_ide = (isset($_POST['folio_ide'])) ? $_POST['folio_ide'] : '';
 $especial = (isset($_POST['especial'])) ? $_POST['especial'] : '0';
 $tipo_ide = (isset($_POST['tipo_ide'])) ? $_POST['tipo_ide'] : '';
 $nacionalidad = $_POST['nacionalidad'] ?? 'MEXICANA';
+$col_asignado = $_POST['col_asignado'] ?? '';
+$origen = $_POST['origen'] ?? '';
 
 
 $opcion = (isset($_POST['opcion'])) ? $_POST['opcion'] : '';
@@ -42,11 +44,11 @@ switch ($opcion) {
         $consulta = "INSERT INTO cliente (
                 rfc, nombre, tel_cel, email, folio, nacionalidad, 
                 tipo_ide, dir_calle, dir_ciudad, dir_colonia, 
-                dir_edo, dir_cp, especial,  status
+                dir_edo, dir_cp, especial,  status, col_asignado, origen
             ) VALUES (
                 :rfc, :nombre, :tel_cel, :email, :folio, :nacionalidad,
                 :tipo_ide, :dir_calle, :dir_ciudad, :dir_colonia,
-                :dir_edo, :dir_cp, :especial, 'CORRECTO'
+                :dir_edo, :dir_cp, :especial, 'CORRECTO', :col_asignado, :origen
             )";
 
         $resultado = $conexion->prepare($consulta);
@@ -63,6 +65,8 @@ switch ($opcion) {
         $resultado->bindParam(':dir_edo', $dir_edo);
         $resultado->bindParam(':dir_cp', $dir_cp);
         $resultado->bindParam(':especial', $especial);
+        $resultado->bindParam(':col_asignado', $col_asignado);
+        $resultado->bindParam(':origen', $origen);
 
         $resultado->execute();
 
@@ -86,7 +90,9 @@ switch ($opcion) {
                 dir_colonia = :dir_colonia, 
                 dir_edo = :dir_edo, 
                 dir_cp = :dir_cp,
-                especial = :especial
+                especial = :especial,
+                col_asignado = :col_asignado,
+                origen = :origen
                 WHERE id_clie = :id_clie";
 
                 $resultado = $conexion->prepare($consulta);
@@ -105,6 +111,8 @@ switch ($opcion) {
         $resultado->bindParam(':dir_cp', $dir_cp);      
         $resultado->bindParam(':id_clie', $id_clie);
         $resultado->bindParam(':especial', $especial);
+        $resultado->bindParam(':col_asignado', $col_asignado);
+        $resultado->bindParam(':origen', $origen);
         
 
         $resultado->execute();

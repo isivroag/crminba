@@ -3,27 +3,26 @@ $(document).ready(function () {
   opcion = 4; // Valor por defecto para operaciones
   var textcolumnas = permisos();
 
+  $("#telefono").on("input", function () {
+    let $input = $(this);
+    let value = $input.val();
+    let cursorPos = this.selectionStart;
 
-  $('#telefono').on('input', function() {
-        let $input = $(this);
-        let value = $input.val();
-        let cursorPos = this.selectionStart;
-        
-        // Limpiar (solo números y +)
-        let newValue = value.replace(/[^0-9+]/g, '');
-        
-        // Asegurar que el + solo esté al inicio
-        if (newValue.includes('+')) {
-            newValue = '+' + newValue.replace(/\+/g, '');
-        }
-        
-        // Actualizar solo si hubo cambios
-        if (value !== newValue) {
-            $input.val(newValue);
-            // Mantener posición del cursor
-            this.setSelectionRange(cursorPos, cursorPos);
-        }
-    });
+    // Limpiar (solo números y +)
+    let newValue = value.replace(/[^0-9+]/g, "");
+
+    // Asegurar que el + solo esté al inicio
+    if (newValue.includes("+")) {
+      newValue = "+" + newValue.replace(/\+/g, "");
+    }
+
+    // Actualizar solo si hubo cambios
+    if (value !== newValue) {
+      $input.val(newValue);
+      // Mantener posición del cursor
+      this.setSelectionRange(cursorPos, cursorPos);
+    }
+  });
 
   function permisos() {
     var tipousuario = parseInt($("#tipousuario").val());
@@ -45,9 +44,9 @@ $(document).ready(function () {
           <button class='btn btn-sm btn-success btnConvertir' data-toggle='tooltip' data-placement='top' title='Convertir a Cliente'><i class='fas fa-user'></i></button>\
            <button class='btn btn-sm bg-purple btnSegumiento' data-toggle='tooltip' data-placement='top' title='Registrar Seguimiento'><i class='fas fa-phone'></i></button>\
            <button class='btn btn-sm bg-orange btnHistoria' data-toggle='tooltip' data-placement='top' title='Ver Historial'><i class='fa-solid fa-book'></i></button>\
-           <button class='btn btn-sm bg-danger btnEliminar' data-toggle='tooltip' data-placement='top' title='Eliminar'><i class='fa-solid fa-trash'></i></button>\
            </div>";
-           //<button class='btn btn-sm btn-secondary btnEnviar' data-toggle='tooltip' data-placement='top' title='Correo'><i class='fas fa-envelope'></i></button>\
+        //<button class='btn btn-sm btn-secondary btnEnviar' data-toggle='tooltip' data-placement='top' title='Correo'><i class='fas fa-envelope'></i></button>\
+        //<button class='btn btn-sm bg-danger btnEliminar' data-toggle='tooltip' data-placement='top' title='Eliminar'><i class='fa-solid fa-trash'></i></button>\
         break;
       case 4: // usuario colaborador
         columnas =
@@ -69,71 +68,221 @@ $(document).ready(function () {
     return columnas;
   }
 
+ 
 
   // Inicialización de DataTable
-  var tablaVis = $("#tablaV").DataTable({
-    dom:
-      "<'row'<'col-sm-12 col-md-4'l><'col-sm-12 col-md-4'B><'col-sm-12 col-md-4'f>>" +
-      "<'row'<'col-sm-12'tr>>" +
-      "<'row'<'col-sm-12 col-md-5'i><'col-sm-12 col-md-7'p>>",
-    buttons: [
-      {
-        extend: "excelHtml5",
-        text: "<i class='fas fa-file-excel'> Excel</i>",
-        titleAttr: "Exportar a Excel",
-        title: "Listado de Prospectos",
-        className: "btn bg-success",
-        exportOptions: { columns: [0, 1, 2, 3, 4, 5, 6] },
-      },
-      {
-        extend: "pdfHtml5",
-        text: "<i class='far fa-file-pdf'> PDF</i>",
-        titleAttr: "Exportar a PDF",
-        title: "Listado de Prospectos",
-        className: "btn bg-danger",
-        exportOptions: { columns: [0, 1, 2, 3, 4, 5, 6] },
-      },
-    ],
-    language: {
-      lengthMenu: "Mostrar _MENU_ registros",
-      zeroRecords: "No se encontraron resultados",
-      info: "Mostrando registros del _START_ al _END_ de un total de _TOTAL_ registros",
-      infoEmpty: "Mostrando registros del 0 al 0 de un total de 0 registros",
-      infoFiltered: "(filtrado de un total de _MAX_ registros)",
-      sSearch: "Buscar:",
-      oPaginate: {
-        sFirst: "Primero",
-        sLast: "Último",
-        sNext: "Siguiente",
-        sPrevious: "Anterior",
-      },
-      sProcessing: "Procesando...",
+ var tablaVis = $("#tablaV").DataTable({
+  dom:
+    "<'row'<'col-sm-12 col-md-4'l><'col-sm-12 col-md-4'B><'col-sm-12 col-md-4'f>>" +
+    "<'row'<'col-sm-12'tr>>" +
+    "<'row'<'col-sm-12 col-md-5'i><'col-sm-12 col-md-7'p>>",
+  buttons: [
+    {
+      extend: "excelHtml5",
+      text: "<i class='fas fa-file-excel'> Excel</i>",
+      titleAttr: "Exportar a Excel",
+      title: "Listado de Prospectos",
+      className: "btn bg-success",
+      exportOptions: { columns: [0, 1, 2, 3, 4, 5, 6] },
     },
-    columnDefs: [
-      {
-        targets: -1,
-        data: null,
-        defaultContent: textcolumnas,
-      },
-     
-    ],
-    rowcallback: function (row, data) {
-      // Formatear el teléfono al cargar la tabla
-      var telefono = data[2];
-      if (telefono) {
-        console.log("Teléfono original:", telefono);
+    {
+      extend: "pdfHtml5",
+      text: "<i class='far fa-file-pdf'> PDF</i>",
+      titleAttr: "Exportar a PDF",
+      title: "Listado de Prospectos",
+      className: "btn bg-danger",
+      exportOptions: { columns: [0, 1, 2, 3, 4, 5, 6] },
+    },
+  ],
+  language: {
+    lengthMenu: "Mostrar _MENU_ registros",
+    zeroRecords: "No se encontraron resultados",
+    info: "Mostrando registros del _START_ al _END_ de un total de _TOTAL_ registros",
+    infoEmpty: "Mostrando registros del 0 al 0 de un total de 0 registros",
+    infoFiltered: "(filtrado de un total de _MAX_ registros)",
+    sSearch: "Buscar:",
+    oPaginate: {
+      sFirst: "Primero",
+      sLast: "Último",
+      sNext: "Siguiente",
+      sPrevious: "Anterior",
+    },
+    sProcessing: "Procesando...",
+  },
 
-        var telefonoFormateado = formatearTelefono(telefono);
-        console.log("Teléfono formateado:", telefonoFormateado);
-        $("td:eq(2)", row).text(telefonoFormateado);
-      }
-
-      // Formatear el origen
-      var origen = data[7];
-      if (origen) {
-        $("td:eq(7)", row).html(formatoOrigen(origen));
-      }
+  columnDefs: [
+    {
+      targets: -1,
+      data: null,
+      defaultContent: textcolumnas,
+    },{
+      targets:9,className: "hide_column"
     }
+  ],
+  rowCallback: function (row, data) {
+    var telefono = data[2];
+    if (telefono && typeof formatearTelefono === "function") {
+      var telefonoFormateado = formatearTelefono(telefono);
+      $("td:eq(2)", row).text(telefonoFormateado);
+    }
+
+    var estado = data[9];
+    var botones = "";
+    if (estado == 1) {
+      botones += `
+        <button class='btn btn-sm btn-danger btnInactivar' data-toggle='tooltip' title='Suspender Prospecto'>
+          <i class='fas fa-ban'></i>
+        </button>`;
+    } else if (estado == 3) {
+      botones += `
+        <button class='btn btn-sm btn-primary btnActivar' data-toggle='tooltip' title='Activar Prospecto'>
+          <i class='fas fa-check'></i>
+        </button>`;
+    }
+    $("td:last", row).append(botones);
+  },
+});
+
+$("#chkInactivos").on("change", function () {
+  window.location.href = "cntaprospecto.php?estado=" + ($(this).prop("checked") ? "todos" : "activos");
+});
+
+   $(document).on("click", ".btnEliminar", function () {
+    var fila = $(this).closest("tr");
+    var id = parseInt(fila.find("td:eq(0)").text());
+
+    Swal.fire({
+      title: "¿Eliminar prospecto?",
+      text: "Esta acción no se puede deshacer",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Sí, eliminar",
+      cancelButtonText: "Cancelar",
+    }).then((result) => {
+      if (result.value) {
+        // Primero verificar si tiene seguimientos
+        $.ajax({
+          url: "bd/crudprospecto.php",
+          type: "POST",
+          dataType: "json",
+          data: {
+            id: id,
+            opcion: 4, // Nueva opción para verificar seguimientos
+          },
+          success: function (response) {
+            if (response.success && response.count > 0) {
+              // Mostrar error si tiene seguimientos
+              Swal.fire({
+                icon: "error",
+                title: "No se puede eliminar",
+                html: `Este prospecto tiene <b>${response.count}</b> registros de seguimiento asociados.<br><br>Primero elimine los seguimientos antes de eliminar el prospecto.`,
+              });
+            } else {
+              // Proceder con eliminación si no tiene seguimientos
+              eliminarProspecto(id, fila);
+            }
+          },
+          error: function (xhr, status, error) {
+            Swal.fire({
+              icon: "error",
+              title: "Error",
+              text: "Error al verificar seguimientos",
+            });
+          },
+        });
+      }
+    });
+  });
+  // Inactivar prospecto
+  $(document).on("click", ".btnInactivar", function () {
+    var fila = $(this).closest("tr");
+    var id = parseInt(fila.find("td:eq(0)").text());
+  
+
+    Swal.fire({
+      title: "Suspender Prospecto?",
+      text: "Este prospecto pasará a la lista de inactivos",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonText: "Sí, suspender",
+      cancelButtonText: "Cancelar",
+    }).then((result) => {
+      if (result.value) {
+        $.ajax({
+          url: "bd/crudprospecto.php",
+          type: "POST",
+          dataType: "json",
+          data: {
+            id: id,
+            opcion: 5, // Opción personalizada para inactivar
+          },
+          success: function (response) {
+            if (response.success ) {
+         
+              // Actualizar la columna de estado en la tabla
+              fila.find("td:eq(10)").html('<span class="badge bg-danger">Inactivo</span>');
+              Swal.fire("Hecho", "El prospecto fue inactivado", "success");
+            } else {
+              Swal.fire("Error", response.message || "No se pudo inactivar", "error");
+            }
+          },
+           error: function (xhr, status, error) {
+            Swal.fire({
+              icon: "error",
+              title: "Error",
+              text: "Error al verificar seguimientos",
+            });
+          },
+        });
+      }
+    });
+  });
+
+  // Activar prospecto
+  $(document).on("click", ".btnActivar", function () {
+    var fila = $(this).closest("tr");
+    var id = parseInt(fila.find("td:eq(0)").text());
+    opcion=6;
+
+    Swal.fire({
+      title: "¿Activar Prospecto?",
+      text: "Este prospecto volverá a la lista de activos",
+      icon: "question",
+      showCancelButton: true,
+      confirmButtonText: "Sí, activar",
+      cancelButtonText: "Cancelar",
+    }).then((result) => {
+      if (result.value) {
+        $.ajax({
+          url: "bd/crudprospecto.php",
+          type: "POST",
+          dataType: "json",
+          data: {
+            id: id,
+            opcion: 6, // Opción personalizada para activar
+          },
+          success: function (response) {
+            if (response.success) {
+              console.log("Prospecto activado:", id);
+              // Actualizar la columna de estado en la tabla
+              fila.find("td:eq(10)").html('<span class="badge badge-asignado">Activo</span>');
+              Swal.fire("Hecho", "El prospecto fue activado", "success");
+            } else {
+              Swal.fire("Error", response.message || "No se pudo activar", "error");
+            }
+          },
+           error: function (xhr, status, error) {
+            Swal.fire({
+              icon: "error",
+              title: "Error",
+              text: "Error al verificar seguimientos",
+            });
+          },
+        });
+      }
+    });
   });
 
   // Tooltips
@@ -306,54 +455,7 @@ $(document).ready(function () {
   });
 
   // Botón Descartar Prospecto
-  $(document).on("click", ".btnEliminar", function () {
-    var fila = $(this).closest("tr");
-    var id = parseInt(fila.find("td:eq(0)").text());
-
-    Swal.fire({
-      title: "¿Eliminar prospecto?",
-      text: "Esta acción no se puede deshacer",
-      icon: "warning",
-      showCancelButton: true,
-      confirmButtonColor: "#3085d6",
-      cancelButtonColor: "#d33",
-      confirmButtonText: "Sí, eliminar",
-      cancelButtonText: "Cancelar",
-    }).then((result) => {
-      if (result.value) {
-        // Primero verificar si tiene seguimientos
-        $.ajax({
-          url: "bd/crudprospecto.php",
-          type: "POST",
-          dataType: "json",
-          data: {
-            id: id,
-            opcion: 4, // Nueva opción para verificar seguimientos
-          },
-          success: function (response) {
-            if (response.success && response.count > 0) {
-              // Mostrar error si tiene seguimientos
-              Swal.fire({
-                icon: "error",
-                title: "No se puede eliminar",
-                html: `Este prospecto tiene <b>${response.count}</b> registros de seguimiento asociados.<br><br>Primero elimine los seguimientos antes de eliminar el prospecto.`,
-              });
-            } else {
-              // Proceder con eliminación si no tiene seguimientos
-              eliminarProspecto(id, fila);
-            }
-          },
-          error: function (xhr, status, error) {
-            Swal.fire({
-              icon: "error",
-              title: "Error",
-              text: "Error al verificar seguimientos",
-            });
-          },
-        });
-      }
-    });
-  });
+ 
 
   function eliminarProspecto(id, fila) {
     $.ajax({
@@ -439,9 +541,8 @@ $(document).ready(function () {
     e.preventDefault(); // Evita recargar la página
   });
 
-
   // Guardar Prospecto (Crear o Editar)
-  $(document).on("click", "#btnGuardar",async function () {
+  $(document).on("click", "#btnGuardar", async function () {
     var nombre = $.trim($("#nombre").val());
     var telefono = $.trim($("#telefono").val());
     var correo = $.trim($("#correo").val());
@@ -470,51 +571,51 @@ $(document).ready(function () {
     }
 
     // Validar teléfono solo si se proporcionó
-   if (telefono && telefono.trim() !== "") {
-    // Validar teléfono (10 dígitos o formato internacional con +)
-    var telefonoValido = /^(\+[0-9]{1,3})?[0-9]{10}$/.test(telefono);
-    if (!telefonoValido) {
+    if (telefono && telefono.trim() !== "") {
+      // Validar teléfono (10 dígitos o formato internacional con +)
+      var telefonoValido = /^(\+[0-9]{1,3})?[0-9]{10}$/.test(telefono);
+      if (!telefonoValido) {
         Swal.fire(
-            "Teléfono inválido",
-            "Formato aceptado: 10 dígitos para nacional o +código para internacional (ej: +521234567890)",
-            "warning"
+          "Teléfono inválido",
+          "Formato aceptado: 10 dígitos para nacional o +código para internacional (ej: +521234567890)",
+          "warning"
         );
         return;
-    } else {
+      } else {
         try {
-            // Normalizar el teléfono (agregar +52 si es nacional)
-            let telefonoNormalizado = telefono;
-            if (!telefono.startsWith('+')) {
-                telefonoNormalizado = '+52' + telefono;
-            }
-            
-            // Esperar la validación del teléfono
-            const respuesta = await $.ajax({
-                url: "bd/buscartelprospecto.php",
-                type: "POST",
-                dataType: "json",
-                data: {
-                    telefono: telefonoNormalizado, // Enviamos el teléfono normalizado
-                    opcion: opcion,
-                    id: id
-                }
+          // Normalizar el teléfono (agregar +52 si es nacional)
+          let telefonoNormalizado = telefono;
+          if (!telefono.startsWith("+")) {
+            telefonoNormalizado = "+52" + telefono;
+          }
+
+          // Esperar la validación del teléfono
+          const respuesta = await $.ajax({
+            url: "bd/buscartelprospecto.php",
+            type: "POST",
+            dataType: "json",
+            data: {
+              telefono: telefonoNormalizado, // Enviamos el teléfono normalizado
+              opcion: opcion,
+              id: id,
+            },
+          });
+
+          if (respuesta == 1) {
+            await Swal.fire({
+              icon: "warning",
+              title: "Teléfono ya registrado",
+              text: "El teléfono ingresado ya está asociado a otro prospecto.",
             });
-            
-            if (respuesta == 1) {
-                await Swal.fire({
-                    icon: "warning",
-                    title: "Teléfono ya registrado",
-                    text: "El teléfono ingresado ya está asociado a otro prospecto.",
-                });
-                return; // Detener el proceso
-            }
-            telefono = telefonoNormalizado; // Actualizar el teléfono con el normalizado
+            return; // Detener el proceso
+          }
+          telefono = telefonoNormalizado; // Actualizar el teléfono con el normalizado
         } catch (error) {
-            console.error("Error al validar teléfono:", error);
-            return;
+          console.error("Error al validar teléfono:", error);
+          return;
         }
+      }
     }
-}
 
     // Validar que al menos uno (teléfono o correo) esté presente
     if (!telefono && !correo) {
@@ -712,27 +813,52 @@ $(document).ready(function () {
 
   // Convertir a Cliente
   $(document).on("click", ".btnConvertir", function () {
-     fila = $(this).closest("tr");
+    fila = $(this).closest("tr");
     var id_prospecto = parseInt(fila.find("td:eq(0)").text());
     var nombre_prospecto = fila.find("td:eq(1)").text();
     var telefono_prospecto = fila.find("td:eq(2)").text();
     var correo_prospecto = fila.find("td:eq(3)").text();
+      var origen = fila.find("td[data-origen]").data("origen"); // Ej: "facebook"
+    var col_asignado = fila.find("td:eq(4)").text();
+    console.log("Colaborador asignado:", col_asignado);
+    console.log("Origen:", origen);
 
     // Prellenar campos del modal con datos del prospecto
     $("#id_prospecto").val(id_prospecto);
     $("#nombre_clie").val(nombre_prospecto);
     $("#tel_clie").val(telefono_prospecto);
     $("#correo_clie").val(correo_prospecto);
+  
+
+
+    $("#origenc").selectpicker("val", origen);
+    /*
+    var select = $("#origen");
+    select.find("option").each(function () {
+      if ($(this).text() === origen) {
+        select.val($(this).val());
+        select.selectpicker("refresh");
+        return false; // Salir del bucle
+      }
+    });
+*/
+    // Buscar el ID del colaborador asignado
+    var select = $("#col_asignadoc");
+    select.find("option").each(function () {
+      if ($(this).text() === col_asignado) {
+        select.val($(this).val());
+        select.selectpicker("refresh");
+        return false; // Salir del bucle
+      }
+    });
 
     opcion = 5; // Opción 5: Convertir a Cliente
     $(".modal-header").css("background-color", "#17a2b8");
     $(".modal-title").text("ALTA DE CLIENTE");
     $("#modalCliente").modal("show");
-
-
   });
 
- $(document).on("click", "#btnGuardarCliente", function () {
+  $(document).on("click", "#btnGuardarCliente", function () {
     var id_prospecto = $("#id_prospecto").val();
     var rfc = $.trim($("#rfc").val()).toUpperCase();
     var tipo_ide = $("#tipo_ide").val();
@@ -746,25 +872,26 @@ $(document).ready(function () {
     var dir_ciudad = $.trim($("#dir_ciudad").val()).toUpperCase();
     var dir_edo = $.trim($("#dir_edo").val()).toUpperCase();
     var dir_cp = $.trim($("#dir_cp").val());
-    var especial = $("#especial").is(':checked') ? 1 : 0;
-
+    var especial = $("#especial").is(":checked") ? 1 : 0;
+    var col_asignado = $("#col_asignadoc").val();
+    var origen = $("#origenc").val();
 
     // Validaciones obligatorias
     if (!tipo_ide || !folio_ide || !nombre_clie || !tel_clie) {
-        Swal.fire("Error", "Los campos marcados con * son obligatorios", "error");
-        return;
+      Swal.fire("Error", "Los campos marcados con * son obligatorios", "error");
+      return;
     }
 
     // Validar RFC si se proporciona
     if (rfc && (rfc.length < 12 || rfc.length > 13)) {
-        Swal.fire("Error", "El RFC debe tener 12 o 13 caracteres", "error");
-        return;
+      Swal.fire("Error", "El RFC debe tener 12 o 13 caracteres", "error");
+      return;
     }
 
     // Validar email si se proporciona
     if (correo_clie && !validarEmail(correo_clie)) {
-        Swal.fire("Error", "Ingrese un correo electrónico válido", "error");
-        return;
+      Swal.fire("Error", "Ingrese un correo electrónico válido", "error");
+      return;
     }
 
     // Validar teléfono
@@ -777,124 +904,133 @@ $(document).ready(function () {
         "error"
       );
       return;
-    }else{
-         let telefonoNormalizado = tel_clie;
-            if (!tel_clie.startsWith('+')) {
-                telefonoNormalizado = '+52' + tel_clie;
-                tel_clie = telefonoNormalizado; // Actualizar el teléfono con el normalizado
-            }
+    } else {
+      let telefonoNormalizado = tel_clie;
+      if (!tel_clie.startsWith("+")) {
+        telefonoNormalizado = "+52" + tel_clie;
+        tel_clie = telefonoNormalizado; // Actualizar el teléfono con el normalizado
+      }
     }
 
     // Validar código postal si se proporciona
     if (dir_cp && (dir_cp.length !== 5 || !/^\d+$/.test(dir_cp))) {
-        Swal.fire("Error", "El código postal debe tener 5 dígitos", "error");
-        return;
+      Swal.fire("Error", "El código postal debe tener 5 dígitos", "error");
+      return;
     }
 
     // Mostrar loading
     Swal.fire({
-        title: 'Procesando...',
-        text: 'Convirtiendo prospecto a cliente',
-        allowOutsideClick: false,
-        showConfirmButton: false,
-        willOpen: () => {
-            Swal.showLoading();
-        }
+      title: "Procesando...",
+      text: "Convirtiendo prospecto a cliente",
+      allowOutsideClick: false,
+      showConfirmButton: false,
+      willOpen: () => {
+        Swal.showLoading();
+      },
     });
-    
+
     // Enviar datos al servidor
     $.ajax({
-        url: "bd/guardarcliente.php",
-        type: "POST",
-        dataType: "json",
-        data: {
-            id_prospecto: id_prospecto,
-            rfc: rfc,
-            tipo_ide: tipo_ide,
-            folio_ide: folio_ide,
-            nombre: nombre_clie,
-            tel_cel: tel_clie,
-            email: correo_clie,
-            nacionalidad: nacionalidad,
-            dir_calle: dir_calle,
-            dir_colonia: dir_colonia,
-            dir_ciudad: dir_ciudad,
-            dir_edo: dir_edo,
-            dir_cp: dir_cp,
-            especial: especial,
-           
-        },
-        success: function (data) {
-            Swal.close();
-            
-            if (data.success) {
-                // Actualizar la fila en la tabla
-                var estadoBadge = '<span class="badge bg-green">Finalizado</span>';
-                fila.find("td:eq(6)").html(estadoBadge);
-                
-                // Remover botones de acción ya que está convertido
-                fila.find("td:eq(9)").html(
-                    '<div class="text-center btn-group">' +
-                    '<button class="btn btn-sm btn-info" data-toggle="tooltip" title="Cliente convertido" disabled>' +
-                    '<i class="fas fa-user-check"></i></button>' +
-                    '</div>'
-                );
+      url: "bd/guardarcliente.php",
+      type: "POST",
+      dataType: "json",
+      data: {
+        id_prospecto: id_prospecto,
+        rfc: rfc,
+        tipo_ide: tipo_ide,
+        folio_ide: folio_ide,
+        nombre: nombre_clie,
+        tel_cel: tel_clie,
+        email: correo_clie,
+        nacionalidad: nacionalidad,
+        dir_calle: dir_calle,
+        dir_colonia: dir_colonia,
+        dir_ciudad: dir_ciudad,
+        dir_edo: dir_edo,
+        dir_cp: dir_cp,
+        especial: especial,
+        col_asignado: col_asignado,
+        origen: origen,
+      },
+      success: function (data) {
+        Swal.close();
 
-                $("#modalCliente").modal("hide");
-                
-                Swal.fire({
-                    icon: "success",
-                    title: "¡Éxito!",
-                    html: `Cliente creado correctamente<br><strong>ID Cliente:</strong> ${data.id_cliente}`,
-                    showConfirmButton: true,
-                    confirmButtonText: "Ver Cliente",
-                    showCancelButton: true,
-                    cancelButtonText: "Continuar"
-                }).then((result) => {
-                    if (result.value) {
-                        // Redireccionar a la vista del cliente
-                        window.location.href = `cntacliente.php?highlight=${data.id_cliente}`;
-                    }
-                });
-                
-                // Limpiar formulario
-                $("#formCliente")[0].reset();
-                $("#especial").prop('checked', false);
-                
-            } else {
-                Swal.fire("Error", data.message || "Error al convertir prospecto", "error");
+        if (data.success) {
+          // Actualizar la fila en la tabla
+          var estadoBadge = '<span class="badge bg-green">Finalizado</span>';
+          fila.find("td:eq(6)").html(estadoBadge);
+
+          // Remover botones de acción ya que está convertido
+          fila
+            .find("td:eq(9)")
+            .html(
+              '<div class="text-center btn-group">' +
+                '<button class="btn btn-sm btn-info" data-toggle="tooltip" title="Cliente convertido" disabled>' +
+                '<i class="fas fa-user-check"></i></button>' +
+                "</div>"
+            );
+
+          $("#modalCliente").modal("hide");
+
+          Swal.fire({
+            icon: "success",
+            title: "¡Éxito!",
+            html: `Cliente creado correctamente<br><strong>ID Cliente:</strong> ${data.id_cliente}`,
+            showConfirmButton: true,
+            confirmButtonText: "Ver Cliente",
+            showCancelButton: true,
+            cancelButtonText: "Continuar",
+          }).then((result) => {
+            if (result.value) {
+              // Redireccionar a la vista del cliente
+              window.location.href = `cntacliente.php?highlight=${data.id_cliente}`;
             }
-        },
-        error: function (xhr, status, error) {
-            Swal.close();
-            console.error("Error AJAX:", error);
-            console.log("Respuesta completa:", xhr.responseText);
-            Swal.fire("Error", "Error de conexión con el servidor", "error");
+          });
+
+          // Limpiar formulario
+          $("#formCliente")[0].reset();
+          $("#especial").prop("checked", false);
+        } else {
+          Swal.fire(
+            "Error",
+            data.message || "Error al convertir prospecto",
+            "error"
+          );
         }
+      },
+      error: function (xhr, status, error) {
+        Swal.close();
+        console.error("Error AJAX:", error);
+        console.log("Respuesta completa:", xhr.responseText);
+        Swal.fire("Error", "Error de conexión con el servidor", "error");
+      },
     });
- });
+  });
 
- // Validación en tiempo real para campos del cliente
-$("#rfc").on("input", function() {
-    this.value = this.value.toUpperCase().replace(/[^A-Z0-9]/g, '');
-});
+  // Validación en tiempo real para campos del cliente
+  $("#rfc").on("input", function () {
+    this.value = this.value.toUpperCase().replace(/[^A-Z0-9]/g, "");
+  });
 
-$("#folio_ide").on("input", function() {
+  $("#folio_ide").on("input", function () {
     this.value = this.value.toUpperCase();
-});
+  });
 
-$("#dir_cp").on("input", function() {
-    this.value = this.value.replace(/[^0-9]/g, '').substring(0, 5);
-});
+  $("#dir_cp").on("input", function () {
+    this.value = this.value.replace(/[^0-9]/g, "").substring(0, 5);
+  });
 
-$("#tel_clie").on("input", function() {
-    this.value = this.value.replace(/[^0-9+]/g, '');
-});
+  $("#tel_clie").on("input", function () {
+    this.value = this.value.replace(/[^0-9+]/g, "");
+  });
 
-// Convertir a mayúsculas automáticamente
-$("#nombre_clie, #dir_calle, #dir_colonia, #dir_ciudad, #dir_edo, #rfc").on("blur", function() {
-    $(this).val($(this).val().toUpperCase());
-});
+  // Convertir a mayúsculas automáticamente
+  $("#nombre_clie, #dir_calle, #dir_colonia, #dir_ciudad, #dir_edo, #rfc").on(
+    "blur",
+    function () {
+      $(this).val($(this).val().toUpperCase());
+    }
+  );
 
   // Función para validar email
   function validarEmail(email) {

@@ -25,7 +25,7 @@ function mayusculasEspanol($texto) {
 		$conexion = $objeto->connect();
 
 
-		$consulta = "SELECT * FROM vpresupuesto WHERE id_pres='$folio'";
+		$consulta = "SELECT * FROM vcotizacion WHERE id_pres='$folio'";
 
 		$resultado = $conexion->prepare($consulta);
 		$resultado->execute();
@@ -37,8 +37,8 @@ function mayusculasEspanol($texto) {
 			$folio = $dt['id_pres'];
 
 			$fecha = $dt['fecha_pres'];
-			$idclie = $dt['id_clie'];
-			$prospecto = $dt['nombre_clie'];
+			
+			$prospecto = $dt['nombre_pros'];
 			$proyecto = $dt['nproyecto'];
 			$manzana = $dt['nmanzana'];
 			$lote = $dt['nlote'];
@@ -72,7 +72,7 @@ function mayusculasEspanol($texto) {
 
 
 
-		$consultadet = "SELECT * FROM detalle_pres WHERE id_pres='$folio' ORDER BY id_reg";
+		$consultadet = "SELECT * FROM detalle_cot WHERE id_pres='$folio' ORDER BY id_reg";
 		$resultadodet = $conexion->prepare($consultadet);
 		$resultadodet->execute();
 		$datadet = $resultadodet->fetchAll(PDO::FETCH_ASSOC);
@@ -106,7 +106,7 @@ function mayusculasEspanol($texto) {
         <td class="round">
             <div class=" info_factura">
                 
-                <p>No. Presupuesto: <strong>' . $folio . '</strong></p>
+                <p>Folio. Cot: <strong>' . $folio . '</strong></p>
                 <p>Fecha: ' . $fecha . '</p> 
 				<p>T.I. Anual: ' . $tasa . '%</p>
 
@@ -122,7 +122,7 @@ function mayusculasEspanol($texto) {
 				<tr>
 					<td class="info_cliente">
 						<div class="round">
-							<span class="encabezado">CLIENTE: <b>' . mayusculasEspanol($prospecto) . '</b> </span><br>
+							<span class="encabezado">PROSPECTO: <b>' . mayusculasEspanol($prospecto) . '</b> </span><br>
 							<span class="encabezado">INMUEBLE: <b>' . mayusculasEspanol($concepto) . '</b> </span><br>
 							<span class="encabezado">ATENCION POR: <b>' . mayusculasEspanol($nombre_col) . '</b> </span><br>
 						<table class="detalle_pres">

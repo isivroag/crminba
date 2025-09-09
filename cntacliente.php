@@ -17,6 +17,12 @@ $resultado = $conexion->prepare($consulta);
 $resultado->execute();
 $data = $resultado->fetchAll(PDO::FETCH_ASSOC);
 
+// Consulta para obtener colaboradores activos (para el select)
+$consulta_colab = "SELECT * FROM colaborador WHERE edo_col = 1 ORDER BY id_col";
+$resultado_colab = $conexion->prepare($consulta_colab);
+$resultado_colab->execute();
+$colaboradores = $resultado_colab->fetchAll(PDO::FETCH_ASSOC);
+
 
 $message = "";
 
@@ -121,116 +127,139 @@ $message = "";
                     <div class="modal-body">
                         <div class="card card-widget" style="margin: 10px;">
                             <form id="formDatos" class="row p-2 g-2" action="" method="POST">
-                               <div class="col-12 col-sm-4">
-                                <div class="form-group input-group-sm">
-                                    <label for="rfc" class="col-form-label form-control-sm">RFC:</label>
-                                    <input type="text" class="form-control form-control-sm" name="rfc" id="rfc" autocomplete="off" placeholder="RFC" maxlength="16">
-                                </div>
-                            </div>
-
-                            <div class="col-12 col-sm-4">
-                                <div class="form-group input-group-sm">
-                                    <label for="tipo_ide" class="col-form-label form-control-sm">*TIPO IDENTIFICACIÓN:</label>
-                                    <select class="form-control form-control-sm" name="tipo_ide" id="tipo_ide" require>
-                                        <option value="INE">INE</option>
-                                        <option value="PASAPORTE">PASAPORTE</option>
-                                        <option value="CURP">CURP</option>
-                                        <option value="LICENCIA">LICENCIA</option>
-                                        <option value="CARTILLA MILITAR">CARTILLA MILITAR</option>
-                                        <option value="TARJETA DE RESIDENCIA">TARJETA DE RESIDENCIA</option>
-                                        <option value="OTRO">OTRO</option>
-                                    </select>
-                                </div>
-                            </div>
-
-
-
-                            <div class="col-12 col-sm-4">
-                                <div class="form-group input-group-sm">
-                                    <label for="folio_ide" class="col-form-label form-control-sm">*FOLIO IDENTIFICACIÓN:</label>
-                                    <input type="text" class="form-control form-control-sm" name="folio_ide" id="folio_ide" autocomplete="off" placeholder="FOLIO" required>
-                                </div>
-                            </div>
-
-
-
-                            <div class="col-12 col-sm-12">
-                                <div class="form-group input-group-sm">
-                                    <label for="nombre_clie" class="col-form-label">*NOMBRE COMPLETO:</label>
-                                    <input type="text" class="form-control form-control-sm" id="nombre_clie" name="nombre_clie" placeholder="NOMBRE COMPLETO" required>
-                                </div>
-                            </div>
-
-
-                            <div class="col-12 col-sm-4">
-                                <div class="form-group input-group-sm">
-                                    <label for="tel_clie" class="col-form-label">*TELÉFONO:</label>
-                                    <input type="text" class="form-control form-control-sm" id="tel_clie" name="tel_clie" placeholder="TELÉFONO" required>
-                                </div>
-                            </div>
-
-                            <div class="col-12 col-sm-4">
-                                <div class="form-group input-group-sm">
-                                    <label for="correo_clie" class="col-form-label">CORREO:</label>
-                                    <input type="email" class="form-control form-control-sm" id="correo_clie" name="correo_clie" placeholder="CORREO">
-                                </div>
-                            </div>
-
-                            <div class="col-12 col-sm-4">
-                                <div class="form-group input-group-sm">
-                                    <label for="nacionalidad" class="col-form-label ">NACIONALIDAD:</label>
-                                    <select class="form-control form-control-sm" name="nacionalidad" id="nacionalidad">
-                                        <option value="MEXICANA">MEXICANA</option>
-                                        <option value="EXTRANJERA">EXTRANJERA</option>
-                                    </select>
-                                </div>
-                            </div>
-
-                            <div class="col-12 col-sm-8">
-                                <div class="form-group input-group-sm">
-                                    <label for="dir_calle" class="col-form-label form-control-sm">CALLE Y NÚMERO:</label>
-                                    <input type="text" class="form-control form-control-sm" name="dir_calle" id="dir_calle" autocomplete="off" placeholder="CALLE Y NÚMERO">
-                                </div>
-                            </div>
-
-                            <div class="col-12 col-sm-4">
-                                <div class="form-group input-group-sm">
-                                    <label for="dir_colonia" class="col-form-label form-control-sm">COLONIA:</label>
-                                    <input type="text" class="form-control form-control-sm" name="dir_colonia" id="dir_colonia" autocomplete="off" placeholder="COLONIA">
-                                </div>
-                            </div>
-
-                            <div class="col-12 col-sm-4">
-                                <div class="form-group input-group-sm">
-                                    <label for="dir_ciudad" class="col-form-label form-control-sm">CIUDAD:</label>
-                                    <input type="text" class="form-control form-control-sm" name="dir_ciudad" id="dir_ciudad" autocomplete="off" placeholder="CIUDAD">
-                                </div>
-                            </div>
-
-                            <div class="col-12 col-sm-4">
-                                <div class="form-group input-group-sm">
-                                    <label for="dir_edo" class="col-form-label form-control-sm">ESTADO:</label>
-                                    <input type="text" class="form-control form-control-sm" name="dir_edo" id="dir_edo" autocomplete="off" placeholder="ESTADO">
-                                </div>
-                            </div>
-
-                            <div class="col-12 col-sm-4">
-                                <div class="form-group input-group-sm">
-                                    <label for="dir_cp" class="col-form-label form-control-sm">CÓDIGO POSTAL:</label>
-                                    <input type="text" class="form-control form-control-sm" name="dir_cp" id="dir_cp" autocomplete="off" placeholder="CP" maxlength="5">
-                                </div>
-                            </div>
-
-                            <div class="col-12">
-                                <div class="form-group input-group-sm">
-                                    <div class="form-check">
-                                        <input type="checkbox" class="form-check-input" name="especial" id="especial" value="1">
-                                        <label class="form-check-label" for="especial">
-                                            <strong>CLIENTE ESPECIAL</strong> <small class="text-muted">(Requiere atención prioritaria)</small>
-                                        </label>
+                                <div class="col-12 col-sm-4">
+                                    <div class="form-group input-group-sm">
+                                        <label for="rfc" class="col-form-label form-control-sm">RFC:</label>
+                                        <input type="text" class="form-control form-control-sm" name="rfc" id="rfc" autocomplete="off" placeholder="RFC" maxlength="16">
                                     </div>
                                 </div>
-                            </div>
+
+                                <div class="col-12 col-sm-4">
+                                    <div class="form-group input-group-sm">
+                                        <label for="tipo_ide" class="col-form-label form-control-sm">*TIPO IDENTIFICACIÓN:</label>
+                                        <select class="form-control form-control-sm" name="tipo_ide" id="tipo_ide" require>
+                                            <option value="INE">INE</option>
+                                            <option value="PASAPORTE">PASAPORTE</option>
+                                            <option value="CURP">CURP</option>
+                                            <option value="LICENCIA">LICENCIA</option>
+                                            <option value="CARTILLA MILITAR">CARTILLA MILITAR</option>
+                                            <option value="TARJETA DE RESIDENCIA">TARJETA DE RESIDENCIA</option>
+                                            <option value="OTRO">OTRO</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+
+
+                                <div class="col-12 col-sm-4">
+                                    <div class="form-group input-group-sm">
+                                        <label for="folio_ide" class="col-form-label form-control-sm">*FOLIO IDENTIFICACIÓN:</label>
+                                        <input type="text" class="form-control form-control-sm" name="folio_ide" id="folio_ide" autocomplete="off" placeholder="FOLIO" required>
+                                    </div>
+                                </div>
+
+
+
+                                <div class="col-12 col-sm-12">
+                                    <div class="form-group input-group-sm">
+                                        <label for="nombre_clie" class="col-form-label">*NOMBRE COMPLETO:</label>
+                                        <input type="text" class="form-control form-control-sm" id="nombre_clie" name="nombre_clie" placeholder="NOMBRE COMPLETO" required>
+                                    </div>
+                                </div>
+
+
+                                <div class="col-12 col-sm-4">
+                                    <div class="form-group input-group-sm">
+                                        <label for="tel_clie" class="col-form-label">*TELÉFONO:</label>
+                                        <input type="text" class="form-control form-control-sm" id="tel_clie" name="tel_clie" placeholder="TELÉFONO" required maxlength="20">
+                                    </div>
+                                </div>
+
+                                <div class="col-12 col-sm-4">
+                                    <div class="form-group input-group-sm">
+                                        <label for="correo_clie" class="col-form-label">CORREO:</label>
+                                        <input type="email" class="form-control form-control-sm" id="correo_clie" name="correo_clie" placeholder="CORREO">
+                                    </div>
+                                </div>
+
+                                <div class="col-12 col-sm-4">
+                                    <div class="form-group input-group-sm">
+                                        <label for="nacionalidad" class="col-form-label ">NACIONALIDAD:</label>
+                                        <select class="form-control form-control-sm" name="nacionalidad" id="nacionalidad">
+                                            <option value="MEXICANA">MEXICANA</option>
+                                            <option value="EXTRANJERA">EXTRANJERA</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="col-12 col-sm-8">
+                                    <div class="form-group input-group-sm">
+                                        <label for="dir_calle" class="col-form-label form-control-sm">CALLE Y NÚMERO:</label>
+                                        <input type="text" class="form-control form-control-sm" name="dir_calle" id="dir_calle" autocomplete="off" placeholder="CALLE Y NÚMERO">
+                                    </div>
+                                </div>
+
+                                <div class="col-12 col-sm-4">
+                                    <div class="form-group input-group-sm">
+                                        <label for="dir_colonia" class="col-form-label form-control-sm">COLONIA:</label>
+                                        <input type="text" class="form-control form-control-sm" name="dir_colonia" id="dir_colonia" autocomplete="off" placeholder="COLONIA">
+                                    </div>
+                                </div>
+
+                                <div class="col-12 col-sm-4">
+                                    <div class="form-group input-group-sm">
+                                        <label for="dir_ciudad" class="col-form-label form-control-sm">CIUDAD:</label>
+                                        <input type="text" class="form-control form-control-sm" name="dir_ciudad" id="dir_ciudad" autocomplete="off" placeholder="CIUDAD">
+                                    </div>
+                                </div>
+
+                                <div class="col-12 col-sm-4">
+                                    <div class="form-group input-group-sm">
+                                        <label for="dir_edo" class="col-form-label form-control-sm">ESTADO:</label>
+                                        <input type="text" class="form-control form-control-sm" name="dir_edo" id="dir_edo" autocomplete="off" placeholder="ESTADO">
+                                    </div>
+                                </div>
+
+                                <div class="col-12 col-sm-4">
+                                    <div class="form-group input-group-sm">
+                                        <label for="dir_cp" class="col-form-label form-control-sm">CÓDIGO POSTAL:</label>
+                                        <input type="text" class="form-control form-control-sm" name="dir_cp" id="dir_cp" autocomplete="off" placeholder="CP" maxlength="5">
+                                    </div>
+                                </div>
+                                <div class="col-12 col-sm-4">
+                                    <div class="form-group input-group-sm">
+                                        <label for="origen" class="col-form-label form-control-sm">*ORIGEN:</label>
+                                        <select id="origen" name="origen" class="selectpicker form-control form-control-sm" data-live-search="false" title="Seleccione el origen...">
+                                            <option value="facebook" data-icon="fab fa-facebook text-primary">Facebook</option>
+                                            <option value="instagram" data-icon="fab fa-instagram text-danger">Instagram</option>
+                                            <option value="web" data-icon="fas fa-globe text-info">Web</option>
+                                            <option value="whatsapp" data-icon="fab fa-whatsapp text-success">WhatsApp</option>
+                                            <option value="llamada" data-icon="fas fa-phone text-dark">Llamada</option>
+                                            <option value="vendedor" data-icon="fas fa-user text-green">Vendedor</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-12 col-sm-8">
+                                    <div class="form-group input-group-sm">
+                                        <label for="col_asignado" class="col-form-label form-control-sm">*ASIGNADO A:</label>
+                                        <select class="form-control form-control-sm selectpicker" name="col_asignado" id="col_asignado" data-live-search="true" title="SELECCIONA COLABORADOR" required>
+                                            <?php foreach ($colaboradores as $colab): ?>
+                                                <option value="<?php echo $colab['id_col'] ?>"><?php echo $colab['nombre'] ?></option>
+                                            <?php endforeach; ?>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="col-12 col-sm-12">
+                                    <div class="form-group input-group-sm">
+                                        <div class="form-check">
+                                            <input type="checkbox" class="form-check-input" name="especial" id="especial" value="1">
+                                            <label class="form-check-label" for="especial">
+                                                <strong>CLIENTE ESPECIAL</strong> <small class="text-muted">(Requiere atención prioritaria)</small>
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
 
                             </form>
                         </div>

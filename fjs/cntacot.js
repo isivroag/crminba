@@ -73,12 +73,12 @@ $(document).ready(function () {
   $(document).on("click", ".btnVer", function() {
      fila = $(this).closest("tr");
         id = parseInt(fila.find('td:eq(0)').text());
-    window.location.href = "cot.php?folio=" + id;
+    window.location.href = "pcot.php?folio=" + id;
   });
   $(document).on("click", ".btnPDF", function () {
     var data = $("#tablaV").DataTable().row($(this).parents("tr")).data();
     var id = data[0];
-    window.open("formatos/generarcot.php?id=" + id, "_blank");
+    window.open("formatos/generarcot2.php?id=" + id, "_blank");
   });
 
 });

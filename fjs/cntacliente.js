@@ -90,6 +90,7 @@ $(document).ready(function () {
 
     id_clie = parseInt(fila.find("td:eq(0)").text());
     id = id_clie;
+    $("#formDatos").trigger("reset");
 
     $.ajax({
       url: "bd/crud_cliente.php",
@@ -108,6 +109,18 @@ $(document).ready(function () {
         $("#correo_clie").val(data[0].email);
         $("#rfc").val(data[0].rfc);
         $("#folio_ide").val(data[0].folio);
+
+
+        col_asignado=data[0].col_asignado;
+        origen=data[0].origen;
+
+
+        $("#origen").selectpicker("val", origen);
+        $("#col_asignado").selectpicker("val", col_asignado);
+
+ 
+  
+
         var especial = data[0].especial 
         if (especial == 1) {
           $("#especial").prop("checked", true);
@@ -188,6 +201,8 @@ $(document).ready(function () {
     var dir_edo = $.trim($("#dir_edo").val());
     var dir_cp = $.trim($("#dir_cp").val());
     var tipo_ide = $("#tipo_ide").val();
+    var col_asignado = $("#col_asignado").val();
+    var origen = $("#origen").val();
 
     var telValido = /^(\+[0-9]{1,3})?[0-9]{10}$/.test(telefono);
     if (!telValido) {
@@ -242,6 +257,8 @@ $(document).ready(function () {
         dir_cp: dir_cp,
         id_clie: id,
         opcion: opcion,
+        col_asignado: col_asignado,
+        origen: origen,
       },
       success: function (data) {
         console.log(data);

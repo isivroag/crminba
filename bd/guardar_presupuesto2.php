@@ -10,13 +10,13 @@ $data = json_decode(file_get_contents("php://input"), true);
 try {
     $conexion->beginTransaction();
 
-    $query = "INSERT INTO presupuesto (
+    $query = "INSERT INTO cotizacion (
                 id_lote, 
                 id_proy,
                 id_man,
                 fecha_pres, 
-                id_clie,
-                nombre_clie,   
+                id_pros,
+                nombre_pros,   
                 tasa,
                 inicial,
                 importe, 
@@ -39,8 +39,8 @@ try {
                 :id_proy, 
                 :id_man, 
                 :fecha_pres, 
-                :id_clie, 
-                :nombre_clie, 
+                :id_pros, 
+                :nombre_pros, 
                 :tasa, 
                 :inicial,
                 :importe,
@@ -67,8 +67,8 @@ try {
     $stmt->bindParam(':id_proy', $data['id_proy']);
     $stmt->bindParam(':id_man', $data['id_man']);
     $stmt->bindParam(':fecha_pres', $data['fecha_pres']);
-    $stmt->bindParam(':id_clie', $data['id_clie']);
-    $stmt->bindParam(':nombre_clie', $data['nombre_clie']);
+    $stmt->bindParam(':id_pros', $data['id_pros']);
+    $stmt->bindParam(':nombre_pros', $data['nombre_pros']);
     $stmt->bindParam(':tasa', $data['tasa']);
     $stmt->bindParam(':inicial', $data['inicial']);
     $stmt->bindParam(':importe', $data['importe']);
