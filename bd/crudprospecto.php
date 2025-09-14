@@ -76,7 +76,8 @@ try {
                 'nombre_colaborador' => $data['nombre_colaborador'],
                 'fecha_registro' => date('d/m/Y', strtotime($data['fecha_registro'])),
                 'origen' => $data['origen'],
-                'interes' => $data['interes']
+                'interes' => $data['interes'],
+                'edo_pros' => $data['edo_pros']
             ];
             break;
 

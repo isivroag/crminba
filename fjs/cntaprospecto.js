@@ -117,7 +117,12 @@ $(document).ready(function () {
       defaultContent: textcolumnas,
     },{
       targets:9,className: "hide_column"
-    }
+    },{
+      targets: 10,className: "text-center"
+    
+      }
+    
+
   ],
   rowCallback: function (row, data) {
     var telefono = data[2];
@@ -688,8 +693,10 @@ $("#chkInactivos").on("change", function () {
                 data.nombre_colaborador,
                 data.fecha_registro,
                 '<span class="badge badge-asignado">Asignado</span>',
-                formatoOrigen(origen),
-                interes,
+                formatoOrigen(data.origen),
+                data.interes,
+                data.edo_pros,
+                formatoestado(data.edo_pros),
               ])
               .draw();
           } else {
@@ -703,8 +710,10 @@ $("#chkInactivos").on("change", function () {
                 data.nombre_colaborador,
                 data.fecha_registro,
                 '<span class="badge badge-asignado">Asignado</span>',
-                formatoOrigen(origen),
-                interes,
+                formatoOrigen(data.origen),
+                data.interes,
+                data.edo_pros,
+                formatoestado(data.edo_pros),
               ])
               .draw();
           }
@@ -811,6 +820,21 @@ $("#chkInactivos").on("change", function () {
     }
   }
 
+  function formatoestado(estado) {
+    
+    
+      if (estado==1){
+        return ' <span class="badge bg-success">Activo</span>';
+      }else{
+        return '<span class="badge bg-secondary">Inactivo</span>';
+      }
+      
+        
+      
+   
+  }
+
+     
   // Convertir a Cliente
   $(document).on("click", ".btnConvertir", function () {
     fila = $(this).closest("tr");
